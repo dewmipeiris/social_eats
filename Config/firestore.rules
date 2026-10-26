@@ -1,0 +1,78 @@
+rules_version = '2';
+
+// SocialEats — Cloud Firestore security rules
+// Paste into Firebase console > Firestore Database > Rules > Publish.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isMember(tableId) {
+      return signedIn() &&
+        request.auth.uid in get(/databases/$(database)/documents/tables/$(tableId)).data.attendeeIds;
+    }
+
+    // Profiles: anyone signed in can read (names, karma); only you can write yours
+    match /users/{userId} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == userId;
+
+      // Your private notification feed
+      match /activity/{itemId} {
+        allow read, write: if signedIn() && request.auth.uid == userId;
+      }
+    }
+
+    // RSVP states (confirmed / cancelled / completed) — one per person per table.
+    // Document id is "{tableId}_{userId}"; only that user can read or write it.
+    match /rsvps/{rsvpId} {
+      allow read: if signedIn() && resource.data.userId == request.auth.uid;
+      // (request.resource = the document AFTER the write, so merges keep userId)
+      allow create, update: if signedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    match /tables/{tableId} {
+      // Guests (not signed in) can browse tables — the "Skip" guest feed
+      allow read: if true;
+
+      // Anyone signed in can open a table (the demo "sample tables" button uses this too)
+      allow create: if signedIn()
+        && request.resource.data.capacity >= 2
+        && request.resource.data.capacity <= 8
+        && request.resource.data.attendeeIds.size() <= request.resource.data.capacity;
+
+      // Two kinds of update are allowed:
+      //  1. Joining / leaving: only the seat fields change, and never over capacity
+      //  2. The HOST changes the meetup time ("Edit Time"): only startTime changes
+      allow update: if signedIn() && (
+        (request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['attendeeIds', 'attendeeNames', 'seatsFilled'])
+          && request.resource.data.attendeeIds.size() <= resource.data.capacity)
+        ||
+        (request.auth.uid == resource.data.hostId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['startTime']))
+      );
+
+      // Only the host can delete
+      allow delete: if signedIn() && request.auth.uid == resource.data.hostId;
+
+      // Group chat: members only (Feature 7)
+      match /messages/{messageId} {
+        allow read: if isMember(tableId);
+        allow create: if isMember(tableId) && request.resource.data.senderId == request.auth.uid;
+      }
+
+      // Verified receipts: your own only
+      match /receipts/{userId} {
+        allow read, write: if signedIn() && request.auth.uid == userId && isMember(tableId);
+      }
+
+      // Tablemate ratings
+      match /ratings/{ratingId} {
+        allow read: if isMember(tableId);
+        allow create: if isMember(tableId) && request.resource.data.raterId == request.auth.uid;
+      }
+    }
+  }
+}
+

@@ -6,6 +6,82 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		EF9B252B308F07D800EF3FC7 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2529308F07D800EF3FC7 /* ViewModelTests.swift */; };
+		EF9B252C308F07D800EF3FC7 /* ValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2528308F07D800EF3FC7 /* ValidatorTests.swift */; };
+		EF9B252D308F07D800EF3FC7 /* AppLogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2526308F07D800EF3FC7 /* AppLogicTests.swift */; };
+		EF9B252E308F07D800EF3FC7 /* ReceiptParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2527308F07D800EF3FC7 /* ReceiptParserTests.swift */; };
+		EF9B25DF308F10E400EF3FC7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = EF9B25DE308F10E400EF3FC7 /* FirebaseAuth */; };
+		EF9B25E1308F10E400EF3FC7 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = EF9B25E0308F10E400EF3FC7 /* FirebaseFirestore */; };
+		EF9B25E4308F115100EF3FC7 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = EF9B25E3308F115100EF3FC7 /* GoogleSignIn */; };
+		EF9B2796308F5E8E00EF3FC7 /* AdaptiveMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B275B308F5E8E00EF3FC7 /* AdaptiveMainView.swift */; };
+		EF9B2797308F5E8E00EF3FC7 /* TableDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2776308F5E8E00EF3FC7 /* TableDetailView.swift */; };
+		EF9B2798308F5E8E00EF3FC7 /* ShakeToMatchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2771308F5E8E00EF3FC7 /* ShakeToMatchView.swift */; };
+		EF9B2799308F5E8E00EF3FC7 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B273B308F5E8E00EF3FC7 /* SessionStore.swift */; };
+		EF9B279A308F5E8E00EF3FC7 /* AppLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2740308F5E8E00EF3FC7 /* AppLogic.swift */; };
+		EF9B279B308F5E8E00EF3FC7 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2781308F5E8E00EF3FC7 /* LocationService.swift */; };
+		EF9B279C308F5E8E00EF3FC7 /* ReceiptScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B276A308F5E8E00EF3FC7 /* ReceiptScannerViewModel.swift */; };
+		EF9B279D308F5E8E00EF3FC7 /* GuestBrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2757308F5E8E00EF3FC7 /* GuestBrowseView.swift */; };
+		EF9B279E308F5E8E00EF3FC7 /* AppHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2746308F5E8E00EF3FC7 /* AppHeader.swift */; };
+		EF9B279F308F5E8E00EF3FC7 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2761308F5E8E00EF3FC7 /* NotificationsView.swift */; };
+		EF9B27A0308F5E8E00EF3FC7 /* FirestoreMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2789308F5E8E00EF3FC7 /* FirestoreMapping.swift */; };
+		EF9B27A1308F5E8E00EF3FC7 /* Validators.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2744308F5E8E00EF3FC7 /* Validators.swift */; };
+		EF9B27A2308F5E8E00EF3FC7 /* SocialEatsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B273D308F5E8E00EF3FC7 /* SocialEatsApp.swift */; };
+		EF9B27A3308F5E8E00EF3FC7 /* ServiceProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2791308F5E8E00EF3FC7 /* ServiceProtocols.swift */; };
+		EF9B27A4308F5E8E00EF3FC7 /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B277E308F5E8E00EF3FC7 /* SampleData.swift */; };
+		EF9B27A5308F5E8E00EF3FC7 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2751308F5E8E00EF3FC7 /* SignInView.swift */; };
+		EF9B27A6308F5E8E00EF3FC7 /* BiometricService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2780308F5E8E00EF3FC7 /* BiometricService.swift */; };
+		EF9B27A7308F5E8E00EF3FC7 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2750308F5E8E00EF3FC7 /* ProfileSetupView.swift */; };
+		EF9B27A8308F5E8E00EF3FC7 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2788308F5E8E00EF3FC7 /* FirebaseAuthService.swift */; };
+		EF9B27A9308F5E8E00EF3FC7 /* ExploreMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B275E308F5E8E00EF3FC7 /* ExploreMapView.swift */; };
+		EF9B27AA308F5E8E00EF3FC7 /* CreateTableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2775308F5E8E00EF3FC7 /* CreateTableViewModel.swift */; };
+		EF9B27AB308F5E8E00EF3FC7 /* ExploreMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B275F308F5E8E00EF3FC7 /* ExploreMapViewModel.swift */; };
+		EF9B27AC308F5E8E00EF3FC7 /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B274E308F5E8E00EF3FC7 /* AppLockView.swift */; };
+		EF9B27AD308F5E8E00EF3FC7 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2767308F5E8E00EF3FC7 /* ProfileView.swift */; };
+		EF9B27AE308F5E8E00EF3FC7 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2763308F5E8E00EF3FC7 /* OnboardingView.swift */; };
+		EF9B27AF308F5E8E00EF3FC7 /* CommonViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2748308F5E8E00EF3FC7 /* CommonViews.swift */; };
+		EF9B27B0308F5E8E00EF3FC7 /* OfflineStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B278E308F5E8E00EF3FC7 /* OfflineStore.swift */; };
+		EF9B27B1308F5E8E00EF3FC7 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2783308F5E8E00EF3FC7 /* NetworkMonitor.swift */; };
+		EF9B27B2308F5E8E00EF3FC7 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B273A308F5E8E00EF3FC7 /* RootView.swift */; };
+		EF9B27B3308F5E8E00EF3FC7 /* DiningOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B277C308F5E8E00EF3FC7 /* DiningOptions.swift */; };
+		EF9B27B4308F5E8E00EF3FC7 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2738308F5E8E00EF3FC7 /* AppContainer.swift */; };
+		EF9B27B5308F5E8E00EF3FC7 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B276D308F5E8E00EF3FC7 /* SearchView.swift */; };
+		EF9B27B6308F5E8E00EF3FC7 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B275C308F5E8E00EF3FC7 /* Navigation.swift */; };
+		EF9B27B7308F5E8E00EF3FC7 /* ReceiptParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2742308F5E8E00EF3FC7 /* ReceiptParser.swift */; };
+		EF9B27B8308F5E8E00EF3FC7 /* TableDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2777308F5E8E00EF3FC7 /* TableDetailViewModel.swift */; };
+		EF9B27B9308F5E8E00EF3FC7 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B278C308F5E8E00EF3FC7 /* MockServices.swift */; };
+		EF9B27BA308F5E8E00EF3FC7 /* UIHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2743308F5E8E00EF3FC7 /* UIHelpers.swift */; };
+		EF9B27BB308F5E8E00EF3FC7 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B274F308F5E8E00EF3FC7 /* AuthViewModel.swift */; };
+		EF9B27BC308F5E8E00EF3FC7 /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2747308F5E8E00EF3FC7 /* Buttons.swift */; };
+		EF9B27BD308F5E8E00EF3FC7 /* ShakeToMatchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2772308F5E8E00EF3FC7 /* ShakeToMatchViewModel.swift */; };
+		EF9B27BE308F5E8E00EF3FC7 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B278F308F5E8E00EF3FC7 /* PersistenceController.swift */; };
+		EF9B27BF308F5E8E00EF3FC7 /* TableCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2759308F5E8E00EF3FC7 /* TableCards.swift */; };
+		EF9B27C0308F5E8E00EF3FC7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B276F308F5E8E00EF3FC7 /* SettingsView.swift */; };
+		EF9B27C1308F5E8E00EF3FC7 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2758308F5E8E00EF3FC7 /* HomeView.swift */; };
+		EF9B27C2308F5E8E00EF3FC7 /* FirestoreServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B278A308F5E8E00EF3FC7 /* FirestoreServices.swift */; };
+		EF9B27C3308F5E8E00EF3FC7 /* NearbyAlertEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2741308F5E8E00EF3FC7 /* NearbyAlertEngine.swift */; };
+		EF9B27C4308F5E8E00EF3FC7 /* TableChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2754308F5E8E00EF3FC7 /* TableChatView.swift */; };
+		EF9B27C5308F5E8E00EF3FC7 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2784308F5E8E00EF3FC7 /* NotificationService.swift */; };
+		EF9B27C6308F5E8E00EF3FC7 /* OtherModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B277D308F5E8E00EF3FC7 /* OtherModels.swift */; };
+		EF9B27C7308F5E8E00EF3FC7 /* SpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2786308F5E8E00EF3FC7 /* SpeechService.swift */; };
+		EF9B27C8308F5E8E00EF3FC7 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2753308F5E8E00EF3FC7 /* ChatViewModel.swift */; };
+		EF9B27C9308F5E8E00EF3FC7 /* MotionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2782308F5E8E00EF3FC7 /* MotionService.swift */; };
+		EF9B27CA308F5E8E00EF3FC7 /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B277A308F5E8E00EF3FC7 /* AppUser.swift */; };
+		EF9B27CB308F5E8E00EF3FC7 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2756308F5E8E00EF3FC7 /* DashboardViewModel.swift */; };
+		EF9B27CC308F5E8E00EF3FC7 /* ReservationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2739308F5E8E00EF3FC7 /* ReservationManager.swift */; };
+		EF9B27CD308F5E8E00EF3FC7 /* ReceiptScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2769308F5E8E00EF3FC7 /* ReceiptScannerView.swift */; };
+		EF9B27CE308F5E8E00EF3FC7 /* ReceiptScannerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2785308F5E8E00EF3FC7 /* ReceiptScannerService.swift */; };
+		EF9B27CF308F5E8E00EF3FC7 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B274B308F5E8E00EF3FC7 /* AppTheme.swift */; };
+		EF9B27D0308F5E8E00EF3FC7 /* CommunityTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B277B308F5E8E00EF3FC7 /* CommunityTable.swift */; };
+		EF9B27D1308F5E8E00EF3FC7 /* TablesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B273E308F5E8E00EF3FC7 /* TablesStore.swift */; };
+		EF9B27D2308F5E8E00EF3FC7 /* PassViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2765308F5E8E00EF3FC7 /* PassViews.swift */; };
+		EF9B27D3308F5E8E00EF3FC7 /* CreateTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2774308F5E8E00EF3FC7 /* CreateTableView.swift */; };
+		EF9B27D4308F5E8E00EF3FC7 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B274A308F5E8E00EF3FC7 /* AppColors.swift */; };
+		EF9B27D5308F5E8E00EF3FC7 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B273C308F5E8E00EF3FC7 /* SettingsStore.swift */; };
+		EF9B27D6308F5E8E00EF3FC7 /* TestReceiptRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B276B308F5E8E00EF3FC7 /* TestReceiptRenderer.swift */; };
+		EF9B27D7308F5E8E00EF3FC7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9B2794308F5E8E00EF3FC7 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		EF9B250A308F05A400EF3FC7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,19 +103,85 @@
 		EF9B24FC308F05A200EF3FC7 /* SocialEats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialEats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9B2509308F05A400EF3FC7 /* SocialEatsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SocialEatsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9B2513308F05A400EF3FC7 /* SocialEatsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SocialEatsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF9B2526308F07D800EF3FC7 /* AppLogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogicTests.swift; sourceTree = "<group>"; };
+		EF9B2527308F07D800EF3FC7 /* ReceiptParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParserTests.swift; sourceTree = "<group>"; };
+		EF9B2528308F07D800EF3FC7 /* ValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorTests.swift; sourceTree = "<group>"; };
+		EF9B2529308F07D800EF3FC7 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
+		EF9B252F308F081300EF3FC7 /* firestore.rules */ = {isa = PBXFileReference; lastKnownFileType = text; path = firestore.rules; sourceTree = "<group>"; };
+		EF9B2530308F081300EF3FC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EF9B2534308F081D00EF3FC7 /* receipt_bella_napoli.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_bella_napoli.png; sourceTree = "<group>"; };
+		EF9B2535308F081D00EF3FC7 /* receipt_chilis_cafe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_chilis_cafe.png; sourceTree = "<group>"; };
+		EF9B2536308F081D00EF3FC7 /* receipt_matsuya_kitchen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_matsuya_kitchen.png; sourceTree = "<group>"; };
+		EF9B2537308F081D00EF3FC7 /* receipt_wrong_restaurant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_wrong_restaurant.png; sourceTree = "<group>"; };
+		EF9B2738308F5E8E00EF3FC7 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		EF9B2739308F5E8E00EF3FC7 /* ReservationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationManager.swift; sourceTree = "<group>"; };
+		EF9B273A308F5E8E00EF3FC7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		EF9B273B308F5E8E00EF3FC7 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		EF9B273C308F5E8E00EF3FC7 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		EF9B273D308F5E8E00EF3FC7 /* SocialEatsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialEatsApp.swift; sourceTree = "<group>"; };
+		EF9B273E308F5E8E00EF3FC7 /* TablesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TablesStore.swift; sourceTree = "<group>"; };
+		EF9B2740308F5E8E00EF3FC7 /* AppLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogic.swift; sourceTree = "<group>"; };
+		EF9B2741308F5E8E00EF3FC7 /* NearbyAlertEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyAlertEngine.swift; sourceTree = "<group>"; };
+		EF9B2742308F5E8E00EF3FC7 /* ReceiptParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParser.swift; sourceTree = "<group>"; };
+		EF9B2743308F5E8E00EF3FC7 /* UIHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelpers.swift; sourceTree = "<group>"; };
+		EF9B2744308F5E8E00EF3FC7 /* Validators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validators.swift; sourceTree = "<group>"; };
+		EF9B2746308F5E8E00EF3FC7 /* AppHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHeader.swift; sourceTree = "<group>"; };
+		EF9B2747308F5E8E00EF3FC7 /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
+		EF9B2748308F5E8E00EF3FC7 /* CommonViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonViews.swift; sourceTree = "<group>"; };
+		EF9B274A308F5E8E00EF3FC7 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		EF9B274B308F5E8E00EF3FC7 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		EF9B274E308F5E8E00EF3FC7 /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
+		EF9B274F308F5E8E00EF3FC7 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		EF9B2750308F5E8E00EF3FC7 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
+		EF9B2751308F5E8E00EF3FC7 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		EF9B2753308F5E8E00EF3FC7 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		EF9B2754308F5E8E00EF3FC7 /* TableChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableChatView.swift; sourceTree = "<group>"; };
+		EF9B2756308F5E8E00EF3FC7 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		EF9B2757308F5E8E00EF3FC7 /* GuestBrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestBrowseView.swift; sourceTree = "<group>"; };
+		EF9B2758308F5E8E00EF3FC7 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		EF9B2759308F5E8E00EF3FC7 /* TableCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableCards.swift; sourceTree = "<group>"; };
+		EF9B275B308F5E8E00EF3FC7 /* AdaptiveMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveMainView.swift; sourceTree = "<group>"; };
+		EF9B275C308F5E8E00EF3FC7 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+		EF9B275E308F5E8E00EF3FC7 /* ExploreMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMapView.swift; sourceTree = "<group>"; };
+		EF9B275F308F5E8E00EF3FC7 /* ExploreMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreMapViewModel.swift; sourceTree = "<group>"; };
+		EF9B2761308F5E8E00EF3FC7 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
+		EF9B2763308F5E8E00EF3FC7 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		EF9B2765308F5E8E00EF3FC7 /* PassViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassViews.swift; sourceTree = "<group>"; };
+		EF9B2767308F5E8E00EF3FC7 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		EF9B2769308F5E8E00EF3FC7 /* ReceiptScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerView.swift; sourceTree = "<group>"; };
+		EF9B276A308F5E8E00EF3FC7 /* ReceiptScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerViewModel.swift; sourceTree = "<group>"; };
+		EF9B276B308F5E8E00EF3FC7 /* TestReceiptRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestReceiptRenderer.swift; sourceTree = "<group>"; };
+		EF9B276D308F5E8E00EF3FC7 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		EF9B276F308F5E8E00EF3FC7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		EF9B2771308F5E8E00EF3FC7 /* ShakeToMatchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeToMatchView.swift; sourceTree = "<group>"; };
+		EF9B2772308F5E8E00EF3FC7 /* ShakeToMatchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeToMatchViewModel.swift; sourceTree = "<group>"; };
+		EF9B2774308F5E8E00EF3FC7 /* CreateTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTableView.swift; sourceTree = "<group>"; };
+		EF9B2775308F5E8E00EF3FC7 /* CreateTableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTableViewModel.swift; sourceTree = "<group>"; };
+		EF9B2776308F5E8E00EF3FC7 /* TableDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDetailView.swift; sourceTree = "<group>"; };
+		EF9B2777308F5E8E00EF3FC7 /* TableDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableDetailViewModel.swift; sourceTree = "<group>"; };
+		EF9B277A308F5E8E00EF3FC7 /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
+		EF9B277B308F5E8E00EF3FC7 /* CommunityTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityTable.swift; sourceTree = "<group>"; };
+		EF9B277C308F5E8E00EF3FC7 /* DiningOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiningOptions.swift; sourceTree = "<group>"; };
+		EF9B277D308F5E8E00EF3FC7 /* OtherModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherModels.swift; sourceTree = "<group>"; };
+		EF9B277E308F5E8E00EF3FC7 /* SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
+		EF9B2780308F5E8E00EF3FC7 /* BiometricService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricService.swift; sourceTree = "<group>"; };
+		EF9B2781308F5E8E00EF3FC7 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		EF9B2782308F5E8E00EF3FC7 /* MotionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionService.swift; sourceTree = "<group>"; };
+		EF9B2783308F5E8E00EF3FC7 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		EF9B2784308F5E8E00EF3FC7 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		EF9B2785308F5E8E00EF3FC7 /* ReceiptScannerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScannerService.swift; sourceTree = "<group>"; };
+		EF9B2786308F5E8E00EF3FC7 /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechService.swift; sourceTree = "<group>"; };
+		EF9B2788308F5E8E00EF3FC7 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		EF9B2789308F5E8E00EF3FC7 /* FirestoreMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreMapping.swift; sourceTree = "<group>"; };
+		EF9B278A308F5E8E00EF3FC7 /* FirestoreServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreServices.swift; sourceTree = "<group>"; };
+		EF9B278C308F5E8E00EF3FC7 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
+		EF9B278E308F5E8E00EF3FC7 /* OfflineStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineStore.swift; sourceTree = "<group>"; };
+		EF9B278F308F5E8E00EF3FC7 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		EF9B2791308F5E8E00EF3FC7 /* ServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProtocols.swift; sourceTree = "<group>"; };
+		EF9B2794308F5E8E00EF3FC7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		EF9B24FE308F05A200EF3FC7 /* SocialEats */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SocialEats;
-			sourceTree = "<group>";
-		};
-		EF9B250C308F05A400EF3FC7 /* SocialEatsTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SocialEatsTests;
-			sourceTree = "<group>";
-		};
 		EF9B2516308F05A400EF3FC7 /* SocialEatsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SocialEatsUITests;
@@ -52,6 +194,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF9B25DF308F10E400EF3FC7 /* FirebaseAuth in Frameworks */,
+				EF9B25E1308F10E400EF3FC7 /* FirebaseFirestore in Frameworks */,
+				EF9B25E4308F115100EF3FC7 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,8 +220,10 @@
 		EF9B24F3308F05A200EF3FC7 = {
 			isa = PBXGroup;
 			children = (
-				EF9B24FE308F05A200EF3FC7 /* SocialEats */,
-				EF9B250C308F05A400EF3FC7 /* SocialEatsTests */,
+				EF9B252A308F07D800EF3FC7 /* SocialEatsTests */,
+				EF9B2531308F081300EF3FC7 /* Config */,
+				EF9B2539308F081D00EF3FC7 /* DemoAssets */,
+				EF9B2795308F5E8E00EF3FC7 /* SocialEats */,
 				EF9B2516308F05A400EF3FC7 /* SocialEatsUITests */,
 				EF9B24FD308F05A200EF3FC7 /* Products */,
 			);
@@ -90,6 +237,334 @@
 				EF9B2513308F05A400EF3FC7 /* SocialEatsUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EF9B252A308F07D800EF3FC7 /* SocialEatsTests */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2526308F07D800EF3FC7 /* AppLogicTests.swift */,
+				EF9B2527308F07D800EF3FC7 /* ReceiptParserTests.swift */,
+				EF9B2528308F07D800EF3FC7 /* ValidatorTests.swift */,
+				EF9B2529308F07D800EF3FC7 /* ViewModelTests.swift */,
+			);
+			path = SocialEatsTests;
+			sourceTree = "<group>";
+		};
+		EF9B2531308F081300EF3FC7 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B252F308F081300EF3FC7 /* firestore.rules */,
+				EF9B2530308F081300EF3FC7 /* Info.plist */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		EF9B2538308F081D00EF3FC7 /* Receipts */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2534308F081D00EF3FC7 /* receipt_bella_napoli.png */,
+				EF9B2535308F081D00EF3FC7 /* receipt_chilis_cafe.png */,
+				EF9B2536308F081D00EF3FC7 /* receipt_matsuya_kitchen.png */,
+				EF9B2537308F081D00EF3FC7 /* receipt_wrong_restaurant.png */,
+			);
+			path = Receipts;
+			sourceTree = "<group>";
+		};
+		EF9B2539308F081D00EF3FC7 /* DemoAssets */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2538308F081D00EF3FC7 /* Receipts */,
+			);
+			path = DemoAssets;
+			sourceTree = "<group>";
+		};
+		EF9B273F308F5E8E00EF3FC7 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2738308F5E8E00EF3FC7 /* AppContainer.swift */,
+				EF9B2739308F5E8E00EF3FC7 /* ReservationManager.swift */,
+				EF9B273A308F5E8E00EF3FC7 /* RootView.swift */,
+				EF9B273B308F5E8E00EF3FC7 /* SessionStore.swift */,
+				EF9B273C308F5E8E00EF3FC7 /* SettingsStore.swift */,
+				EF9B273D308F5E8E00EF3FC7 /* SocialEatsApp.swift */,
+				EF9B273E308F5E8E00EF3FC7 /* TablesStore.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		EF9B2745308F5E8E00EF3FC7 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2740308F5E8E00EF3FC7 /* AppLogic.swift */,
+				EF9B2741308F5E8E00EF3FC7 /* NearbyAlertEngine.swift */,
+				EF9B2742308F5E8E00EF3FC7 /* ReceiptParser.swift */,
+				EF9B2743308F5E8E00EF3FC7 /* UIHelpers.swift */,
+				EF9B2744308F5E8E00EF3FC7 /* Validators.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		EF9B2749308F5E8E00EF3FC7 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2745308F5E8E00EF3FC7 /* Utilities */,
+				EF9B2746308F5E8E00EF3FC7 /* AppHeader.swift */,
+				EF9B2747308F5E8E00EF3FC7 /* Buttons.swift */,
+				EF9B2748308F5E8E00EF3FC7 /* CommonViews.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		EF9B274C308F5E8E00EF3FC7 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B274A308F5E8E00EF3FC7 /* AppColors.swift */,
+				EF9B274B308F5E8E00EF3FC7 /* AppTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		EF9B274D308F5E8E00EF3FC7 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2749308F5E8E00EF3FC7 /* Components */,
+				EF9B274C308F5E8E00EF3FC7 /* Theme */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		EF9B2752308F5E8E00EF3FC7 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B274E308F5E8E00EF3FC7 /* AppLockView.swift */,
+				EF9B274F308F5E8E00EF3FC7 /* AuthViewModel.swift */,
+				EF9B2750308F5E8E00EF3FC7 /* ProfileSetupView.swift */,
+				EF9B2751308F5E8E00EF3FC7 /* SignInView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		EF9B2755308F5E8E00EF3FC7 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2753308F5E8E00EF3FC7 /* ChatViewModel.swift */,
+				EF9B2754308F5E8E00EF3FC7 /* TableChatView.swift */,
+			);
+			path = Chat;
+			sourceTree = "<group>";
+		};
+		EF9B275A308F5E8E00EF3FC7 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2756308F5E8E00EF3FC7 /* DashboardViewModel.swift */,
+				EF9B2757308F5E8E00EF3FC7 /* GuestBrowseView.swift */,
+				EF9B2758308F5E8E00EF3FC7 /* HomeView.swift */,
+				EF9B2759308F5E8E00EF3FC7 /* TableCards.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		EF9B275D308F5E8E00EF3FC7 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B275B308F5E8E00EF3FC7 /* AdaptiveMainView.swift */,
+				EF9B275C308F5E8E00EF3FC7 /* Navigation.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		EF9B2760308F5E8E00EF3FC7 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B275E308F5E8E00EF3FC7 /* ExploreMapView.swift */,
+				EF9B275F308F5E8E00EF3FC7 /* ExploreMapViewModel.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		EF9B2762308F5E8E00EF3FC7 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2761308F5E8E00EF3FC7 /* NotificationsView.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		EF9B2764308F5E8E00EF3FC7 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2763308F5E8E00EF3FC7 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		EF9B2766308F5E8E00EF3FC7 /* Pass */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2765308F5E8E00EF3FC7 /* PassViews.swift */,
+			);
+			path = Pass;
+			sourceTree = "<group>";
+		};
+		EF9B2768308F5E8E00EF3FC7 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2767308F5E8E00EF3FC7 /* ProfileView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		EF9B276C308F5E8E00EF3FC7 /* Scan */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2769308F5E8E00EF3FC7 /* ReceiptScannerView.swift */,
+				EF9B276A308F5E8E00EF3FC7 /* ReceiptScannerViewModel.swift */,
+				EF9B276B308F5E8E00EF3FC7 /* TestReceiptRenderer.swift */,
+			);
+			path = Scan;
+			sourceTree = "<group>";
+		};
+		EF9B276E308F5E8E00EF3FC7 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B276D308F5E8E00EF3FC7 /* SearchView.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		EF9B2770308F5E8E00EF3FC7 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B276F308F5E8E00EF3FC7 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		EF9B2773308F5E8E00EF3FC7 /* Shake */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2771308F5E8E00EF3FC7 /* ShakeToMatchView.swift */,
+				EF9B2772308F5E8E00EF3FC7 /* ShakeToMatchViewModel.swift */,
+			);
+			path = Shake;
+			sourceTree = "<group>";
+		};
+		EF9B2778308F5E8E00EF3FC7 /* Table */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2774308F5E8E00EF3FC7 /* CreateTableView.swift */,
+				EF9B2775308F5E8E00EF3FC7 /* CreateTableViewModel.swift */,
+				EF9B2776308F5E8E00EF3FC7 /* TableDetailView.swift */,
+				EF9B2777308F5E8E00EF3FC7 /* TableDetailViewModel.swift */,
+			);
+			path = Table;
+			sourceTree = "<group>";
+		};
+		EF9B2779308F5E8E00EF3FC7 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2752308F5E8E00EF3FC7 /* Auth */,
+				EF9B2755308F5E8E00EF3FC7 /* Chat */,
+				EF9B275A308F5E8E00EF3FC7 /* Home */,
+				EF9B275D308F5E8E00EF3FC7 /* Main */,
+				EF9B2760308F5E8E00EF3FC7 /* Map */,
+				EF9B2762308F5E8E00EF3FC7 /* Notifications */,
+				EF9B2764308F5E8E00EF3FC7 /* Onboarding */,
+				EF9B2766308F5E8E00EF3FC7 /* Pass */,
+				EF9B2768308F5E8E00EF3FC7 /* Profile */,
+				EF9B276C308F5E8E00EF3FC7 /* Scan */,
+				EF9B276E308F5E8E00EF3FC7 /* Search */,
+				EF9B2770308F5E8E00EF3FC7 /* Settings */,
+				EF9B2773308F5E8E00EF3FC7 /* Shake */,
+				EF9B2778308F5E8E00EF3FC7 /* Table */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		EF9B277F308F5E8E00EF3FC7 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B277A308F5E8E00EF3FC7 /* AppUser.swift */,
+				EF9B277B308F5E8E00EF3FC7 /* CommunityTable.swift */,
+				EF9B277C308F5E8E00EF3FC7 /* DiningOptions.swift */,
+				EF9B277D308F5E8E00EF3FC7 /* OtherModels.swift */,
+				EF9B277E308F5E8E00EF3FC7 /* SampleData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		EF9B2787308F5E8E00EF3FC7 /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2780308F5E8E00EF3FC7 /* BiometricService.swift */,
+				EF9B2781308F5E8E00EF3FC7 /* LocationService.swift */,
+				EF9B2782308F5E8E00EF3FC7 /* MotionService.swift */,
+				EF9B2783308F5E8E00EF3FC7 /* NetworkMonitor.swift */,
+				EF9B2784308F5E8E00EF3FC7 /* NotificationService.swift */,
+				EF9B2785308F5E8E00EF3FC7 /* ReceiptScannerService.swift */,
+				EF9B2786308F5E8E00EF3FC7 /* SpeechService.swift */,
+			);
+			path = Device;
+			sourceTree = "<group>";
+		};
+		EF9B278B308F5E8E00EF3FC7 /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2788308F5E8E00EF3FC7 /* FirebaseAuthService.swift */,
+				EF9B2789308F5E8E00EF3FC7 /* FirestoreMapping.swift */,
+				EF9B278A308F5E8E00EF3FC7 /* FirestoreServices.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
+		EF9B278D308F5E8E00EF3FC7 /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B278C308F5E8E00EF3FC7 /* MockServices.swift */,
+			);
+			path = Mock;
+			sourceTree = "<group>";
+		};
+		EF9B2790308F5E8E00EF3FC7 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B278E308F5E8E00EF3FC7 /* OfflineStore.swift */,
+				EF9B278F308F5E8E00EF3FC7 /* PersistenceController.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		EF9B2792308F5E8E00EF3FC7 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2791308F5E8E00EF3FC7 /* ServiceProtocols.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		EF9B2793308F5E8E00EF3FC7 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B2787308F5E8E00EF3FC7 /* Device */,
+				EF9B278B308F5E8E00EF3FC7 /* Firebase */,
+				EF9B278D308F5E8E00EF3FC7 /* Mock */,
+				EF9B2790308F5E8E00EF3FC7 /* Persistence */,
+				EF9B2792308F5E8E00EF3FC7 /* Protocols */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		EF9B2795308F5E8E00EF3FC7 /* SocialEats */ = {
+			isa = PBXGroup;
+			children = (
+				EF9B273F308F5E8E00EF3FC7 /* App */,
+				EF9B274D308F5E8E00EF3FC7 /* Core */,
+				EF9B2779308F5E8E00EF3FC7 /* Features */,
+				EF9B277F308F5E8E00EF3FC7 /* Models */,
+				EF9B2793308F5E8E00EF3FC7 /* Services */,
+				EF9B2794308F5E8E00EF3FC7 /* Assets.xcassets */,
+			);
+			path = SocialEats;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -107,11 +582,11 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				EF9B24FE308F05A200EF3FC7 /* SocialEats */,
-			);
 			name = SocialEats;
 			packageProductDependencies = (
+				EF9B25DE308F10E400EF3FC7 /* FirebaseAuth */,
+				EF9B25E0308F10E400EF3FC7 /* FirebaseFirestore */,
+				EF9B25E3308F115100EF3FC7 /* GoogleSignIn */,
 			);
 			productName = SocialEats;
 			productReference = EF9B24FC308F05A200EF3FC7 /* SocialEats.app */;
@@ -129,9 +604,6 @@
 			);
 			dependencies = (
 				EF9B250B308F05A400EF3FC7 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				EF9B250C308F05A400EF3FC7 /* SocialEatsTests */,
 			);
 			name = SocialEatsTests;
 			packageProductDependencies = (
@@ -195,6 +667,10 @@
 			);
 			mainGroup = EF9B24F3308F05A200EF3FC7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EF9B25DD308F10E400EF3FC7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				EF9B25E2308F115100EF3FC7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EF9B24FD308F05A200EF3FC7 /* Products */;
 			projectDirPath = "";
@@ -212,6 +688,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF9B27D7308F5E8E00EF3FC7 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +713,71 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF9B2796308F5E8E00EF3FC7 /* AdaptiveMainView.swift in Sources */,
+				EF9B2797308F5E8E00EF3FC7 /* TableDetailView.swift in Sources */,
+				EF9B2798308F5E8E00EF3FC7 /* ShakeToMatchView.swift in Sources */,
+				EF9B2799308F5E8E00EF3FC7 /* SessionStore.swift in Sources */,
+				EF9B279A308F5E8E00EF3FC7 /* AppLogic.swift in Sources */,
+				EF9B279B308F5E8E00EF3FC7 /* LocationService.swift in Sources */,
+				EF9B279C308F5E8E00EF3FC7 /* ReceiptScannerViewModel.swift in Sources */,
+				EF9B279D308F5E8E00EF3FC7 /* GuestBrowseView.swift in Sources */,
+				EF9B279E308F5E8E00EF3FC7 /* AppHeader.swift in Sources */,
+				EF9B279F308F5E8E00EF3FC7 /* NotificationsView.swift in Sources */,
+				EF9B27A0308F5E8E00EF3FC7 /* FirestoreMapping.swift in Sources */,
+				EF9B27A1308F5E8E00EF3FC7 /* Validators.swift in Sources */,
+				EF9B27A2308F5E8E00EF3FC7 /* SocialEatsApp.swift in Sources */,
+				EF9B27A3308F5E8E00EF3FC7 /* ServiceProtocols.swift in Sources */,
+				EF9B27A4308F5E8E00EF3FC7 /* SampleData.swift in Sources */,
+				EF9B27A5308F5E8E00EF3FC7 /* SignInView.swift in Sources */,
+				EF9B27A6308F5E8E00EF3FC7 /* BiometricService.swift in Sources */,
+				EF9B27A7308F5E8E00EF3FC7 /* ProfileSetupView.swift in Sources */,
+				EF9B27A8308F5E8E00EF3FC7 /* FirebaseAuthService.swift in Sources */,
+				EF9B27A9308F5E8E00EF3FC7 /* ExploreMapView.swift in Sources */,
+				EF9B27AA308F5E8E00EF3FC7 /* CreateTableViewModel.swift in Sources */,
+				EF9B27AB308F5E8E00EF3FC7 /* ExploreMapViewModel.swift in Sources */,
+				EF9B27AC308F5E8E00EF3FC7 /* AppLockView.swift in Sources */,
+				EF9B27AD308F5E8E00EF3FC7 /* ProfileView.swift in Sources */,
+				EF9B27AE308F5E8E00EF3FC7 /* OnboardingView.swift in Sources */,
+				EF9B27AF308F5E8E00EF3FC7 /* CommonViews.swift in Sources */,
+				EF9B27B0308F5E8E00EF3FC7 /* OfflineStore.swift in Sources */,
+				EF9B27B1308F5E8E00EF3FC7 /* NetworkMonitor.swift in Sources */,
+				EF9B27B2308F5E8E00EF3FC7 /* RootView.swift in Sources */,
+				EF9B27B3308F5E8E00EF3FC7 /* DiningOptions.swift in Sources */,
+				EF9B27B4308F5E8E00EF3FC7 /* AppContainer.swift in Sources */,
+				EF9B27B5308F5E8E00EF3FC7 /* SearchView.swift in Sources */,
+				EF9B27B6308F5E8E00EF3FC7 /* Navigation.swift in Sources */,
+				EF9B27B7308F5E8E00EF3FC7 /* ReceiptParser.swift in Sources */,
+				EF9B27B8308F5E8E00EF3FC7 /* TableDetailViewModel.swift in Sources */,
+				EF9B27B9308F5E8E00EF3FC7 /* MockServices.swift in Sources */,
+				EF9B27BA308F5E8E00EF3FC7 /* UIHelpers.swift in Sources */,
+				EF9B27BB308F5E8E00EF3FC7 /* AuthViewModel.swift in Sources */,
+				EF9B27BC308F5E8E00EF3FC7 /* Buttons.swift in Sources */,
+				EF9B27BD308F5E8E00EF3FC7 /* ShakeToMatchViewModel.swift in Sources */,
+				EF9B27BE308F5E8E00EF3FC7 /* PersistenceController.swift in Sources */,
+				EF9B27BF308F5E8E00EF3FC7 /* TableCards.swift in Sources */,
+				EF9B27C0308F5E8E00EF3FC7 /* SettingsView.swift in Sources */,
+				EF9B27C1308F5E8E00EF3FC7 /* HomeView.swift in Sources */,
+				EF9B27C2308F5E8E00EF3FC7 /* FirestoreServices.swift in Sources */,
+				EF9B27C3308F5E8E00EF3FC7 /* NearbyAlertEngine.swift in Sources */,
+				EF9B27C4308F5E8E00EF3FC7 /* TableChatView.swift in Sources */,
+				EF9B27C5308F5E8E00EF3FC7 /* NotificationService.swift in Sources */,
+				EF9B27C6308F5E8E00EF3FC7 /* OtherModels.swift in Sources */,
+				EF9B27C7308F5E8E00EF3FC7 /* SpeechService.swift in Sources */,
+				EF9B27C8308F5E8E00EF3FC7 /* ChatViewModel.swift in Sources */,
+				EF9B27C9308F5E8E00EF3FC7 /* MotionService.swift in Sources */,
+				EF9B27CA308F5E8E00EF3FC7 /* AppUser.swift in Sources */,
+				EF9B27CB308F5E8E00EF3FC7 /* DashboardViewModel.swift in Sources */,
+				EF9B27CC308F5E8E00EF3FC7 /* ReservationManager.swift in Sources */,
+				EF9B27CD308F5E8E00EF3FC7 /* ReceiptScannerView.swift in Sources */,
+				EF9B27CE308F5E8E00EF3FC7 /* ReceiptScannerService.swift in Sources */,
+				EF9B27CF308F5E8E00EF3FC7 /* AppTheme.swift in Sources */,
+				EF9B27D0308F5E8E00EF3FC7 /* CommunityTable.swift in Sources */,
+				EF9B27D1308F5E8E00EF3FC7 /* TablesStore.swift in Sources */,
+				EF9B27D2308F5E8E00EF3FC7 /* PassViews.swift in Sources */,
+				EF9B27D3308F5E8E00EF3FC7 /* CreateTableView.swift in Sources */,
+				EF9B27D4308F5E8E00EF3FC7 /* AppColors.swift in Sources */,
+				EF9B27D5308F5E8E00EF3FC7 /* SettingsStore.swift in Sources */,
+				EF9B27D6308F5E8E00EF3FC7 /* TestReceiptRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +785,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF9B252B308F07D800EF3FC7 /* ViewModelTests.swift in Sources */,
+				EF9B252C308F07D800EF3FC7 /* ValidatorTests.swift in Sources */,
+				EF9B252D308F07D800EF3FC7 /* AppLogicTests.swift in Sources */,
+				EF9B252E308F07D800EF3FC7 /* ReceiptParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,11 +943,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -411,9 +959,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -428,11 +976,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -442,9 +992,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -464,7 +1014,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SocialEats.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SocialEats";
@@ -485,7 +1035,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SocialEats.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SocialEats";
@@ -570,6 +1120,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EF9B25DD308F10E400EF3FC7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.0.0;
+			};
+		};
+		EF9B25E2308F115100EF3FC7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EF9B25DE308F10E400EF3FC7 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF9B25DD308F10E400EF3FC7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		EF9B25E0308F10E400EF3FC7 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF9B25DD308F10E400EF3FC7 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		EF9B25E3308F115100EF3FC7 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF9B25E2308F115100EF3FC7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EF9B24F4308F05A200EF3FC7 /* Project object */;
 }

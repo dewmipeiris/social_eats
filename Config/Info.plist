@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  SocialEats extra Info.plist keys.
+  Xcode MERGES this file with the keys it generates automatically.
+  In Build Settings set:  Info.plist File (INFOPLIST_FILE) = Config/Info.plist
+  Replace the two YOUR_... URL schemes with values from GoogleService-Info.plist.
+-->
+<plist version="1.0">
+<dict>
+	<!-- Face ID (MVP Feature 6) -->
+	<key>NSFaceIDUsageDescription</key>
+	<string>SocialEats uses Face ID to confirm your seat, protect cancellations and unlock the app.</string>
+
+	<!-- Core Location + geofencing (Features 5 and Map) -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SocialEats uses your location to show community tables near you and how far away they are.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Allow "Always" so SocialEats can tell you when you arrive at a venue you have a seat at, even if the app is closed.</string>
+
+	<!-- Vision receipt scanner (Advanced Feature 1) -->
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to scan your restaurant receipt on your iPhone to verify the meal and earn Foodie Karma.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo of your receipt to verify your meal.</string>
+
+	<!-- Voice search (Speech framework) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The microphone is used for voice search, like "cozy ramen spots nearby".</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech recognition turns your voice search into text on your iPhone.</string>
+
+	<!-- Core Motion (Advanced Feature 2) -->
+	<key>NSMotionUsageDescription</key>
+	<string>SocialEats reads the accelerometer so you can shake your phone to find an open table.</string>
+
+	<!-- Background: geofence + "moved ~500 m" wake-ups (location),
+	     Firebase silent phone verification (remote-notification) -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>remote-notification</string>
+	</array>
+
+	<!-- URL schemes for Google Sign-In and Firebase Phone Auth (reCAPTCHA fallback) -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- REVERSED_CLIENT_ID from GoogleService-Info.plist, e.g. com.googleusercontent.apps.1234-abcd -->
+				<string>YOUR_REVERSED_CLIENT_ID</string>
+				<!-- Encoded App ID from Firebase console > Project settings, e.g. app-1-1234567890-ios-abc123 -->
+				<string>YOUR_ENCODED_APP_ID</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

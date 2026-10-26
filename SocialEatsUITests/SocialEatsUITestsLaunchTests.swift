@@ -31,3 +31,4 @@ final class SocialEatsUITestsLaunchTests: XCTestCase {
         add(attachment)
     }
 }
+

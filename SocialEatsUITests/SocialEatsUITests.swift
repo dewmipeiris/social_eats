@@ -39,3 +39,4 @@ final class SocialEatsUITests: XCTestCase {
         }
     }
 }
+
