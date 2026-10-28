@@ -149,6 +149,11 @@ final class FirestoreTableService: TableServicing {
         }
     }
 
+    /// Host changes the meetup time. Only "startTime" changes (the rules allow this for the host only).
+    func updateTableTime(id: String, startTime: Date) async throws {
+        try await tables.document(id).updateData(["startTime": Timestamp(date: startTime)])
+    }
+
     func submitReceipt(tableId: String, userId: String, result: ReceiptScanResult) async throws {
         let batch = db.batch()
         batch.setData([

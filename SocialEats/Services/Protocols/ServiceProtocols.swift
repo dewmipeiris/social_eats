@@ -34,6 +34,8 @@ protocol AuthServicing: AnyObject {
     func signInWithGoogle() async throws -> String
     /// Signs in, or creates the account if it doesn't exist yet.
     func signInWithEmail(_ email: String, password: String) async throws -> String
+    /// "Forgot password?" — Firebase emails a link to choose a new password.
+    func sendPasswordReset(to email: String) async throws
     func signOut() throws
 }
 
@@ -70,6 +72,8 @@ protocol TableServicing: AnyObject {
     /// Saves a verified receipt and marks the RSVP "completed".
     func submitReceipt(tableId: String, userId: String, result: ReceiptScanResult) async throws
     func rateTablemate(tableId: String, raterId: String, rateeId: String, stars: Int) async throws
+    /// Host only: moves the meetup to a new time ("Edit Time" on the detail screen)
+    func updateTableTime(id: String, startTime: Date) async throws
 }
 
 // MARK: - Group chat (Feature 7)

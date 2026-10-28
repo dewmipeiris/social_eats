@@ -36,12 +36,16 @@ final class SessionStore: ObservableObject {
     @Published var tasteDraft = TasteProfileDraft()
     /// Set when a notification is tapped -> the Home tab opens that table
     @Published var pendingTableId: String?
+    /// Set when the iPhone Camera app scans a pass QR and opens SocialEats
+    /// -> RootView shows the check-in result
+    @Published var scannedPass: ScannedPass?
 
     private let auth: AuthServicing
     private let users: UserServicing
     private let biometrics: BiometricServicing
     private let settings: SettingsStore
 
+    private var hasBootstrapped = false
     private var userListener: ListenerToken?
     private var activityListener: ListenerToken?
 
@@ -56,26 +60,37 @@ final class SessionStore: ObservableObject {
     var unreadCount: Int { activity.filter { !$0.isRead }.count }
     var biometricKind: BiometricKind { biometrics.availableKind }
 
-    /// True when "Login with Face ID" can be offered on the sign-in screen
+    /// True when the phone has Face ID / Touch ID (the button is shown and tappable)
     var canUseBiometricLogin: Bool {
-        auth.currentUserId != nil && biometrics.availableKind != .none
+        biometrics.availableKind != .none
+    }
+
+    /// True when someone signed in on this phone before, so Face ID can log them back in
+    var hasSavedAccount: Bool {
+        auth.currentUserId != nil
     }
 
     // MARK: - Start up
 
     /// Called once when the app opens.
+    ///  • Nobody signed in  -> always start at Onboarding (prototype Figure 1)
+    ///  • Signed in before  -> "Welcome Back" with "Login with Face ID" (Figure 2),
+    ///                         or straight into the app if Face ID Protection is off
     func bootstrap() async {
-        if !settings.hasSeenOnboarding {
-            phase = .onboarding
-        } else if let uid = auth.currentUserId {
-            // Already signed in — lock behind Face ID if the user turned that on
-            if settings.faceIDProtectionEnabled && biometrics.availableKind != .none {
-                phase = .locked
+        // Only once per app launch. (The "not a robot" web page covers the whole
+        // screen; when it closes, SwiftUI runs RootView's .task again — without this
+        // check we'd jump back to Onboarding in the middle of signing in.)
+        guard !hasBootstrapped else { return }
+        hasBootstrapped = true
+
+        if let uid = auth.currentUserId {
+            if settings.faceIDProtectionEnabled && biometrics.isSetUp {
+                phase = .signIn
             } else {
                 await finishSignIn(userId: uid)
             }
         } else {
-            phase = .signIn
+            phase = .onboarding
         }
     }
 
@@ -157,7 +172,7 @@ final class SessionStore: ObservableObject {
     /// Returns an error message, or nil on success.
     func unlockWithBiometrics() async -> String? {
         guard let uid = auth.currentUserId else {
-            return "Please sign in with your phone number first."
+            return "Sign in once with your phone number below. Next time you open SocialEats, Face ID logs you straight in."
         }
         let result = await biometrics.authenticate(reason: "Unlock SocialEats to see your tables and passes")
         switch result {

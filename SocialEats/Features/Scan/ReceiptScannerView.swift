@@ -94,7 +94,7 @@ struct ReceiptScannerView: View {
             Spacer()
             EmptyStateView(systemImage: "doc.text.viewfinder",
                            title: "No meal to verify yet",
-                           message: "Join a table, enjoy your meal, then scan the paper receipt here to earn Foodie Karma.",
+                           message: noTableMessage,
                            buttonTitle: "Find a Table") {
                 navigation.selectedTab = .home
             }
@@ -102,6 +102,14 @@ struct ReceiptScannerView: View {
             .padding(AppLayout.screenPadding)
             Spacer()
         }
+    }
+
+    /// Tells the user WHY they can't scan yet
+    private var noTableMessage: String {
+        if let next = viewModel.nextUpcomingTable {
+            return "Your next meal, \(next.title) at \(next.venueName), is on \(next.startTime.friendlyDayTime). Receipt scanning opens 3 hours before it starts."
+        }
+        return "Join a table, enjoy your meal, then scan the paper receipt here to earn Foodie Karma."
     }
 
     // MARK: - Scanner

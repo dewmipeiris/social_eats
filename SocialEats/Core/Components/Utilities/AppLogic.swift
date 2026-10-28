@@ -134,10 +134,61 @@ enum QRToken {
         return (parts[1], parts[2], seat)
     }
 
+    /// What goes INSIDE the QR picture: a link like
+    /// socialeats://checkin?t=SE|table|user|seat|signature
+    /// Because it's a link, the iPhone's normal Camera app can scan it and open SocialEats.
+    static func checkInLink(for token: String) -> String {
+        var link = URLComponents()
+        link.scheme = "socialeats"
+        link.host = "checkin"
+        link.queryItems = [URLQueryItem(name: "t", value: token)]
+        return link.string ?? token
+    }
+
+    /// Gets the token back out of whatever was scanned (the link, or a plain token).
+    static func token(fromScanned text: String) -> String? {
+        if let link = URLComponents(string: text), link.scheme == "socialeats", link.host == "checkin" {
+            return link.queryItems?.first(where: { $0.name == "t" })?.value
+        }
+        return text.hasPrefix("SE|") ? text : nil
+    }
+
     /// First 12 hex characters of SHA-256(payload + secret)
     private static func signature(for payload: String) -> String {
         let digest = SHA256.hash(data: Data((payload + secret).utf8))
         return digest.map { String(format: "%02x", $0) }.joined().prefix(12).description
+    }
+}
+
+// MARK: - Check-in (scanning a guest's pass QR)
+
+/// What the host sees after scanning a pass.
+enum CheckInResult: Equatable {
+    /// Genuine pass, and the guest really has this seat
+    case valid(guestName: String, seat: Int, tableTitle: String, venueName: String, startTime: Date)
+    /// Genuine pass, but this table isn't loaded on this phone (e.g. offline)
+    case validButTableUnknown(seat: Int)
+    /// Genuine pass, but the guest is no longer at the table (seat cancelled)
+    case seatCancelled(tableTitle: String)
+    /// Fake, damaged or not a SocialEats code
+    case invalid
+}
+
+enum CheckIn {
+    /// Checks a scanned QR: 1) is the signature genuine? 2) does the guest still have the seat?
+    static func check(scannedText: String, tables: [CommunityTable]) -> CheckInResult {
+        guard let token = QRToken.token(fromScanned: scannedText),
+              let pass = QRToken.verify(token) else { return .invalid }
+
+        guard let table = tables.first(where: { $0.id == pass.tableId }) else {
+            return .validButTableUnknown(seat: pass.seat)
+        }
+        guard let index = table.attendeeIds.firstIndex(of: pass.userId) else {
+            return .seatCancelled(tableTitle: table.title)
+        }
+        let name = index < table.attendeeNames.count ? table.attendeeNames[index] : "Guest"
+        return .valid(guestName: name, seat: pass.seat, tableTitle: table.title,
+                      venueName: table.venueName, startTime: table.startTime)
     }
 }
 

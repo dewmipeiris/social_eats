@@ -90,6 +90,24 @@ final class ReservationManager {
         location?.stopGeofence(tableId: table.id)
     }
 
+    // MARK: - Edit time (host only)
+
+    /// The host moves their table to a new time.
+    /// Saves it online, then updates the host's offline pass and reminder to match.
+    func changeTime(of table: CommunityTable, to newTime: Date, userId: String) async throws {
+        guard table.isHost(userId) else { return }
+        try await tables.updateTableTime(id: table.id, startTime: newTime)
+
+        var updated = table
+        updated.startTime = newTime
+        offlineStore.saveReservation(Reservation.make(from: updated, userId: userId))
+
+        if settings.meetupRemindersEnabled {
+            notifications.cancelMeetupReminder(tableId: table.id)
+            notifications.scheduleMeetupReminder(for: updated)
+        }
+    }
+
     // MARK: - Complete (receipt verified)
 
     /// Returns the karma points earned.
@@ -128,8 +146,22 @@ final class ReservationManager {
     func savedPasses(for userId: String) -> [Reservation] {
         offlineStore.reservations(for: userId)
     }
+    
+    /// Makes sure you have an offline pass for a table you've joined.
+    /// (Passes are saved on the device you joined from. If you joined on another
+    /// iPhone/iPad, this rebuilds the pass from the live Firebase table and saves it here.)
+    func restorePassIfNeeded(for table: CommunityTable, userId: String) -> Reservation? {
+        if let saved = offlineStore.reservation(tableId: table.id, userId: userId) {
+            return saved
+        }
+        guard table.isAttending(userId) else { return nil }
+        let pass = Reservation.make(from: table, userId: userId)
+        offlineStore.saveReservation(pass)
+        return pass
+    }
 
     func savedPass(tableId: String, userId: String) -> Reservation? {
         offlineStore.reservation(tableId: tableId, userId: userId)
     }
 }
+

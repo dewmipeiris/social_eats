@@ -33,6 +33,11 @@ struct SocialEatsApp: App {
                 .environmentObject(container.network)
                 // Google Sign-In and Phone Auth reCAPTCHA come back through URLs
                 .onOpenURL { url in
+                    // A pass QR scanned with the iPhone Camera app (socialeats://checkin?t=...)
+                    if url.scheme == "socialeats" {
+                        container.session.scannedPass = ScannedPass(id: url.absoluteString)
+                        return
+                    }
                     if FirebaseApp.app() != nil, Auth.auth().canHandle(url) { return }
                     _ = GIDSignIn.sharedInstance.handle(url)
                 }

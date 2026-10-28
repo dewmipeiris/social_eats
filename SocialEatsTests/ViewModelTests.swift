@@ -82,6 +82,14 @@ struct SessionStoreTests {
         #expect(env.session.phase == .onboarding)
     }
 
+    @Test("Someone not signed in always starts at onboarding, even after seeing it before")
+    func signedOutSeesOnboarding() async {
+        let env = TestEnvironment(signedIn: false)
+        env.settings.hasSeenOnboarding = true
+        await env.session.bootstrap()
+        #expect(env.session.phase == .onboarding)
+    }
+
     @Test("Signed-in user with Face ID protection sees 'Welcome Back' and logs in with Face ID")
     func faceIDLoginOnLaunch() async {
         let env = TestEnvironment(signedIn: true)
@@ -478,6 +486,32 @@ struct OfflineStoreTests {
         let cached = store.cachedTables()
         #expect(cached.count == tables.count)
         #expect(Set(cached.map(\.id)) == Set(tables.map(\.id)))
+    }
+}
+
+// MARK: - Settings: Text Size slider
+
+@Suite("Text size setting")
+@MainActor
+struct TextSizeTests {
+
+    @Test("Starts at Default and the A-/A+ buttons stop at the ends")
+    func buttonsStopAtEnds() {
+        let settings = SettingsStore(defaults: UserDefaults(suiteName: "text-\(UUID().uuidString)")!)
+        #expect(settings.textSize == .standard)
+
+        for _ in 0..<10 { settings.makeTextSmaller() }
+        #expect(settings.textSize == .extraSmall)
+
+        for _ in 0..<10 { settings.makeTextBigger() }
+        #expect(settings.textSize == .huge)
+    }
+
+    @Test("The chosen size is remembered after the app restarts")
+    func remembered() {
+        let defaults = UserDefaults(suiteName: "text-\(UUID().uuidString)")!
+        SettingsStore(defaults: defaults).textSize = .small
+        #expect(SettingsStore(defaults: defaults).textSize == .small)
     }
 }
 

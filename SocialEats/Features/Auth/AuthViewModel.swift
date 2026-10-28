@@ -6,7 +6,7 @@
 //   1. User types a phone number -> E.164 smart validation
 //   2. Firebase sends a 6-digit SMS code (with a 30 s resend timer)
 //   3. User enters the code -> verified -> profile created in Firestore
-//  Also: Google, email + password and "Login with Face ID".
+//  Also: Google, email + password (with Forgot password) and "Login with Face ID".
 //  (Sign in with Apple needs a paid Apple Developer account, so it isn't included.)
 //
 
@@ -43,6 +43,7 @@ final class AuthViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published var errorMessage: String?
     @Published var showsPasswordSheet = false
+    @Published var resetMessage: String?     // green "check your email" text
     @Published private(set) var resendSecondsLeft = 0
     @Published private(set) var verifiedPhone: String?   // E.164 number the code was sent to
 
@@ -194,6 +195,24 @@ final class AuthViewModel: ObservableObject {
         }
         showsPasswordSheet = false
         await runProvider { try await self.auth.signInWithEmail(self.emailForPassword, password: self.password) }
+    }
+
+    /// "Forgot password?" on the email sheet
+    func forgotPassword() async {
+        errorMessage = nil
+        resetMessage = nil
+        guard EmailValidator.isValid(emailForPassword) else {
+            errorMessage = "Type your email address first, then tap Forgot password."
+            return
+        }
+        isLoading = true
+        do {
+            try await auth.sendPasswordReset(to: emailForPassword)
+            resetMessage = "If an account exists for \(emailForPassword), we've sent a link to reset your password. Check your inbox (and Spam)."
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
     }
 
     /// "Login with Face ID" (only works if you've signed in on this phone before)

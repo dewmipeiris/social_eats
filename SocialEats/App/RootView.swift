@@ -41,11 +41,14 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.25), value: session.phase)
         .preferredColorScheme(settings.theme.colorScheme)
-        // Settings > Accessibility > Larger Text
-        .dynamicTypeSize(settings.largerTextEnabled
-                          ? DynamicTypeSize.xxLarge ... DynamicTypeSize.accessibility5
-                          : DynamicTypeSize.xSmall ... DynamicTypeSize.accessibility5)
+        // Settings > Accessibility > Text Size slider (applies to every screen)
+        .dynamicTypeSize(settings.textSize.dynamicTypeSize)
         .tint(AppColors.primary)
+        // A guest's pass was scanned with the iPhone Camera app -> show the check-in result
+        .sheet(item: $session.scannedPass) { pass in
+            CheckInResultView(scannedText: pass.id)
+                .environmentObject(container.tablesStore)
+        }
         .task {
             await session.bootstrap()
             container.location.requestPermission()
@@ -63,7 +66,7 @@ struct RootView: View {
             if newPhase == .background,
                session.phase == .main,
                settings.faceIDProtectionEnabled,
-               container.biometrics.availableKind != .none {
+               container.biometrics.isSetUp {
                 session.lockApp()
             }
         }

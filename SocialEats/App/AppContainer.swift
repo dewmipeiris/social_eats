@@ -166,7 +166,8 @@ final class AppContainer: ObservableObject {
         let database = MockDatabase()
         return AppContainer(
             isDemoMode: true,
-            auth: MockAuthService(signedInUserId: signedIn ? SampleData.demoUser.id : nil),
+            auth: MockAuthService(signedInUserId: signedIn ? SampleData.demoUser.id : nil,
+                                  remembersSignIn: !signedIn),
             users: MockUserService(database: database),
             tableService: MockTableService(database: database),
             chat: MockChatService(database: database),
@@ -188,12 +189,29 @@ final class AppContainer: ObservableObject {
 
     /// Settings > "Add sample tables near me": fills the backend with
     /// example tables around the user's current position (great for the demo video).
+    /// A sample table is SKIPPED if the same one is already there and people can
+    /// still join it, so pressing the button twice doesn't make duplicates.
     func addSampleTablesNearUser() async throws -> Int {
         let center = location.currentLocation?.coordinate ?? SampleData.defaultCenter
         let samples = SampleData.tables(around: center)
+
+        // Tables that are already in the database
+        let existing = try await tableService.fetchActiveTables()
+        let now = Date()
+
+        var added = 0
         for table in samples {
+            // Same title at the same venue, and joining is still open (not started 30+ min ago)
+            let alreadyThere = existing.contains { old in
+                old.title == table.title
+                    && old.venueName == table.venueName
+                    && old.startTime.addingTimeInterval(30 * 60) > now
+            }
+            if alreadyThere { continue }      // skip it, no duplicate
             _ = try await tableService.createTable(table)
+            added += 1
         }
-        return samples.count
+        return added
     }
 }
+

@@ -68,7 +68,9 @@ final class SettingsViewModel: ObservableObject {
         isSeeding = true
         do {
             let count = try await container.addSampleTablesNearUser()
-            infoMessage = "Added \(count) sample tables near you 🎉"
+            infoMessage = count == 0
+                            ? "Sample tables are already there 👍"
+                            : "Added \(count) sample tables near you 🎉"
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -140,10 +142,12 @@ struct SettingsView: View {
                       onAvatar: { navigation.selectedTab = .profile })
         }
         .toolbar(.hidden, for: .navigationBar)
-        .confirmationDialog("Log out of SocialEats?", isPresented: $showsLogoutConfirm, titleVisibility: .visible) {
+        // Standard iOS alert in the middle of the screen: "Log out?"  [Cancel] [Log Out]
+        .alert("Log out?", isPresented: $showsLogoutConfirm) {
+            Button("Cancel", role: .cancel) {}
             Button("Log Out", role: .destructive) { viewModel.signOut() }
         } message: {
-            Text("Your offline passes stay on this phone.")
+            Text("You can sign back in anytime with your phone number. Your offline passes stay on this phone.")
         }
         .sheet(isPresented: $showsPrivacy) { PrivacyPolicyView() }
     }
@@ -256,15 +260,61 @@ struct SettingsView: View {
 
     // MARK: - Accessibility (proposal Feature 2: "provides accessibility options")
 
+    /// The slider works with numbers (0...5), so this turns the
+    /// saved text size into a number and back again.
+    private var textSizeSliderValue: Binding<Double> {
+        Binding(
+            get: { Double(settings.textSize.rawValue) },
+            set: { newValue in
+                settings.textSize = AppTextSize(rawValue: Int(newValue.rounded())) ?? .standard
+            }
+        )
+    }
+
     private var accessibilitySection: some View {
         VStack(alignment: .leading, spacing: 8) {
             OverlineText(text: "Accessibility")
             VStack(spacing: 12) {
-                Toggle(isOn: $settings.largerTextEnabled) {
-                    settingRow(icon: "textformat.size", title: "Larger Text",
-                               subtitle: "Bigger text everywhere in SocialEats")
+                // Text Size: "A-" button, slider, "A+" button
+                VStack(alignment: .leading, spacing: 10) {
+                    settingRow(icon: "textformat.size", title: "Text Size",
+                               subtitle: settings.textSize.title)
+
+                    HStack(spacing: 12) {
+                        Button {
+                            settings.makeTextSmaller()
+                        } label: {
+                            Image(systemName: "textformat.size.smaller")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(AppColors.primary)
+                                .frame(width: 40, height: 40)
+                                .background(Circle().fill(AppColors.primarySoft))
+                        }
+                        .disabled(settings.textSize == .extraSmall)
+                        .accessibilityLabel("Smaller text")
+
+                        // Drag to pick a size (6 steps)
+                        Slider(value: textSizeSliderValue,
+                               in: 0...Double(AppTextSize.allCases.count - 1),
+                               step: 1)
+                            .tint(AppColors.primary)
+                            .accessibilityLabel("Text size")
+                            .accessibilityValue(settings.textSize.title)
+
+                        Button {
+                            settings.makeTextBigger()
+                        } label: {
+                            Image(systemName: "textformat.size.larger")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(AppColors.primary)
+                                .frame(width: 40, height: 40)
+                                .background(Circle().fill(AppColors.primarySoft))
+                        }
+                        .disabled(settings.textSize == .huge)
+                        .accessibilityLabel("Bigger text")
+                    }
+                    .buttonStyle(.plain)
                 }
-                .tint(AppColors.success)
 
                 Divider()
 
@@ -426,3 +476,4 @@ struct PrivacyPolicyView: View {
         .cardStyle()
     }
 }
+

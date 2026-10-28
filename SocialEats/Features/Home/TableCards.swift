@@ -34,6 +34,10 @@ struct FoodPhoto: View {
             Image(imageName)
                 .resizable()
                 .scaledToFill()
+                // The photo is bigger than its box (it's cut off with .clipped()),
+                // but the hidden part would still catch taps and block buttons
+                // like "Preview Table". So the photo ignores taps.
+                .allowsHitTesting(false)
         } else {
             // No photo yet -> coloured tile with the emoji
             Rectangle()
@@ -68,6 +72,7 @@ struct TableThumbnail: View {
                 Image(category.photoName)
                     .resizable()
                     .scaledToFill()
+                    .allowsHitTesting(false)   // hidden overflow must not block taps
             } else {
                 // No photo yet -> coloured tile with the emoji
                 Rectangle()
@@ -229,7 +234,12 @@ struct TableFeatureCard: View {
         }
         .background(RoundedRectangle(cornerRadius: AppLayout.cardRadius).fill(AppColors.surface))
         .overlay(RoundedRectangle(cornerRadius: AppLayout.cardRadius).stroke(AppColors.border.opacity(0.6), lineWidth: 1))
+        // Tapping ANYWHERE on the card opens the preview (not only the small button)
+        .contentShape(RoundedRectangle(cornerRadius: AppLayout.cardRadius))
+        .onTapGesture { onPreview() }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(table.title) at \(table.venueName), \(distanceText), \(table.seatsLeft) seats open")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Opens a preview of this table")
     }
 }

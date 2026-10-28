@@ -68,6 +68,8 @@ final class TableDetailViewModel: ObservableObject {
         guard let table else { return "Join This Table Now" }
         if isAttending { return "View My Pass" }
         if table.isFull { return "Table Full" }
+        // You can join until 30 minutes after  the start time
+        if table.joinBlockReason(for: userId ?? "") == .tableExpired { return "Meetup Already Started" }
         return "Join This Table Now"
     }
 
@@ -130,6 +132,28 @@ final class TableDetailViewModel: ObservableObject {
         isWorking = false
     }
 
+    /// Host only: moves the meetup to a new time. Returns true if it worked.
+    func changeTime(to newTime: Date) async -> Bool {
+        guard let table, let userId else { return false }
+        // The new time must be in the future
+        guard newTime > Date() else {
+            errorMessage = "Please choose a time in the future."
+            return false
+        }
+        isWorking = true
+        errorMessage = nil
+        defer { isWorking = false }
+        do {
+            try await reservations.changeTime(of: table, to: newTime, userId: userId)
+            Haptics.success()
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            Haptics.error()
+            return false
+        }
+    }
+
     /// Opens Apple Maps with walking directions to the venue.
     func openWalkingDirections() {
         guard let table else { return }
@@ -158,3 +182,4 @@ final class TableDetailViewModel: ObservableObject {
         }
     }
 }
+

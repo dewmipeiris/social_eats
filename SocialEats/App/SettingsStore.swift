@@ -23,7 +23,7 @@ final class SettingsStore: ObservableObject {
         static let meetupReminders = "settings.meetupReminders"
         static let dietary = "settings.dietary"
         static let seenOnboarding = "settings.seenOnboarding"
-        static let largerText = "settings.largerText"
+        static let textSize = "settings.textSize"
         static let haptics = Haptics.enabledKey
     }
 
@@ -57,10 +57,9 @@ final class SettingsStore: ObservableObject {
         didSet { defaults.set(dietaryTags.map(\.rawValue), forKey: Key.dietary) }
     }
 
-    /// Accessibility option: makes ALL text at least "Extra Extra Large"
-    /// (on top of the iPhone's own Dynamic Type setting)
-    @Published var largerTextEnabled: Bool {
-        didSet { defaults.set(largerTextEnabled, forKey: Key.largerText) }
+    /// Accessibility option: the Text Size slider (smaller / bigger text everywhere)
+    @Published var textSize: AppTextSize {
+        didSet { defaults.set(textSize.rawValue, forKey: Key.textSize) }
     }
 
     /// Accessibility option: turn vibration feedback off
@@ -83,7 +82,7 @@ final class SettingsStore: ObservableObject {
         meetupRemindersEnabled = defaults.object(forKey: Key.meetupReminders) as? Bool ?? true
         dietaryTags = (defaults.stringArray(forKey: Key.dietary) ?? []).compactMap(DietaryTag.init(rawValue:))
         hasSeenOnboarding = defaults.bool(forKey: Key.seenOnboarding)
-        largerTextEnabled = defaults.bool(forKey: Key.largerText)
+        textSize = AppTextSize(rawValue: defaults.object(forKey: Key.textSize) as? Int ?? AppTextSize.standard.rawValue) ?? .standard
         hapticsEnabled = defaults.object(forKey: Key.haptics) as? Bool ?? true
     }
 
@@ -110,7 +109,18 @@ final class SettingsStore: ObservableObject {
     }
 
     /// Clears everything on log out (keeps onboarding seen).
+    /// "A-" button next to the slider
+    func makeTextSmaller() {
+        if let smaller = AppTextSize(rawValue: textSize.rawValue - 1) { textSize = smaller }
+    }
+
+    /// "A+" button next to the slider
+    func makeTextBigger() {
+        if let bigger = AppTextSize(rawValue: textSize.rawValue + 1) { textSize = bigger }
+    }
+
     func resetForSignOut() {
         dietaryTags = []
     }
 }
+

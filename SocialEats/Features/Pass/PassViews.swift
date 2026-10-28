@@ -16,26 +16,39 @@ final class PassViewModel: ObservableObject {
     @Published private(set) var allPasses: [Reservation] = []
 
     private let reservations: ReservationManager
-    private let session: SessionStore
+        private let session: SessionStore
+        private let tablesStore: TablesStore
 
-    init(reservations: ReservationManager, session: SessionStore) {
-        self.reservations = reservations
-        self.session = session
-    }
+        init(reservations: ReservationManager, session: SessionStore, tablesStore: TablesStore) {
+            self.reservations = reservations
+            self.session = session
+            self.tablesStore = tablesStore
+        }
 
-    convenience init(container: AppContainer) {
-        self.init(reservations: container.reservations, session: container.session)
-    }
+        convenience init(container: AppContainer) {
+            self.init(reservations: container.reservations, session: container.session,
+                      tablesStore: container.tablesStore)
+        }
 
-    func load(tableId: String) {
-        guard let uid = session.userId else { return }
-        reservation = reservations.savedPass(tableId: tableId, userId: uid)
-    }
+        func load(tableId: String) {
+            guard let uid = session.userId else { return }
+            if let table = tablesStore.table(id: tableId) {
+                // Online: also rebuilds the pass if you joined on another device
+                reservation = reservations.restorePassIfNeeded(for: table, userId: uid)
+            } else {
+                // Offline: only what's saved in Core Data
+                reservation = reservations.savedPass(tableId: tableId, userId: uid)
+            }
+        }
 
-    func loadAll() {
-        guard let uid = session.userId else { return }
-        allPasses = reservations.savedPasses(for: uid)
-    }
+        func loadAll() {
+            guard let uid = session.userId else { return }
+            // Save a pass for every table you've joined (even from another device)
+            for table in tablesStore.tables where table.isAttending(uid) {
+                _ = reservations.restorePassIfNeeded(for: table, userId: uid)
+            }
+            allPasses = reservations.savedPasses(for: uid)
+        }
 
     var upcomingPasses: [Reservation] { allPasses.filter { $0.isUpcomingOrActive && !$0.isVerified } }
     var pastPasses: [Reservation] { allPasses.filter { !$0.isUpcomingOrActive || $0.isVerified } }

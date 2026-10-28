@@ -61,15 +61,55 @@ enum AppLayout {
 /// Text styles used across the app.
 /// They are all built from Dynamic Type styles (.title, .body ...),
 /// so text grows automatically when the user increases font size.
+/// All fonts in one place. Each one is based on an Apple "text style"
+/// (.title, .callout ...) so it still grows/shrinks with the Text Size slider
+/// in Settings and with the iPhone's own Dynamic Type setting.
+/// (Sizes at the default setting are shown in the comments.)
 enum AppFont {
-    static let largeTitle = Font.system(.largeTitle, design: .rounded).weight(.bold)
-    static let title = Font.system(.title2, design: .rounded).weight(.bold)
-    static let headline = Font.system(.headline, design: .rounded)
-    static let body = Font.system(.body, design: .rounded)
-    static let callout = Font.system(.callout, design: .rounded)
-    static let subheadline = Font.system(.subheadline, design: .rounded)
+    static let largeTitle = Font.system(.title, design: .rounded).weight(.bold)        // 28 pt – big screen titles
+    static let title = Font.system(.title3, design: .rounded).weight(.bold)            // 20 pt – section titles
+    static let headline = Font.system(.callout, design: .rounded).weight(.semibold)    // 16 pt – card titles
+    static let body = Font.system(.callout, design: .rounded)                          // 16 pt – normal text
+    static let callout = Font.system(.subheadline, design: .rounded)                   // 15 pt
+    static let subheadline = Font.system(.subheadline, design: .rounded)               // 15 pt
     static let footnote = Font.system(.footnote, design: .rounded)
     static let caption = Font.system(.caption, design: .rounded).weight(.medium)
     /// Small all-caps labels such as "APPEARANCE" or "WELCOME BACK"
     static let overline = Font.system(.caption2, design: .rounded).weight(.semibold)
 }
+
+/// Text Size slider in Settings > Accessibility (smallest -> biggest).
+/// Each step is one of Apple's Dynamic Type sizes, so every screen scales together.
+enum AppTextSize: Int, CaseIterable {
+    case extraSmall = 0
+    case small
+    case standard        // the normal size
+    case large
+    case extraLarge
+    case huge
+
+    /// Shown under the slider
+    var title: String {
+        switch self {
+        case .extraSmall: return "Extra Small"
+        case .small: return "Small"
+        case .standard: return "Default"
+        case .large: return "Large"
+        case .extraLarge: return "Extra Large"
+        case .huge: return "Huge"
+        }
+    }
+
+    /// The Dynamic Type size applied to the whole app (in RootView)
+    var dynamicTypeSize: DynamicTypeSize {
+        switch self {
+        case .extraSmall: return .xSmall
+        case .small: return .small
+        case .standard: return .large          // .large is Apple's normal size
+        case .large: return .xLarge
+        case .extraLarge: return .xxLarge
+        case .huge: return .accessibility2
+        }
+    }
+}
+

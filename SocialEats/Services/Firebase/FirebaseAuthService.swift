@@ -44,7 +44,14 @@ final class FirebaseAuthService: AuthServicing {
 
     // MARK: - Phone OTP
 
+    /// The fake numbers added in Firebase > Authentication > Phone > "Phone numbers for testing".
+    /// They never get a real SMS (the code is fixed), so the "I'm not a robot" check is skipped for them.
+    static let testPhoneNumbers: Set<String> = ["+94740584022", "+94761045068"]
+
     func sendOTP(to e164Phone: String) async throws -> String {
+        // Test numbers: skip the reCAPTCHA web page (only allowed for Firebase test numbers).
+        // Real numbers: Firebase checks the app is genuine (reCAPTCHA on a free Apple account).
+        Auth.auth().settings?.isAppVerificationDisabledForTesting = Self.testPhoneNumbers.contains(e164Phone)
         do {
             // Firebase sends the SMS and gives back a verification id
             return try await PhoneAuthProvider.provider().verifyPhoneNumber(e164Phone, uiDelegate: nil)
@@ -115,6 +122,17 @@ final class FirebaseAuthService: AuthServicing {
                 if createCode == .emailAlreadyInUse { throw AuthServiceError.wrongPassword }
                 throw Self.friendly(error)
             }
+        }
+    }
+
+    // MARK: - Forgot password
+
+    func sendPasswordReset(to email: String) async throws {
+        do {
+            // Firebase sends the "reset your password" email for us
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+        } catch {
+            throw Self.friendly(error)
         }
     }
 

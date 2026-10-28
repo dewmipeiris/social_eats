@@ -17,16 +17,16 @@ enum SampleData {
 
     static let demoUser = AppUser(
         id: "demo-user",
-        displayName: "Alex Morgan",
-        username: "@alex_eats",
-        phoneNumber: "+94771234567",
-        email: "alex@example.com",
+        displayName: "Dewmi Peiris",
+        username: "@dewmi_eats",
+        phoneNumber: "+94740584022",
+        email: "dewmi@example.com",
         karma: 1040,
         mealsShared: 18,
         newFriends: 14,
         tablesHosted: 3,
         hostRating: 4.9,
-        dietaryTags: [.halal],
+        dietaryTags: [],             // no dietary filter, so ALL tables show on Home
         ambiences: [.chillCozy, .techFounders],
         cuisines: [.neapolitanPizza, .ramenNoodles],
         diningStyle: .smallGroup,
@@ -165,3 +165,4 @@ enum SampleData {
                      createdAt: Date().addingTimeInterval(-14400), tableId: "t-coffee", isRead: true)
     ]
 }
+

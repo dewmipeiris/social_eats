@@ -107,8 +107,12 @@ struct ProfileView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showsEditName) { editNameSheet }
-        .confirmationDialog("Log out?", isPresented: $showsLogoutConfirm) {
+        // Standard iOS alert in the middle of the screen: "Log out?"  [Cancel] [Log Out]
+        .alert("Log out?", isPresented: $showsLogoutConfirm) {
+            Button("Cancel", role: .cancel) {}
             Button("Log Out", role: .destructive) { session.signOut() }
+        } message: {
+            Text("You can sign back in anytime with your phone number. Your offline passes stay on this phone.")
         }
     }
 

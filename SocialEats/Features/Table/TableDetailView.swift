@@ -16,6 +16,11 @@ struct TableDetailView: View {
     @State private var passToOpen: String?
     @StateObject private var viewModel: TableDetailViewModel
     @State private var showsCancelConfirm = false
+    /// Host only: the "Edit Meetup Time" sheet
+    @State private var showsEditTime = false
+    /// Host only: scan a guest's pass
+    @State private var showsCheckIn = false
+    @State private var newTime = Date()
 
     init(tableId: String, container: AppContainer) {
         _viewModel = StateObject(wrappedValue: TableDetailViewModel(tableId: tableId, container: container))
@@ -56,6 +61,21 @@ struct TableDetailView: View {
             }
         } message: {
             Text("Your seat will be released for someone else. Face ID is needed to confirm.")
+        }
+        // Host only: pick a new time for the meetup
+        .sheet(isPresented: $showsEditTime) {
+            EditTimeSheet(newTime: $newTime, isSaving: viewModel.isWorking,
+                          errorMessage: viewModel.errorMessage) {
+                Task {
+                    if await viewModel.changeTime(to: newTime) {
+                        showsEditTime = false
+                    }
+                }
+            }
+            .presentationDetents([.medium])
+        }
+        .sheet(isPresented: $showsCheckIn) {
+            CheckInScannerSheet()
         }
     }
 
@@ -108,6 +128,7 @@ struct TableDetailView: View {
                     Image("table_hero")
                         .resizable()
                         .scaledToFill()
+                        .allowsHitTesting(false)   // hidden overflow must not block the buttons
                 } else {
                     FoodPhoto(category: table.category, emojiSize: 110)
                 }
@@ -322,20 +343,40 @@ struct TableDetailView: View {
                 }
                 .frame(height: 170)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                // Tapping the small map also opens Apple Maps
+                .onTapGesture { viewModel.openWalkingDirections() }
                 .accessibilityLabel("Map showing \(table.venueName)")
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint("Opens walking directions in Apple Maps")
 
-                HStack {
-                    Image(systemName: "mappin.circle").foregroundStyle(AppColors.primary)
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(table.venueName).font(AppFont.subheadline.weight(.semibold))
-                        Text(table.venueAddress).font(AppFont.caption).foregroundStyle(AppColors.textSecondary)
+                // Venue card: the whole card (including the green "Open" badge)
+                // is a button that opens walking directions in Apple Maps.
+                Button {
+                    viewModel.openWalkingDirections()
+                } label: {
+                    HStack {
+                        Image(systemName: "mappin.circle").foregroundStyle(AppColors.primary)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(table.venueName)
+                                .font(AppFont.subheadline.weight(.semibold))
+                                .foregroundStyle(AppColors.textPrimary)
+                            Text(table.venueAddress)
+                                .font(AppFont.caption)
+                                .foregroundStyle(AppColors.textSecondary)
+                        }
+                        Spacer()
+                        BadgeView(text: "Open")
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(AppColors.textTertiary)
                     }
-                    Spacer()
-                    BadgeView(text: "Open")
+                    .padding(10)
+                    .background(RoundedRectangle(cornerRadius: 12).fill(AppColors.surface))
                 }
-                .padding(10)
-                .background(RoundedRectangle(cornerRadius: 12).fill(AppColors.surface))
+                .buttonStyle(.plain)
                 .padding(8)
+                .accessibilityLabel("\(table.venueName), \(table.venueAddress), open now")
+                .accessibilityHint("Opens walking directions in Apple Maps")
             }
         }
     }
@@ -358,7 +399,27 @@ struct TableDetailView: View {
                 }
                 .buttonStyle(SoftButtonStyle())
             }
-            if !viewModel.isHost {
+            if viewModel.isHost {
+                // Hosts can move their table to a new time
+                Button {
+                    newTime = table.startTime
+                    showsEditTime = true
+                } label: {
+                    Label("Edit Meetup Time", systemImage: "clock.arrow.circlepath")
+                        .font(AppFont.subheadline.weight(.semibold))
+                        .foregroundStyle(AppColors.primary)
+                        .frame(maxWidth: .infinity, minHeight: AppLayout.minTapTarget)
+                }
+                .accessibilityHint("Change when your table meets")
+
+                // Hosts scan their guests' pass QR codes on arrival
+                Button {
+                    showsCheckIn = true
+                } label: {
+                    Label("Check In a Guest", systemImage: "qrcode.viewfinder")
+                }
+                .buttonStyle(SoftButtonStyle())
+            } else {
                 Button(role: .destructive) {
                     showsCancelConfirm = true
                 } label: {
@@ -475,13 +536,15 @@ struct ReservationConfirmedSheet: View {
 }
 
 /// QR code image built on the phone (no internet needed).
+/// `text` is the pass token; the picture holds it as a socialeats://checkin link
+/// so the iPhone Camera app can scan it (see QRToken.checkInLink).
 struct QRCodeView: View {
     let text: String
     var size: CGFloat = 180
 
     var body: some View {
         Group {
-            if let image = QRCodeGenerator.image(from: text) {
+            if let image = QRCodeGenerator.image(from: QRToken.checkInLink(for: text)) {
                 Image(uiImage: image)
                     .interpolation(.none)
                     .resizable()
@@ -497,5 +560,52 @@ struct QRCodeView: View {
         .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))   // QR always on white so it scans
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppColors.border, lineWidth: 1))
         .accessibilityLabel("Check-in QR code")
+    }
+}
+
+/// Host only: small sheet with a date & time picker to move the meetup.
+struct EditTimeSheet: View {
+    @Binding var newTime: Date
+    let isSaving: Bool
+    var errorMessage: String? = nil
+    let onSave: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Text("Everyone at your table will see the new time.")
+                    .font(AppFont.subheadline)
+                    .foregroundStyle(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+
+                // Only future times, up to 7 days ahead
+                DatePicker("Meetup time", selection: $newTime,
+                           in: Date()...Date().addingTimeInterval(7 * 24 * 60 * 60))
+                    .datePickerStyle(.compact)
+                    .font(AppFont.body)
+
+                // If saving fails, show why HERE (not behind the popup)
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(AppFont.footnote)
+                        .foregroundStyle(AppColors.danger)
+                        .multilineTextAlignment(.center)
+                }
+
+                LoadingButton(title: "Save New Time", systemImage: "checkmark",
+                              isLoading: isSaving, isEnabled: true, action: onSave)
+                Spacer()
+            }
+            .padding(20)
+            .navigationTitle("Edit Meetup Time")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+            .screenBackground()
+        }
     }
 }

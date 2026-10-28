@@ -87,6 +87,14 @@ final class ReceiptScannerViewModel: ObservableObject {
         guard let selectedTableId else { return eligibleTables.first }
         return tablesStore.table(id: selectedTableId)
     }
+    
+    /// Your next joined table that is too far ahead to scan yet
+    /// (used to explain WHY the scanner is empty)
+    var nextUpcomingTable: CommunityTable? {
+        guard let uid = session.userId else { return nil }
+        let opensAt = Date().addingTimeInterval(3 * 3600)
+        return tablesStore.joinedTables(userId: uid).first { $0.startTime >= opensAt }
+    }
 
     /// "Vision AI: Artisan Pizza (+200 pts)" chip on the camera view
     var liveChipText: String? {

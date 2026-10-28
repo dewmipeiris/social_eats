@@ -81,13 +81,29 @@ final class MockAuthService: AuthServicing {
     /// Any 6-digit code works except this one (lets tests check the error path)
     static let wrongCode = "000000"
 
-    private(set) var currentUserId: String?
-    var currentDisplayName: String? = "Alex Morgan"
+    /// Who is signed in. In the real app Firebase remembers this after the app
+    /// is closed; in Demo mode we copy that by saving it in UserDefaults.
+    private(set) var currentUserId: String? {
+        didSet {
+            if remembersSignIn { UserDefaults.standard.set(currentUserId, forKey: Self.savedUserKey) }
+        }
+    }
+    var currentDisplayName: String? = "Dewmi Peiris"
     var currentPhone: String?
     var currentEmail: String?
 
-    init(signedInUserId: String? = nil) {
-        currentUserId = signedInUserId
+    private static let savedUserKey = "demo.signedInUserId"
+    private let remembersSignIn: Bool
+
+    /// remembersSignIn: true for the Demo app (stay signed in like Firebase),
+    /// false for unit tests (each test starts clean).
+    init(signedInUserId: String? = nil, remembersSignIn: Bool = false) {
+        self.remembersSignIn = remembersSignIn
+        if remembersSignIn, signedInUserId == nil {
+            currentUserId = UserDefaults.standard.string(forKey: Self.savedUserKey)
+        } else {
+            currentUserId = signedInUserId
+        }
     }
 
     func sendOTP(to e164Phone: String) async throws -> String {
@@ -119,6 +135,11 @@ final class MockAuthService: AuthServicing {
         currentEmail = email
         currentUserId = SampleData.demoUser.id
         return SampleData.demoUser.id
+    }
+
+    /// "Forgot password?" — Demo mode: no real email is sent, it just pretends it worked.
+    func sendPasswordReset(to email: String) async throws {
+        try await Task.sleep(nanoseconds: 500_000_000)
     }
 
     func signOut() throws {
@@ -188,6 +209,13 @@ final class MockTableService: TableServicing {
     }
 
     func rateTablemate(tableId: String, raterId: String, rateeId: String, stars: Int) async throws {}
+
+    func updateTableTime(id: String, startTime: Date) async throws {
+        guard var table = database.tables[id] else { throw TableJoinError.notFound }
+        table.startTime = startTime
+        database.tables[id] = table
+        database.notifyTables()
+    }
 }
 
 // MARK: - Users

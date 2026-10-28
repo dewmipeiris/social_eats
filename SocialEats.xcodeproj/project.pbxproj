@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF135E963091CD0F007D5DC0 /* artisan_pizza__bella_napoli.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E8E3091CD0F007D5DC0 /* artisan_pizza__bella_napoli.png */; };
+		EF135E973091CD0F007D5DC0 /* pizza_palace.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E913091CD0F007D5DC0 /* pizza_palace.png */; };
+		EF135E983091CD0F007D5DC0 /* coffee_deep_work__the_daily_roast.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E8F3091CD0F007D5DC0 /* coffee_deep_work__the_daily_roast.png */; };
+		EF135E993091CD0F007D5DC0 /* friday_slice__luigis_brick_oven.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E903091CD0F007D5DC0 /* friday_slice__luigis_brick_oven.png */; };
+		EF135E9A3091CD0F007D5DC0 /* ramen_club__menya_ramen_bar.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E923091CD0F007D5DC0 /* ramen_club__menya_ramen_bar.png */; };
+		EF135E9B3091CD0F007D5DC0 /* spicy_burgers.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E933091CD0F007D5DC0 /* spicy_burgers.png */; };
+		EF135E9C3091CD0F007D5DC0 /* sushi_lovers__matsuya_kitchen.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E943091CD0F007D5DC0 /* sushi_lovers__matsuya_kitchen.png */; };
+		EF135E9D3091CD0F007D5DC0 /* taco_tuesday__chilis_cafe.png in Resources */ = {isa = PBXBuildFile; fileRef = EF135E953091CD0F007D5DC0 /* taco_tuesday__chilis_cafe.png */; };
+		EF962A5B30909577003CE16D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EF962A5A30909577003CE16D /* GoogleService-Info.plist */; };
 		EF9B252B308F07D800EF3FC7 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2529308F07D800EF3FC7 /* ViewModelTests.swift */; };
 		EF9B252C308F07D800EF3FC7 /* ValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2528308F07D800EF3FC7 /* ValidatorTests.swift */; };
 		EF9B252D308F07D800EF3FC7 /* AppLogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B2526308F07D800EF3FC7 /* AppLogicTests.swift */; };
@@ -80,6 +89,7 @@
 		EF9B27D5308F5E8E00EF3FC7 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B273C308F5E8E00EF3FC7 /* SettingsStore.swift */; };
 		EF9B27D6308F5E8E00EF3FC7 /* TestReceiptRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B276B308F5E8E00EF3FC7 /* TestReceiptRenderer.swift */; };
 		EF9B27D7308F5E8E00EF3FC7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF9B2794308F5E8E00EF3FC7 /* Assets.xcassets */; };
+		EF9B27DD308F685600EF3FC7 /* CheckInViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9B27DC308F684C00EF3FC7 /* CheckInViews.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +110,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EF135E8E3091CD0F007D5DC0 /* artisan_pizza__bella_napoli.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = artisan_pizza__bella_napoli.png; sourceTree = "<group>"; };
+		EF135E8F3091CD0F007D5DC0 /* coffee_deep_work__the_daily_roast.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = coffee_deep_work__the_daily_roast.png; sourceTree = "<group>"; };
+		EF135E903091CD0F007D5DC0 /* friday_slice__luigis_brick_oven.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = friday_slice__luigis_brick_oven.png; sourceTree = "<group>"; };
+		EF135E913091CD0F007D5DC0 /* pizza_palace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pizza_palace.png; sourceTree = "<group>"; };
+		EF135E923091CD0F007D5DC0 /* ramen_club__menya_ramen_bar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ramen_club__menya_ramen_bar.png; sourceTree = "<group>"; };
+		EF135E933091CD0F007D5DC0 /* spicy_burgers.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spicy_burgers.png; sourceTree = "<group>"; };
+		EF135E943091CD0F007D5DC0 /* sushi_lovers__matsuya_kitchen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sushi_lovers__matsuya_kitchen.png; sourceTree = "<group>"; };
+		EF135E953091CD0F007D5DC0 /* taco_tuesday__chilis_cafe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = taco_tuesday__chilis_cafe.png; sourceTree = "<group>"; };
+		EF962A5A30909577003CE16D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		EF9B24FC308F05A200EF3FC7 /* SocialEats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocialEats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9B2509308F05A400EF3FC7 /* SocialEatsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SocialEatsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF9B2513308F05A400EF3FC7 /* SocialEatsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SocialEatsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,10 +128,6 @@
 		EF9B2529308F07D800EF3FC7 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
 		EF9B252F308F081300EF3FC7 /* firestore.rules */ = {isa = PBXFileReference; lastKnownFileType = text; path = firestore.rules; sourceTree = "<group>"; };
 		EF9B2530308F081300EF3FC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EF9B2534308F081D00EF3FC7 /* receipt_bella_napoli.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_bella_napoli.png; sourceTree = "<group>"; };
-		EF9B2535308F081D00EF3FC7 /* receipt_chilis_cafe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_chilis_cafe.png; sourceTree = "<group>"; };
-		EF9B2536308F081D00EF3FC7 /* receipt_matsuya_kitchen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_matsuya_kitchen.png; sourceTree = "<group>"; };
-		EF9B2537308F081D00EF3FC7 /* receipt_wrong_restaurant.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = receipt_wrong_restaurant.png; sourceTree = "<group>"; };
 		EF9B2738308F5E8E00EF3FC7 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		EF9B2739308F5E8E00EF3FC7 /* ReservationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationManager.swift; sourceTree = "<group>"; };
 		EF9B273A308F5E8E00EF3FC7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -179,6 +194,7 @@
 		EF9B278F308F5E8E00EF3FC7 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		EF9B2791308F5E8E00EF3FC7 /* ServiceProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProtocols.swift; sourceTree = "<group>"; };
 		EF9B2794308F5E8E00EF3FC7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EF9B27DC308F684C00EF3FC7 /* CheckInViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInViews.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -262,10 +278,14 @@
 		EF9B2538308F081D00EF3FC7 /* Receipts */ = {
 			isa = PBXGroup;
 			children = (
-				EF9B2534308F081D00EF3FC7 /* receipt_bella_napoli.png */,
-				EF9B2535308F081D00EF3FC7 /* receipt_chilis_cafe.png */,
-				EF9B2536308F081D00EF3FC7 /* receipt_matsuya_kitchen.png */,
-				EF9B2537308F081D00EF3FC7 /* receipt_wrong_restaurant.png */,
+				EF135E8E3091CD0F007D5DC0 /* artisan_pizza__bella_napoli.png */,
+				EF135E8F3091CD0F007D5DC0 /* coffee_deep_work__the_daily_roast.png */,
+				EF135E903091CD0F007D5DC0 /* friday_slice__luigis_brick_oven.png */,
+				EF135E913091CD0F007D5DC0 /* pizza_palace.png */,
+				EF135E923091CD0F007D5DC0 /* ramen_club__menya_ramen_bar.png */,
+				EF135E933091CD0F007D5DC0 /* spicy_burgers.png */,
+				EF135E943091CD0F007D5DC0 /* sushi_lovers__matsuya_kitchen.png */,
+				EF135E953091CD0F007D5DC0 /* taco_tuesday__chilis_cafe.png */,
 			);
 			path = Receipts;
 			sourceTree = "<group>";
@@ -401,6 +421,7 @@
 		EF9B2766308F5E8E00EF3FC7 /* Pass */ = {
 			isa = PBXGroup;
 			children = (
+				EF9B27DC308F684C00EF3FC7 /* CheckInViews.swift */,
 				EF9B2765308F5E8E00EF3FC7 /* PassViews.swift */,
 			);
 			path = Pass;
@@ -563,6 +584,7 @@
 				EF9B277F308F5E8E00EF3FC7 /* Models */,
 				EF9B2793308F5E8E00EF3FC7 /* Services */,
 				EF9B2794308F5E8E00EF3FC7 /* Assets.xcassets */,
+				EF962A5A30909577003CE16D /* GoogleService-Info.plist */,
 			);
 			path = SocialEats;
 			sourceTree = "<group>";
@@ -689,6 +711,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9B27D7308F5E8E00EF3FC7 /* Assets.xcassets in Resources */,
+				EF962A5B30909577003CE16D /* GoogleService-Info.plist in Resources */,
+				EF135E963091CD0F007D5DC0 /* artisan_pizza__bella_napoli.png in Resources */,
+				EF135E973091CD0F007D5DC0 /* pizza_palace.png in Resources */,
+				EF135E983091CD0F007D5DC0 /* coffee_deep_work__the_daily_roast.png in Resources */,
+				EF135E993091CD0F007D5DC0 /* friday_slice__luigis_brick_oven.png in Resources */,
+				EF135E9A3091CD0F007D5DC0 /* ramen_club__menya_ramen_bar.png in Resources */,
+				EF135E9B3091CD0F007D5DC0 /* spicy_burgers.png in Resources */,
+				EF135E9C3091CD0F007D5DC0 /* sushi_lovers__matsuya_kitchen.png in Resources */,
+				EF135E9D3091CD0F007D5DC0 /* taco_tuesday__chilis_cafe.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -729,6 +760,7 @@
 				EF9B27A3308F5E8E00EF3FC7 /* ServiceProtocols.swift in Sources */,
 				EF9B27A4308F5E8E00EF3FC7 /* SampleData.swift in Sources */,
 				EF9B27A5308F5E8E00EF3FC7 /* SignInView.swift in Sources */,
+				EF9B27DD308F685600EF3FC7 /* CheckInViews.swift in Sources */,
 				EF9B27A6308F5E8E00EF3FC7 /* BiometricService.swift in Sources */,
 				EF9B27A7308F5E8E00EF3FC7 /* ProfileSetupView.swift in Sources */,
 				EF9B27A8308F5E8E00EF3FC7 /* FirebaseAuthService.swift in Sources */,
@@ -941,6 +973,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3ZBBK53UAM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
@@ -949,7 +982,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -974,6 +1007,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3ZBBK53UAM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
@@ -982,7 +1016,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

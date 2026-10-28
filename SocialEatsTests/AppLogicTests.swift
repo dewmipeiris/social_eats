@@ -1,17 +1,14 @@
-//
 //  AppLogicTests.swift
-//  SocialEatsTests
+//  Test File 01
 //
-//  Shake detection (Core Motion maths), karma levels, QR pass tokens,
-//  seat capacity rules and table filtering.
-//
+//  Shake detection (maths part), karma levels, QR pass tokens, seat capacity rules and table filtering.
 
 import Testing
 import Foundation
 import CoreLocation
 @testable import SocialEats
 
-// MARK: - Shake to Match
+// Shake to match
 
 @Suite("Shake detector (Core Motion)")
 struct ShakeDetectorTests {
@@ -42,7 +39,7 @@ struct ShakeDetectorTests {
     }
 }
 
-// MARK: - Karma
+// Karma
 
 @Suite("Karma levels and tiers")
 struct KarmaCalculatorTests {
@@ -84,7 +81,7 @@ struct KarmaCalculatorTests {
     }
 }
 
-// MARK: - QR tokens
+// QR Tokens
 
 @Suite("Offline pass QR token")
 struct QRTokenTests {
@@ -119,12 +116,12 @@ struct QRTokenTests {
     }
 }
 
-// MARK: - Check-in (host scans a guest's pass)
+// Checkin (Host Scaning guest pass)
 
 @Suite("Pass check-in")
 struct CheckInTests {
 
-    let table = SampleData.tables()[0]    // host + 2 guests
+    let table = SampleData.tables()[0]    // host  & 2 guests
 
     @Test("A real guest's pass checks in with their name and seat")
     func validGuest() throws {
@@ -153,12 +150,12 @@ struct CheckInTests {
     }
 }
 
-// MARK: - Seat capacity (Feature 9)
+// Seat capacity
 
 @Suite("Community table seat logic")
 struct CommunityTableTests {
 
-    let table = SampleData.tables()[0]    // 4 seats, 3 taken (host + 2 guests)
+    let table = SampleData.tables()[0]    // 4 seats only & taken 3 seats (host + 2 guests)
 
     @Test("Seat counts")
     func seatCounts() {
@@ -174,7 +171,7 @@ struct CommunityTableTests {
         let joined = try table.adding(userId: "me", name: "Me")
         #expect(joined.isFull)
         #expect(joined.seatNumber(for: "me") == 4)
-        #expect(joined.seatNumber(for: table.hostId) == 1)     // host is always Seat #1
+        #expect(joined.seatNumber(for: table.hostId) == 1)     // host is always Seat no.01
     }
 
     @Test("Cannot join a full table")
@@ -220,7 +217,7 @@ struct CommunityTableTests {
     }
 }
 
-// MARK: - Filtering
+// Table Filtering
 
 @Suite("Table filtering & matching")
 struct TableFilterTests {
@@ -308,7 +305,7 @@ struct TableFilterTests {
     }
 }
 
-// MARK: - Nearby alerts (Feature 5)
+// Nearby alerts
 
 @Suite("New-table-nearby alert rules")
 struct NearbyAlertEngineTests {
@@ -317,7 +314,7 @@ struct NearbyAlertEngineTests {
     var here: CLLocation { CLLocation(latitude: center.latitude, longitude: center.longitude) }
     let lastCheck = Date().addingTimeInterval(-10 * 60)
 
-    /// A copy of a sample table that was "just created"
+    // created table sample
     func freshTable(_ index: Int, hostId: String = "someone") -> CommunityTable {
         var table = SampleData.tables(around: center)[index]
         table.createdAt = Date()
@@ -327,7 +324,7 @@ struct NearbyAlertEngineTests {
 
     @Test("A brand-new table inside the radius triggers an alert")
     func newTableInRadius() {
-        let table = freshTable(5)           // ~280 m away
+        let table = freshTable(5)           // 280 m away
         let result = NearbyAlertEngine.tablesToAlert([table], createdAfter: lastCheck, alreadyAlerted: [],
                                                      currentUserId: "me", userLocation: here, radiusKm: 1)
         #expect(result.map(\.id) == [table.id])
@@ -335,7 +332,7 @@ struct NearbyAlertEngineTests {
 
     @Test("Tables outside the radius, old tables and already-alerted tables are skipped")
     func skipped() {
-        let far = freshTable(3)             // ~1.4 km away
+        let far = freshTable(3)             // 1.4 km away
         var old = freshTable(5)
         old.createdAt = Date().addingTimeInterval(-3 * 3600)
         let alerted = freshTable(0)
@@ -382,7 +379,7 @@ struct NearbyAlertEngineTests {
     }
 }
 
-// MARK: - Community Hub mutual interests (Feature 7)
+// Community hub mutual interests
 
 @Suite("Tablemate mutual interests")
 struct MutualInterestTests {
@@ -409,4 +406,3 @@ struct MutualInterestTests {
         #expect(ChatViewModel.mutualInterests(me: nil, them: SampleData.sampleMembers[0]).isEmpty)
     }
 }
-

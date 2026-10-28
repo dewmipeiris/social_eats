@@ -66,10 +66,12 @@ final class ShakeToMatchViewModel: ObservableObject {
 
     var isMotionAvailable: Bool { motion.isAvailable }
 
-    /// Proposal Advanced Feature 2, step 4: "selects an open table within 1 km"
-    static let matchRadiusKm = 1.0
+    /// How far away a matched table can be.
+    /// (The proposal said 1 km; changed to 5 km after testing, because in a real city
+    /// there often isn't an open table within 1 km. Mention this in the report.)
+    static let matchRadiusKm = 2.0
 
-    var radiusText: String { "1 km" }
+    var radiusText: String { "\(Int(Self.matchRadiusKm)) km" }
 
     /// Open tables inside the radius, positioned on the radar by real bearing.
     var blips: [RadarBlip] {
@@ -158,3 +160,4 @@ final class ShakeToMatchViewModel: ObservableObject {
         return atan2(y, x)
     }
 }
+

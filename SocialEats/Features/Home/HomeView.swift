@@ -44,6 +44,8 @@ struct HomeView: View {
             }
             .padding(.horizontal, AppLayout.screenPadding)
             .padding(.bottom, 90)
+            .frame(maxWidth: 900)          // same centred look as other screens on iPad
+            .frame(maxWidth: .infinity)
         }
         .refreshable { await viewModel.refresh() }
         .screenBackground()

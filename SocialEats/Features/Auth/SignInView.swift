@@ -26,14 +26,15 @@ struct SignInView: View {
                     if isDemoMode {
                         demoNotice
                     }
+                    // Errors show at the TOP so they're seen straight away
+                    if let error = viewModel.errorMessage {
+                        ErrorBanner(message: error) { viewModel.errorMessage = nil }
+                    }
                     switch viewModel.step {
                     case .enterDetails:
                         detailsStep
                     case .enterCode:
                         OTPStepView(viewModel: viewModel)
-                    }
-                    if let error = viewModel.errorMessage {
-                        ErrorBanner(message: error) { viewModel.errorMessage = nil }
                     }
                 }
                 .padding(AppLayout.screenPadding)
@@ -46,7 +47,8 @@ struct SignInView: View {
         .animation(.easeInOut(duration: 0.25), value: viewModel.step)
         .sheet(isPresented: $viewModel.showsPasswordSheet) {
             EmailPasswordSheet(viewModel: viewModel)
-                .presentationDetents([.medium])
+                // medium = half screen; can be pulled up to full if the messages need more room
+                .presentationDetents([.medium, .large])
         }
     }
 
@@ -120,11 +122,15 @@ struct SignInView: View {
                 }
                 .disabled(!session.canUseBiometricLogin)
                 .opacity(session.canUseBiometricLogin ? 1 : 0.5)
-                .accessibilityHint(session.canUseBiometricLogin
-                                   ? "Unlocks your saved account"
+                .accessibilityHint(session.hasSavedAccount
+                                   ? "Logs you back in to your saved account"
                                    : "Available after you sign in once on this phone")
 
-                Label("Instant Face ID & Touch ID login", systemImage: "checkmark.shield.fill")
+                // Small line under the button: tells the user if Face ID login is ready yet
+                Label(session.hasSavedAccount
+                      ? "Instant Face ID & Touch ID login"
+                      : "Sign in once below to turn on Face ID login",
+                      systemImage: "checkmark.shield.fill")
                     .font(AppFont.caption)
                     .foregroundStyle(AppColors.textSecondary)
             }
@@ -138,7 +144,7 @@ struct SignInView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "at")
                         .foregroundStyle(AppColors.textSecondary)
-                    TextField("alex@example.com or phone", text: $viewModel.identifierInput)
+                    TextField("dewmi@example.com or phone", text: $viewModel.identifierInput)
                         .textContentType(.username)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
@@ -395,7 +401,7 @@ struct CountryPicker: View {
     }
 }
 
-/// Small sheet for the email + password path.
+/// Small sheet for the email + password path (with "Forgot password?").
 private struct EmailPasswordSheet: View {
     @ObservedObject var viewModel: AuthViewModel
 
@@ -415,6 +421,31 @@ private struct EmailPasswordSheet: View {
             SecureField("Password (6+ characters)", text: $viewModel.password)
                 .textContentType(.password)
                 .inputFieldStyle()
+
+            // Forgot password link (right side)
+            HStack {
+                Spacer()
+                Button("Forgot password?") {
+                    Task { await viewModel.forgotPassword() }
+                }
+                .font(AppFont.footnote.weight(.semibold))
+                .foregroundStyle(AppColors.primary)
+                .disabled(viewModel.isLoading)
+            }
+
+            // Green message after the reset email is sent
+            if let message = viewModel.resetMessage {
+                Label(message, systemImage: "envelope.badge")
+                    .font(AppFont.footnote)
+                    .foregroundStyle(AppColors.success)
+            }
+            // Red message (e.g. no email typed)
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .font(AppFont.footnote)
+                    .foregroundStyle(AppColors.danger)
+            }
+
             LoadingButton(title: "Continue", isLoading: viewModel.isLoading) {
                 Task { await viewModel.signInWithEmail() }
             }
@@ -422,6 +453,11 @@ private struct EmailPasswordSheet: View {
         }
         .padding(20)
         .screenBackground()
+        // Clear old messages each time the sheet opens
+        .onAppear {
+            viewModel.resetMessage = nil
+            viewModel.errorMessage = nil
+        }
     }
 }
 
@@ -441,6 +477,6 @@ extension View {
 
 #Preview {
     let container = AppContainer.demo()
-    return SignInView(container: container)
+    SignInView(container: container)
         .environmentObject(container.session)
 }

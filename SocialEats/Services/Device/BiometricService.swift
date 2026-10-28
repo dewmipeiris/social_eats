@@ -37,6 +37,8 @@ enum BiometricKind {
 
 protocol BiometricServicing {
     var availableKind: BiometricKind { get }
+    /// True when Face ID / Touch ID is set up and ready to use right now
+    var isSetUp: Bool { get }
     /// Shows the Face ID prompt. Returns true if the user passed.
     func authenticate(reason: String) async -> Result<Void, BiometricError>
 }
@@ -51,7 +53,7 @@ enum BiometricError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .notAvailable: return "This device doesn't support Face ID or Touch ID."
-        case .notEnrolled: return "Set up Face ID or Touch ID in the Settings app first."
+        case .notEnrolled: return "Face ID isn't set up yet. iPhone: Settings → Face ID & Passcode. Simulator: menu Features → Face ID → Enrolled."
         case .cancelled: return "Verification was cancelled — your seat was not changed."
         case .failed: return "Face ID didn't recognise you. Please try again."
         case .lockedOut: return "Too many failed attempts. Unlock your phone with your passcode first."
@@ -61,18 +63,24 @@ enum BiometricError: LocalizedError, Equatable {
 
 final class BiometricService: BiometricServicing {
 
+    /// Which sensor the phone HAS (even if Face ID isn't set up yet).
+    /// That way the button always says "Face ID", and if it isn't set up
+    /// the user gets a clear message instead of the feature silently disappearing.
     var availableKind: BiometricKind {
         let context = LAContext()
         var error: NSError?
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
-            return .none
-        }
+        // We ignore the true/false answer here: calling this fills in `biometryType`
+        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
         switch context.biometryType {
         case .faceID: return .faceID
         case .touchID: return .touchID
         case .opticID: return .opticID
         default: return .none
         }
+    }
+
+    var isSetUp: Bool {
+        LAContext().canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
     }
 
     func authenticate(reason: String) async -> Result<Void, BiometricError> {
@@ -113,6 +121,7 @@ final class BiometricService: BiometricServicing {
 final class MockBiometricService: BiometricServicing {
     var shouldSucceed: Bool
     var availableKind: BiometricKind = .faceID
+    var isSetUp = true
     private(set) var requestCount = 0
 
     init(shouldSucceed: Bool = true) {
