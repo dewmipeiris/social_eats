@@ -22,8 +22,8 @@ The backend is Firebase (Authentication + Cloud Firestore). GoogleService-Info.p
 Test account (no real SMS needed). On the sign in screen, under Direct Mobile Access:
 
 Country: Sri Lanka (+94)
-Phone number: 74 058 4022
-Code: 123456
+Phone number: xx xxx xxxx
+Code: xxxxxx
 
 Read only access: the lecturer has been added to the Firebase project as a Viewer. Open https://console.firebase.google.com → SocialEats project → Authentication and Firestore Database.
 
