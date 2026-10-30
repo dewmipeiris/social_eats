@@ -1,12 +1,4 @@
-//
 //  SearchView.swift
-//  SocialEats
-//
-//  Prototype Figure 19 — Search & Voice.
-//  Type, or tap the mic and say "cozy ramen spots nearby" — the
-//  Speech framework turns it into text on-device and we filter live.
-//  Recent searches are remembered on the phone.
-//
 
 import SwiftUI
 import Combine
@@ -33,13 +25,11 @@ final class SearchViewModel: ObservableObject {
         self.defaults = defaults
         recentSearches = defaults.stringArray(forKey: Self.recentKey) ?? []
 
-        // Voice transcript fills the search box as you speak
         speech.$transcript
             .filter { !$0.isEmpty }
             .sink { [weak self] text in self?.query = text }
             .store(in: &cancellables)
 
-        // Re-run the search 250 ms after typing stops
         Publishers.CombineLatest3($query.debounce(for: .milliseconds(250), scheduler: RunLoop.main),
                                   $category,
                                   tablesStore.$tables)
@@ -48,7 +38,6 @@ final class SearchViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        // The speech service is its own ObservableObject; forward its changes
         speech.objectWillChange
             .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &cancellables)
@@ -64,7 +53,6 @@ final class SearchViewModel: ObservableObject {
         DistanceText.away(table.distance(from: location.currentLocation))
     }
 
-    /// Turns natural phrases into keywords: "cozy ramen spots nearby" -> "ramen"
     static func keywords(from query: String) -> String {
         let fillers: Set<String> = ["cozy", "spots", "spot", "nearby", "near", "me", "with", "open", "seats",
                                     "seat", "a", "the", "some", "find", "show", "places", "place", "good", "best", "for", "in"]
@@ -79,7 +67,6 @@ final class SearchViewModel: ObservableObject {
         let cleaned = Self.keywords(from: query)
         var options = TableFilterOptions()
         options.category = category ?? TableCategory.allCases.first { cleaned.contains($0.title.lowercased()) }
-        // If the spoken word WAS the category, don't also require it in the text
         options.searchText = options.category?.title.lowercased() == cleaned ? "" : cleaned
         options.hideFull = false
         results = TableFilter.apply(options, to: tables, userLocation: location.currentLocation)

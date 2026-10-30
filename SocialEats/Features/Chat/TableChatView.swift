@@ -1,9 +1,4 @@
-//
 //  TableChatView.swift
-//  SocialEats
-//
-//  Prototype Figure 10 — Table Group Chat.
-//
 
 import SwiftUI
 import MapKit
@@ -55,8 +50,6 @@ struct TableChatView: View {
         }
     }
 
-    // MARK: - Header card
-
     private func tableHeader(_ table: CommunityTable) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 10) {
@@ -77,7 +70,6 @@ struct TableChatView: View {
                 BadgeView(text: "🕖 \(viewModel.startsInText)", foreground: AppColors.amber, background: AppColors.amberSoft)
             }
             HStack {
-                // Tap the faces to see tablemates' profiles & mutual interests
                 Button {
                     showsTablemates = true
                 } label: {
@@ -113,8 +105,6 @@ struct TableChatView: View {
         .padding(.horizontal, AppLayout.screenPadding)
         .padding(.top, 8)
     }
-
-    // MARK: - Messages
 
     private var messagesList: some View {
         ScrollViewReader { proxy in
@@ -164,8 +154,6 @@ struct TableChatView: View {
         .accessibilityElement(children: .combine)
     }
 
-    // MARK: - Input
-
     private var inputArea: some View {
         VStack(spacing: 8) {
             if let error = viewModel.errorMessage {
@@ -214,7 +202,6 @@ struct TableChatView: View {
     }
 }
 
-/// One chat bubble. Mine = coral on the right, others = white on the left.
 struct MessageBubble: View {
     let message: ChatMessage
     let isMine: Bool
@@ -270,9 +257,6 @@ struct MessageBubble: View {
     }
 }
 
-// MARK: - Tablemates sheet (Feature 7, step 2)
-
-/// Profiles, mutual interests and verified badge standing of everyone at the table.
 struct TablematesSheet: View {
     @ObservedObject var viewModel: ChatViewModel
 

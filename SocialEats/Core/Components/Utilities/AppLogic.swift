@@ -1,27 +1,13 @@
-//
 //  AppLogic.swift
-//  SocialEats
-//
-//  Pure "business logic" helpers with no UI — all unit tested:
-//  - ShakeDetector   (Core Motion maths for Shake to Match)
-//  - KarmaCalculator (levels, tiers and points)
-//  - QRToken         (check-in code inside the offline pass)
-//  - TableFilter     (category / dietary / distance filtering)
-//  - DistanceText    (400m away, 1.1km away, 4 min walk)
-//
 
 import Foundation
 import CoreLocation
 import CryptoKit
 
-// MARK: - Shake detection
+// shake detection
 
-/// Decides when a set of accelerometer readings counts as a "shake".
-/// Proposal Advanced Feature 2: total acceleration > 2.5g triggers a match.
 struct ShakeDetector {
-    /// Force needed, in g (1g = normal gravity while the phone is still)
     var threshold: Double = 2.5
-    /// Ignore new shakes for this many seconds after one is detected
     var cooldown: TimeInterval = 1.5
 
     private var lastShakeTime: TimeInterval = -.infinity
@@ -31,12 +17,10 @@ struct ShakeDetector {
         self.cooldown = cooldown
     }
 
-    /// Total force of a reading: √(x² + y² + z²)
     static func magnitude(x: Double, y: Double, z: Double) -> Double {
         (x * x + y * y + z * z).squareRoot()
     }
 
-    /// Feed in one accelerometer reading. Returns true when a shake happens.
     mutating func process(x: Double, y: Double, z: Double, timestamp: TimeInterval) -> Bool {
         let force = ShakeDetector.magnitude(x: x, y: y, z: z)
         guard force > threshold else { return false }
@@ -46,9 +30,8 @@ struct ShakeDetector {
     }
 }
 
-// MARK: - Karma
+// karma
 
-/// All the reputation ("Foodie Karma") rules in one place.
 enum KarmaCalculator {
     static let startingKarma = 100
     static let pointsPerLevel = 300
@@ -112,11 +95,8 @@ enum KarmaCalculator {
     }
 }
 
-// MARK: - QR check-in token
+// QR
 
-/// The text stored inside the pass QR code.
-/// Format:  SE|tableId|userId|seat|signature
-/// The signature stops people from making fake passes by hand.
 enum QRToken {
     private static let secret = "socialeats-checkin-v1"
 
@@ -125,7 +105,6 @@ enum QRToken {
         return payload + "|" + signature(for: payload)
     }
 
-    /// Returns the parts if the token is genuine, otherwise nil.
     static func verify(_ token: String) -> (tableId: String, userId: String, seat: Int)? {
         let parts = token.split(separator: "|").map(String.init)
         guard parts.count == 5, parts[0] == "SE", let seat = Int(parts[3]) else { return nil }
@@ -134,9 +113,6 @@ enum QRToken {
         return (parts[1], parts[2], seat)
     }
 
-    /// What goes INSIDE the QR picture: a link like
-    /// socialeats://checkin?t=SE|table|user|seat|signature
-    /// Because it's a link, the iPhone's normal Camera app can scan it and open SocialEats.
     static func checkInLink(for token: String) -> String {
         var link = URLComponents()
         link.scheme = "socialeats"
@@ -159,8 +135,6 @@ enum QRToken {
         return digest.map { String(format: "%02x", $0) }.joined().prefix(12).description
     }
 }
-
-// MARK: - Check-in (scanning a guest's pass QR)
 
 /// What the host sees after scanning a pass.
 enum CheckInResult: Equatable {
@@ -192,7 +166,7 @@ enum CheckIn {
     }
 }
 
-// MARK: - Filtering
+// filtering
 
 /// Options the user can filter tables by.
 struct TableFilterOptions: Equatable {
@@ -244,8 +218,6 @@ enum TableFilter {
         }
     }
 
-    /// Picks a random open table for Shake to Match.
-    /// Tables that match the user's favourite cuisines get picked first.
     static func randomMatch(from tables: [CommunityTable],
                             userId: String?,
                             favouriteCategories: [TableCategory],
@@ -265,7 +237,7 @@ enum TableFilter {
     }
 }
 
-// MARK: - Distance text
+// distance text
 
 enum DistanceText {
     /// Average walking speed: about 80 metres per minute

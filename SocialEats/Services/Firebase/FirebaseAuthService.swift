@@ -1,12 +1,4 @@
-//
 //  FirebaseAuthService.swift
-//  SocialEats
-//
-//  Real sign-in using Firebase Authentication (proposal Feature 1):
-//   • Phone number + 6-digit SMS OTP
-//   • Google Sign-In (SSO)
-//   • Email + password (for the "Phone or Email" field)
-//
 
 import Foundation
 import UIKit
@@ -14,7 +6,6 @@ import FirebaseCore
 import FirebaseAuth
 import GoogleSignIn
 
-/// Friendly error messages for sign-in problems.
 enum AuthServiceError: LocalizedError {
     case missingGoogleClientID
     case noScreenToPresentOn
@@ -35,25 +26,16 @@ enum AuthServiceError: LocalizedError {
 
 final class FirebaseAuthService: AuthServicing {
 
-    // MARK: - Current user
-
     var currentUserId: String? { Auth.auth().currentUser?.uid }
     var currentDisplayName: String? { Auth.auth().currentUser?.displayName }
     var currentPhone: String? { Auth.auth().currentUser?.phoneNumber }
     var currentEmail: String? { Auth.auth().currentUser?.email }
 
-    // MARK: - Phone OTP
-
-    /// The fake numbers added in Firebase > Authentication > Phone > "Phone numbers for testing".
-    /// They never get a real SMS (the code is fixed), so the "I'm not a robot" check is skipped for them.
     static let testPhoneNumbers: Set<String> = ["+94740584022", "+94761045068"]
 
     func sendOTP(to e164Phone: String) async throws -> String {
-        // Test numbers: skip the reCAPTCHA web page (only allowed for Firebase test numbers).
-        // Real numbers: Firebase checks the app is genuine (reCAPTCHA on a free Apple account).
         Auth.auth().settings?.isAppVerificationDisabledForTesting = Self.testPhoneNumbers.contains(e164Phone)
         do {
-            // Firebase sends the SMS and gives back a verification id
             return try await PhoneAuthProvider.provider().verifyPhoneNumber(e164Phone, uiDelegate: nil)
         } catch {
             throw Self.friendly(error)
@@ -72,8 +54,6 @@ final class FirebaseAuthService: AuthServicing {
             throw Self.friendly(error)
         }
     }
-
-    // MARK: - Google
 
     @MainActor
     func signInWithGoogle() async throws -> String {
@@ -102,14 +82,11 @@ final class FirebaseAuthService: AuthServicing {
         }
     }
 
-    // MARK: - Email
-
     func signInWithEmail(_ email: String, password: String) async throws -> String {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)
             return result.user.uid
         } catch {
-            // Not found (or hidden by email-enumeration protection) -> try creating the account
             let code = Self.authCode(error)
             guard code == .userNotFound || code == .invalidCredential else {
                 throw Self.friendly(error)
@@ -125,8 +102,6 @@ final class FirebaseAuthService: AuthServicing {
         }
     }
 
-    // MARK: - Forgot password
-
     func sendPasswordReset(to email: String) async throws {
         do {
             // Firebase sends the "reset your password" email for us
@@ -136,23 +111,17 @@ final class FirebaseAuthService: AuthServicing {
         }
     }
 
-    // MARK: - Sign out
-
     func signOut() throws {
         GIDSignIn.sharedInstance.signOut()
         try Auth.auth().signOut()
     }
 
-    // MARK: - Helpers
-
-    /// Reads the Firebase Auth error code from any error (nil if it isn't an Auth error).
     static func authCode(_ error: Error) -> AuthErrorCode? {
         let nsError = error as NSError
         guard nsError.domain == AuthErrorDomain else { return nil }
         return AuthErrorCode(rawValue: nsError.code)
     }
 
-    /// Converts Firebase error codes into simple sentences.
     static func friendly(_ error: Error) -> Error {
         guard let code = authCode(error) else { return error }
         let message: String

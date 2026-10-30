@@ -1,9 +1,4 @@
-//
 //  CreateTableView.swift
-//  SocialEats
-//
-//  Table Creator form opened from the + button (Feature 9).
-//
 
 import SwiftUI
 
@@ -57,8 +52,6 @@ struct CreateTableView: View {
             }
         }
     }
-
-    // MARK: - Cards
 
     private var basicsCard: some View {
         VStack(alignment: .leading, spacing: 10) {

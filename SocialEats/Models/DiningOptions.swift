@@ -1,15 +1,7 @@
-//
 //  DiningOptions.swift
-//  SocialEats
-//
-//  Small enums for the choices a user can make:
-//  food categories, dietary tags, ambience, cuisines and dining style.
-//  `String` raw values are what we save in Firestore.
-//
 
 import Foundation
 
-/// Category chips on the Dashboard and Map ("Pizza", "Sushi", "Cafe"...).
 enum TableCategory: String, CaseIterable, Identifiable, Codable {
     case pizza, sushi, cafe, student, tacos, ramen, burgers, asian, coWork
 
@@ -29,8 +21,6 @@ enum TableCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Name of the food photo in Assets.xcassets (Dashboard, Search, Map, Shake).
-    /// Some categories share a photo (Student Eats uses the pizza photo, like the design).
     var photoName: String {
         switch self {
         case .pizza, .student: return "food_pizza"
@@ -39,12 +29,10 @@ enum TableCategory: String, CaseIterable, Identifiable, Codable {
         case .cafe: return "food_cafe"
         case .coWork: return "food_cowork"
         case .ramen: return "food_ramen"
-        case .burgers: return "food_burgers"   // no photo yet -> emoji tile
+        case .burgers: return "food_burgers"
         }
     }
-
-    /// The bigger photos used on the Guest feed (prototype Figure 5).
-    /// If a category has no guest photo, the normal food photo is used.
+    
     var guestPhotoName: String {
         switch self {
         case .pizza, .student: return "guest_pizza"
@@ -54,7 +42,6 @@ enum TableCategory: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Emoji used on chips (and as the picture when there is no photo)
     var emoji: String {
         switch self {
         case .pizza: return "🍕"
@@ -70,7 +57,6 @@ enum TableCategory: String, CaseIterable, Identifiable, Codable {
     }
 }
 
-/// Dietary preference chips in Settings ("Vegetarian", "Halal"...).
 enum DietaryTag: String, CaseIterable, Identifiable, Codable {
     case vegetarian, vegan, halal, glutenFree, pescatarian, nutAllergy
 
@@ -98,11 +84,9 @@ enum DietaryTag: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// An allergy is a "must avoid" rather than a preference.
     var isAllergy: Bool { self == .nutAllergy }
 }
 
-/// "Dining Ambience" options on the Taste Profile screen.
 enum Ambience: String, CaseIterable, Identifiable, Codable {
     case chillCozy, techFounders, casualWine, quickLively, quietIntrovert
 
@@ -129,7 +113,6 @@ enum Ambience: String, CaseIterable, Identifiable, Codable {
     }
 }
 
-/// "Favorite Cuisines" list on the Taste Profile screen.
 enum Cuisine: String, CaseIterable, Identifiable, Codable {
     case neapolitanPizza, ramenNoodles, streetTacos, healthyBowls, bakeryCoffee
 
@@ -165,7 +148,6 @@ enum Cuisine: String, CaseIterable, Identifiable, Codable {
         }
     }
 
-    /// Which table categories match this cuisine (used for recommendations)
     var matchingCategories: [TableCategory] {
         switch self {
         case .neapolitanPizza: return [.pizza]
@@ -177,7 +159,6 @@ enum Cuisine: String, CaseIterable, Identifiable, Codable {
     }
 }
 
-/// "Dining Style" segmented control on the Taste Profile screen.
 enum DiningStyle: String, CaseIterable, Identifiable, Codable {
     case soloExplorer, socialButterfly, smallGroup
 

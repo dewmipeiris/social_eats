@@ -1,19 +1,8 @@
-//
 //  OtherModels.swift
-//  SocialEats
-//
-//  Smaller models: Reservation (offline pass), ChatMessage,
-//  ActivityItem (notification feed) and ReceiptScanResult (Vision OCR).
-//
 
 import Foundation
 
-// MARK: - Reservation
-
-/// A confirmed seat. Stored on the phone with Core Data so the
-/// pass + QR code still open with no internet (proposal Feature 8).
 struct Reservation: Identifiable, Equatable, Hashable {
-    /// Same as the table id (one seat per table per user)
     var id: String { tableId }
     var tableId: String
     var userId: String
@@ -30,7 +19,6 @@ struct Reservation: Identifiable, Equatable, Hashable {
     var isVerified: Bool
     var savedAt: Date
 
-    /// Builds a reservation from a table the user just joined.
     static func make(from table: CommunityTable, userId: String) -> Reservation {
         let seat = table.seatNumber(for: userId) ?? table.seatsFilled
         return Reservation(
@@ -51,19 +39,15 @@ struct Reservation: Identifiable, Equatable, Hashable {
         )
     }
 
-    /// True if the meal is in the future (or started less than 3 hours ago).
     var isUpcomingOrActive: Bool {
         startTime.addingTimeInterval(3 * 60 * 60) > Date()
     }
 }
 
-// MARK: - Chat
-
-/// One message in a table's group chat. Firestore: tables/{id}/messages/{msgId}
 struct ChatMessage: Identifiable, Equatable {
     enum Kind: String {
         case text
-        case system     // e.g. "Zero-Flake Reminder"
+        case system
     }
 
     var id: String
@@ -73,14 +57,9 @@ struct ChatMessage: Identifiable, Equatable {
     var sentAt: Date
     var isFromHost: Bool
     var kind: Kind = .text
-    /// True while the message is saved on the phone but not yet on the server
-    /// (e.g. no signal) — shows "Sending…" instead of "Delivered ✓".
     var isPending: Bool = false
 }
 
-// MARK: - Activity feed
-
-/// One row on the Notifications screen. Firestore: users/{uid}/activity/{id}
 struct ActivityItem: Identifiable, Equatable {
     enum Kind: String {
         case seatConfirmed
@@ -110,9 +89,6 @@ struct ActivityItem: Identifiable, Equatable {
     }
 }
 
-// MARK: - Receipt scanning
-
-/// What the Vision text recogniser found on a receipt.
 struct ReceiptScanResult: Equatable {
     var restaurantName: String?
     var total: Double?
@@ -120,7 +96,6 @@ struct ReceiptScanResult: Equatable {
     var timestamp: Date?
     var rawLines: [String]
 
-    /// How sure we are (0...1) that this is a complete receipt.
     var completeness: Double {
         var score = 0.0
         if restaurantName != nil { score += 0.4 }
@@ -130,7 +105,6 @@ struct ReceiptScanResult: Equatable {
     }
 }
 
-/// Result of checking a scanned receipt against the user's reservation.
 enum ReceiptValidation: Equatable {
     case verified(matchScore: Double)
     case venueMismatch(found: String?)

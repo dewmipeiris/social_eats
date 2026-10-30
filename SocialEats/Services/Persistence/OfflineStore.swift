@@ -1,11 +1,4 @@
-//
 //  OfflineStore.swift
-//  SocialEats
-//
-//  Easy-to-use functions on top of Core Data:
-//  save / load reservations (offline passes) and cache tables.
-//  ViewModels use the `OfflineStoring` protocol, never Core Data directly.
-//
 
 import Foundation
 import CoreData
@@ -29,10 +22,7 @@ final class CoreDataOfflineStore: OfflineStoring {
         self.persistence = persistence
     }
 
-    // MARK: - Reservations
-
     func saveReservation(_ reservation: Reservation) {
-        // Update the existing row if there is one, otherwise insert a new one
         let object = fetchReservationObject(tableId: reservation.tableId, userId: reservation.userId)
             ?? CDReservation(context: context)
 
@@ -103,14 +93,11 @@ final class CoreDataOfflineStore: OfflineStoring {
         )
     }
 
-    // MARK: - Cached tables
-
     func cacheTables(_ tables: [CommunityTable]) {
-        // Replace the whole cache with the latest list
         let deleteRequest = NSFetchRequest<CDCachedTable>(entityName: "CDCachedTable")
         let oldRows = (try? context.fetch(deleteRequest)) ?? []
         oldRows.forEach { context.delete($0) }
-        persistence.save()   // save the deletes first so new rows don't clash
+        persistence.save()  
 
         let encoder = JSONEncoder()
         for table in tables {

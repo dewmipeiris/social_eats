@@ -1,18 +1,8 @@
-//
 //  BiometricService.swift
-//  SocialEats
-//
-//  Face ID / Touch ID using the LocalAuthentication framework
-//  (proposal MVP Feature 6). Used to:
-//   • confirm a reservation (stops accidental taps and bot RSVPs)
-//   • cancel a seat
-//   • unlock the app ("Login with Face ID")
-//
 
 import Foundation
 import LocalAuthentication
 
-/// Which biometric the phone has (for button labels and icons).
 enum BiometricKind {
     case faceID, touchID, opticID, none
 
@@ -37,9 +27,7 @@ enum BiometricKind {
 
 protocol BiometricServicing {
     var availableKind: BiometricKind { get }
-    /// True when Face ID / Touch ID is set up and ready to use right now
     var isSetUp: Bool { get }
-    /// Shows the Face ID prompt. Returns true if the user passed.
     func authenticate(reason: String) async -> Result<Void, BiometricError>
 }
 
@@ -63,13 +51,9 @@ enum BiometricError: LocalizedError, Equatable {
 
 final class BiometricService: BiometricServicing {
 
-    /// Which sensor the phone HAS (even if Face ID isn't set up yet).
-    /// That way the button always says "Face ID", and if it isn't set up
-    /// the user gets a clear message instead of the feature silently disappearing.
     var availableKind: BiometricKind {
         let context = LAContext()
         var error: NSError?
-        // We ignore the true/false answer here: calling this fills in `biometryType`
         _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
         switch context.biometryType {
         case .faceID: return .faceID
@@ -88,18 +72,15 @@ final class BiometricService: BiometricServicing {
         context.localizedCancelTitle = "Cancel"
         context.localizedFallbackTitle = "Use Passcode"
 
-        // 1. Can this phone do biometrics at all?
         var checkError: NSError?
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &checkError) else {
             switch LAError.Code(rawValue: checkError?.code ?? 0) {
             case .biometryNotEnrolled: return .failure(.notEnrolled)
-            // Locked after too many wrong tries -> ask for the phone passcode instead
             case .biometryLockout: return await authenticateWithPasscode(reason: reason)
             default: return .failure(.notAvailable)
             }
         }
 
-        // 2. Show the system Face ID / Touch ID prompt
         do {
             let success = try await context.evaluatePolicy(
                 .deviceOwnerAuthenticationWithBiometrics,
@@ -118,7 +99,6 @@ final class BiometricService: BiometricServicing {
         }
     }
 
-    /// Shows the iPhone passcode screen. Entering it also unlocks Face ID / Touch ID again.
     private func authenticateWithPasscode(reason: String) async -> Result<Void, BiometricError> {
         let context = LAContext()
         do {
@@ -133,7 +113,6 @@ final class BiometricService: BiometricServicing {
     }
 }
 
-/// Test / preview version — always succeeds (or always fails).
 final class MockBiometricService: BiometricServicing {
     var shouldSucceed: Bool
     var availableKind: BiometricKind = .faceID

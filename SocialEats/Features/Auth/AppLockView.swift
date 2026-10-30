@@ -1,10 +1,4 @@
-//
 //  AppLockView.swift
-//  SocialEats
-//
-//  Shown when "Face ID Protection" is on and the app is opened again.
-//  Face ID runs automatically; the user can retry or sign out.
-//
 
 import SwiftUI
 
@@ -51,7 +45,7 @@ struct AppLockView: View {
         .frame(maxWidth: 480)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .screenBackground()
-        .task { await unlock() }      // try straight away
+        .task { await unlock() }     
     }
 
     private func unlock() async {

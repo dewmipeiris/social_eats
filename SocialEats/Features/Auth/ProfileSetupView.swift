@@ -1,12 +1,4 @@
-//
 //  ProfileSetupView.swift
-//  SocialEats
-//
-//  Prototype Figure 3 — "What's Your Dining Vibe?" (Taste Profile, Step 1 of 2)
-//  Used twice:
-//   • .onboarding -> before sign-in, choices are kept as a draft
-//   • .edit       -> from Profile, choices are saved to Firestore straight away
-//
 
 import SwiftUI
 
@@ -30,15 +22,12 @@ final class ProfileSetupViewModel: ObservableObject {
         if cuisines.contains(cuisine) { cuisines.remove(cuisine) } else { cuisines.insert(cuisine) }
     }
 
-    /// Fake-but-friendly "34 foodie tables matching your taste" count,
-    /// based on how many live tables match the chosen cuisines.
     func matchingCount(in tables: [CommunityTable]) -> Int {
         guard !cuisines.isEmpty else { return tables.count }
         let categories = Set(cuisines.flatMap(\.matchingCategories))
         return tables.filter { categories.contains($0.category) }.count
     }
 
-    /// Keeps the order the options appear in on screen.
     func makeDraft(dietary: [DietaryTag]) -> TasteProfileDraft {
         TasteProfileDraft(
             ambiences: Ambience.allCases.filter { ambiences.contains($0) },
@@ -68,7 +57,6 @@ struct ProfileSetupView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header: < [logo] Taste Profile Setup   (Step 1 of 2)
             HStack(spacing: 0) {
 
                 if mode == .edit {
@@ -124,7 +112,6 @@ struct ProfileSetupView: View {
                 .frame(maxWidth: .infinity)
             }
 
-            // Bottom button
             VStack(spacing: 8) {
                 LoadingButton(title: mode == .onboarding ? "Continue to Table Discovery" : "Save Taste Profile",
                               systemImage: "arrow.right",
@@ -144,7 +131,6 @@ struct ProfileSetupView: View {
         .toolbar(.hidden, for: .navigationBar)
     }
 
-    // MARK: - Cards
 
     private var ambienceCard: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -230,7 +216,6 @@ struct ProfileSetupView: View {
                 .font(AppFont.footnote)
                 .foregroundStyle(AppColors.textSecondary)
 
-            // Custom segmented control (coral selected segment like the design)
             HStack(spacing: 4) {
                 ForEach(DiningStyle.allCases) { style in
                     let isOn = viewModel.diningStyle == style
@@ -276,8 +261,6 @@ struct ProfileSetupView: View {
         .overlay(RoundedRectangle(cornerRadius: 14).stroke(AppColors.amber.opacity(0.3), lineWidth: 1))
         .accessibilityElement(children: .combine)
     }
-
-    // MARK: - Actions
 
     private func continueTapped() async {
         let draft = viewModel.makeDraft(dietary: settings.dietaryTags)

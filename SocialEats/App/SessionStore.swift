@@ -1,28 +1,15 @@
-//
 //  SessionStore.swift
-//  SocialEats
-//
-//  Decides WHICH part of the app is showing (the "phase") and keeps
-//  the signed-in user's profile + notification feed up to date.
-//
-//  Flow (matches the prototype):
-//   Onboarding ─ Get Started ─> Taste Profile (Step 1 of 2) ─> Sign In (Step 2 of 2) ─> Main app
-//        │                                                        ▲
-//        ├─ "Already part of a table? Sign In" ───────────────────┘
-//        └─ Skip ─> Guest browse (read-only)
-//
 
 import Foundation
 import Combine
 
-/// The big screens the app can be on.
 enum AppPhase: Equatable {
     case loading
     case onboarding
     case tasteProfile
     case signIn
     case guest
-    case locked        // waiting for Face ID
+    case locked
     case main
 }
 
@@ -32,12 +19,8 @@ final class SessionStore: ObservableObject {
     @Published private(set) var phase: AppPhase = .loading
     @Published private(set) var currentUser: AppUser?
     @Published private(set) var activity: [ActivityItem] = []
-    /// Choices from the Taste Profile screen, saved once the user signs in
     @Published var tasteDraft = TasteProfileDraft()
-    /// Set when a notification is tapped -> the Home tab opens that table
     @Published var pendingTableId: String?
-    /// Set when the iPhone Camera app scans a pass QR and opens SocialEats
-    /// -> RootView shows the check-in result
     @Published var scannedPass: ScannedPass?
 
     private let auth: AuthServicing
@@ -59,27 +42,16 @@ final class SessionStore: ObservableObject {
     var userId: String? { currentUser?.id ?? auth.currentUserId }
     var unreadCount: Int { activity.filter { !$0.isRead }.count }
     var biometricKind: BiometricKind { biometrics.availableKind }
-
-    /// True when the phone has Face ID / Touch ID (the button is shown and tappable)
     var canUseBiometricLogin: Bool {
         biometrics.availableKind != .none
     }
-
-    /// True when someone signed in on this phone before, so Face ID can log them back in
     var hasSavedAccount: Bool {
         auth.currentUserId != nil
     }
 
-    // MARK: - Start up
-
-    /// Called once when the app opens.
-    ///  • Nobody signed in  -> always start at Onboarding (prototype Figure 1)
-    ///  • Signed in before  -> "Welcome Back" with "Login with Face ID" (Figure 2),
-    ///                         or straight into the app if Face ID Protection is off
+// start up
+    
     func bootstrap() async {
-        // Only once per app launch. (The "not a robot" web page covers the whole
-        // screen; when it closes, SwiftUI runs RootView's .task again — without this
-        // check we'd jump back to Onboarding in the middle of signing in.)
         guard !hasBootstrapped else { return }
         hasBootstrapped = true
 
@@ -94,7 +66,7 @@ final class SessionStore: ObservableObject {
         }
     }
 
-    // MARK: - Onboarding navigation
+// onboarding navigation
 
     func startTasteProfile() {
         settings.hasSeenOnboarding = true
@@ -117,14 +89,12 @@ final class SessionStore: ObservableObject {
 
     func completeTasteProfile(_ draft: TasteProfileDraft) {
         tasteDraft = draft
-        // Copy dietary choices into Settings so filters work straight away
         if !draft.dietaryTags.isEmpty { settings.dietaryTags = draft.dietaryTags }
         phase = .signIn
     }
 
-    // MARK: - Signing in / out
+// signing out
 
-    /// Called by AuthViewModel after Firebase says the sign-in worked.
     func finishSignIn(userId: String) async {
         phase = .loading
         do {
@@ -142,7 +112,6 @@ final class SessionStore: ObservableObject {
                 currentUser = newUser
             }
         } catch {
-            // Offline on launch: continue with a basic profile, listeners will fill it in later
             currentUser = currentUser ?? AppUser.newMember(id: userId, name: defaultName(),
                                                            phone: auth.currentPhone, email: auth.currentEmail,
                                                            draft: tasteDraft)
@@ -156,7 +125,6 @@ final class SessionStore: ObservableObject {
         phase = .main
     }
 
-    /// Name for a brand-new profile: Google name, else email name, else "Foodie 4567".
     private func defaultName() -> String {
         if let name = auth.currentDisplayName, !name.isEmpty { return name }
         if let email = auth.currentEmail, let first = email.components(separatedBy: "@").first {
@@ -168,8 +136,6 @@ final class SessionStore: ObservableObject {
         return "Foodie"
     }
 
-    /// "Login with Face ID" / unlocking the app.
-    /// Returns an error message, or nil on success.
     func unlockWithBiometrics() async -> String? {
         guard let uid = auth.currentUserId else {
             return "Sign in once with your phone number below. Next time you open SocialEats, Face ID logs you straight in."
@@ -178,7 +144,7 @@ final class SessionStore: ObservableObject {
         switch result {
         case .success:
             if currentUser?.id == uid {
-                phase = .main          // re-unlock after backgrounding: keep everything loaded
+                phase = .main
             } else {
                 await finishSignIn(userId: uid)
             }
@@ -199,18 +165,16 @@ final class SessionStore: ObservableObject {
         phase = .signIn
     }
 
-    /// Called when the app goes to the background with Face ID Protection on.
     func lockApp() {
         guard phase == .main else { return }
         phase = .locked
     }
 
-    /// Guest wants to create an account
     func leaveGuestMode() {
         phase = .tasteProfile
     }
 
-    // MARK: - Profile updates
+// profile updates
 
     func updateProfile(_ user: AppUser) async throws {
         try await users.saveUser(user)
@@ -223,7 +187,7 @@ final class SessionStore: ObservableObject {
         try? await users.markActivityRead(userId: uid, itemIds: unreadIds)
     }
 
-    // MARK: - Live listeners
+// live listeners
 
     private func startListeners(userId: String) {
         userListener?.remove()

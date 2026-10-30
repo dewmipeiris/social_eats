@@ -1,13 +1,4 @@
-//
 //  ReceiptScannerViewModel.swift
-//  SocialEats
-//
-//  Proposal Advanced Feature 1 — On-Device Vision AI Receipt Scanner.
-//   1. Live camera frames -> Vision OCR (fast) -> fields auto-detected
-//   2. Capture / pick photo -> Vision OCR (accurate) -> ReceiptParser
-//   3. Validate against the user's active reservation (venue + time)
-//   4. Verified -> Firestore receipt + karma points + pass marked complete
-//
 
 import Foundation
 import UIKit
@@ -19,7 +10,7 @@ final class ReceiptScannerViewModel: ObservableObject {
     enum Phase: Equatable {
         case scanning
         case processing
-        case reviewed            // fields found, waiting for "Verify & Claim"
+        case reviewed
         case claiming
         case success(points: Int)
     }
@@ -48,15 +39,12 @@ final class ReceiptScannerViewModel: ObservableObject {
         self.reservations = reservations
         self.session = session
 
-        // Parse every live OCR result so the card fills in as you aim
         camera.$liveLines
             .filter { !$0.isEmpty }
             .map { ReceiptParser.parse(lines: $0) }
             .sink { [weak self] result in self?.liveResult = result }
             .store(in: &cancellables)
 
-        // The camera is its own ObservableObject — pass its changes on
-        // so the view refreshes when the camera starts / is denied
         camera.objectWillChange
             .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &cancellables)
@@ -69,17 +57,14 @@ final class ReceiptScannerViewModel: ObservableObject {
                   reservations: container.reservations, session: container.session)
     }
 
-    // MARK: - Which meal are we verifying?
-
-    /// Tables the user joined that are happening around now and not yet verified.
     var eligibleTables: [CommunityTable] {
         guard let uid = session.userId else { return [] }
         let verifiedIds = Set(reservations.savedPasses(for: uid).filter(\.isVerified).map(\.tableId))
         let now = Date()
         return tablesStore.joinedTables(userId: uid).filter { table in
             !verifiedIds.contains(table.id)
-                && table.startTime < now.addingTimeInterval(3 * 3600)     // starts within 3 h
-                && table.startTime > now.addingTimeInterval(-8 * 3600)    // or started < 8 h ago
+                && table.startTime < now.addingTimeInterval(3 * 3600)
+                && table.startTime > now.addingTimeInterval(-8 * 3600)
         }
     }
 
@@ -88,22 +73,18 @@ final class ReceiptScannerViewModel: ObservableObject {
         return tablesStore.table(id: selectedTableId)
     }
     
-    /// Your next joined table that is too far ahead to scan yet
-    /// (used to explain WHY the scanner is empty)
     var nextUpcomingTable: CommunityTable? {
         guard let uid = session.userId else { return nil }
         let opensAt = Date().addingTimeInterval(3 * 3600)
         return tablesStore.joinedTables(userId: uid).first { $0.startTime >= opensAt }
     }
 
-    /// "Vision AI: Artisan Pizza (+200 pts)" chip on the camera view
     var liveChipText: String? {
         guard let live = liveResult, let name = live.restaurantName else { return nil }
         let points = KarmaCalculator.pointsForVerifiedMeal(isHost: selectedTable?.isHost(session.userId) ?? false)
         return "Vision AI: \(name) (+\(points) pts)"
     }
 
-    /// Venue match % for the "99.4% Match" badge
     var matchPercent: Int? {
         if case .verified(let score)? = validation { return Int(score * 100) }
         return nil
@@ -113,12 +94,9 @@ final class ReceiptScannerViewModel: ObservableObject {
         KarmaCalculator.pointsForVerifiedMeal(isHost: selectedTable?.isHost(session.userId) ?? false)
     }
 
-    // MARK: - Camera
-
     func startCamera() { camera.start() }
     func stopCamera() { camera.stop() }
 
-    /// Shutter button: accurate OCR on the current frame.
     func captureFromCamera() async {
         guard let image = camera.captureCurrentFrame() else {
             errorMessage = "Camera isn't ready yet. Try again in a second."
@@ -127,7 +105,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         await analyse(image)
     }
 
-    /// Photo library (also how you test on the Simulator).
     func analyse(_ image: UIImage) async {
         phase = .processing
         errorMessage = nil
@@ -145,8 +122,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         }
     }
 
-    /// Simulator only (no camera): prints a test receipt for the selected
-    /// table and sends it through the same Vision OCR as a real photo.
     func scanTestReceipt() async {
         guard let table = selectedTable else {
             errorMessage = "Join a table first — receipts are matched to your reservation."
@@ -156,7 +131,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         await analyse(image)
     }
 
-    /// Re-check when the user picks another table.
     func revalidate() {
         if let scanResult { validate(scanResult) }
     }
@@ -170,9 +144,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         validation = ReceiptParser.validate(result, venueName: table.venueName, meetupStart: table.startTime)
     }
 
-    /// "Edit" next to TIMESTAMP (prototype Figure 14): fixes a time the
-    /// OCR misread. Only the time can be edited — the restaurant name and
-    /// total always come from the receipt, so the check can't be faked.
     func updateTimestamp(_ date: Date) {
         guard var result = scanResult else { return }
         result.timestamp = date
@@ -186,8 +157,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         errorMessage = nil
         phase = .scanning
     }
-
-    // MARK: - Claim karma
 
     func verifyAndClaim() async {
         guard let table = selectedTable, let uid = session.userId,
@@ -203,7 +172,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         }
     }
 
-    /// "Rate Your Tablemates" stars (+15 karma each)
     func rate(tablemateId: String, stars: Int) async {
         guard let table = selectedTable, let uid = session.userId,
               ratedTablemates[tablemateId] == nil else { return }
@@ -211,7 +179,6 @@ final class ReceiptScannerViewModel: ObservableObject {
         try? await reservations.rate(tablemateId: tablemateId, stars: stars, table: table, raterId: uid)
     }
 
-    /// Everyone at the table except me (for the rating list)
     var tablemates: [(id: String, name: String)] {
         guard let table = selectedTable else { return [] }
         return zip(table.attendeeIds, table.attendeeNames)

@@ -1,26 +1,13 @@
-//
 //  TableCards.swift
-//  SocialEats
-//
-//  The table cards used on the Dashboard, Guest feed, Search and Map.
-//
-//  FOOD PHOTOS live in Assets.xcassets (food_pizza, food_sushi, guest_pizza ...).
-//  Which photo each category uses is decided in DiningOptions.swift (photoName).
-//  If a photo is missing, a coloured tile with the food emoji is shown instead.
-//
 
 import SwiftUI
 import UIKit
 
-/// Shows the food photo for a category, or a coloured emoji tile if there is no photo.
-/// Used for big pictures (guest feed, search) — fills its frame.
 struct FoodPhoto: View {
     let category: TableCategory
     var emojiSize: CGFloat = 70
-    /// true = use the bigger Guest feed photo (guest_pizza ...)
     var forGuestFeed: Bool = false
 
-    /// Picks which photo name to use
     private var imageName: String {
         if forGuestFeed && UIImage(named: category.guestPhotoName) != nil {
             return category.guestPhotoName
@@ -30,13 +17,9 @@ struct FoodPhoto: View {
 
     var body: some View {
         if UIImage(named: imageName) != nil {
-            // Real photo from Assets.xcassets
             Image(imageName)
                 .resizable()
                 .scaledToFill()
-                // The photo is bigger than its box (it's cut off with .clipped()),
-                // but the hidden part would still catch taps and block buttons
-                // like "Preview Table". So the photo ignores taps.
                 .allowsHitTesting(false)
         } else {
             // No photo yet -> coloured tile with the emoji
@@ -48,13 +31,11 @@ struct FoodPhoto: View {
     }
 }
 
-/// Small square food picture for a table (cards, lists, map sheet).
 struct TableThumbnail: View {
     let category: TableCategory
     var size: CGFloat = 76
     var cornerRadius: CGFloat = 14
 
-    /// Each category gets its own warm colour
     private var tint: Color {
         switch category {
         case .pizza, .student: return AppColors.primary
@@ -72,9 +53,8 @@ struct TableThumbnail: View {
                 Image(category.photoName)
                     .resizable()
                     .scaledToFill()
-                    .allowsHitTesting(false)   // hidden overflow must not block taps
+                    .allowsHitTesting(false)
             } else {
-                // No photo yet -> coloured tile with the emoji
                 Rectangle()
                     .fill(LinearGradient(colors: [tint.opacity(0.28), tint.opacity(0.12)],
                                          startPoint: .topLeading, endPoint: .bottomTrailing))
@@ -87,8 +67,6 @@ struct TableThumbnail: View {
     }
 }
 
-/// Dashboard row card (prototype Figure 6):
-/// [🍕 TODAY] Taco Tuesday Meetup / Chili's Cafe • 400m away / ● 3/4 Seats Filled   [bookmark]
 struct TableRowCard: View {
     let table: CommunityTable
     let distanceText: String
@@ -169,7 +147,6 @@ struct TableRowCard: View {
     }
 }
 
-/// Big photo-style card used on the Guest feed (prototype Figure 5).
 struct TableFeatureCard: View {
     let table: CommunityTable
     let distanceText: String
@@ -206,7 +183,6 @@ struct TableFeatureCard: View {
             }
             .clipShape(UnevenRoundedRectangle(topLeadingRadius: AppLayout.cardRadius, topTrailingRadius: AppLayout.cardRadius))
 
-            // Host row + button
             VStack(spacing: 10) {
                 HStack(spacing: 10) {
                     AvatarView(name: table.hostName, size: 36)

@@ -1,16 +1,7 @@
-//
 //  Buttons.swift
-//  SocialEats
-//
-//  Reusable button styles that match the prototype:
-//  - PrimaryButtonStyle   -> big coral "Get Started →" button
-//  - SecondaryButtonStyle -> white outlined "Continue with Google" button
-//  - SoftButtonStyle      -> peach "Preview Table" / "Get Directions" button
-//
 
 import SwiftUI
 
-/// Big coral button used for the main action on every screen.
 struct PrimaryButtonStyle: ButtonStyle {
     var isEnabled: Bool = true
 
@@ -24,13 +15,11 @@ struct PrimaryButtonStyle: ButtonStyle {
                     .fill(AppColors.primary.opacity(isEnabled ? 1 : 0.45))
             )
             .shadow(color: AppColors.primary.opacity(isEnabled ? 0.25 : 0), radius: 8, y: 4)
-            // Small "press down" effect for a nicer feel
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
 
-/// White button with a thin border (Google sign-in).
 struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -50,7 +39,6 @@ struct SecondaryButtonStyle: ButtonStyle {
     }
 }
 
-/// Peach-coloured button (e.g. "Preview Table", "Get Walking Directions").
 struct SoftButtonStyle: ButtonStyle {
     var tint: Color = AppColors.primary
 
@@ -71,7 +59,6 @@ struct SoftButtonStyle: ButtonStyle {
     }
 }
 
-/// A primary button that shows a spinner while `isLoading` is true.
 struct LoadingButton: View {
     let title: String
     var systemImage: String? = nil
@@ -99,7 +86,6 @@ struct LoadingButton: View {
     }
 }
 
-/// Round icon button used in the top bars (search, bell, back).
 struct CircleIconButton: View {
     let systemImage: String
     let accessibilityText: String

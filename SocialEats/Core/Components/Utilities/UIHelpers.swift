@@ -1,19 +1,12 @@
-//
 //  UIHelpers.swift
-//  SocialEats
-//
-//  Small helpers used by views: date text, haptic feedback,
-//  QR code images and a "device was shaken" fallback for the Simulator.
-//
 
 import SwiftUI
 import UIKit
 import CoreImage.CIFilterBuiltins
 
-// MARK: - Dates
+// dates
 
 extension Date {
-    /// "Today, 7:00 PM" / "Tomorrow, 1:15 PM" / "Fri 24 Oct, 7:30 PM"
     var friendlyDayTime: String {
         let calendar = Calendar.current
         let time = formatted(date: .omitted, time: .shortened)
@@ -22,20 +15,17 @@ extension Date {
         return formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)) + ", " + time
     }
 
-    /// "7:05 PM"
     var shortTime: String {
         formatted(date: .omitted, time: .shortened)
     }
 
-    /// "2h ago", "Just now"
     var relativeText: String {
         if abs(timeIntervalSinceNow) < 60 { return "Just now" }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
         return formatter.localizedString(for: self, relativeTo: Date())
     }
-
-    /// Short label shown on the table card image: "TODAY", "7:30 PM", "SAT"
+    
     var cardBadgeText: String {
         let calendar = Calendar.current
         if calendar.isDateInToday(self) {
@@ -46,11 +36,9 @@ extension Date {
     }
 }
 
-// MARK: - Haptics
+// haptics
 
-/// Small vibration feedback (e.g. when a shake is detected).
 enum Haptics {
-    /// Settings > Accessibility > "Vibration Feedback" (on by default)
     static let enabledKey = "settings.haptics"
     private static var isEnabled: Bool {
         UserDefaults.standard.object(forKey: enabledKey) as? Bool ?? true
@@ -79,9 +67,8 @@ enum Haptics {
     }
 }
 
-// MARK: - QR code
+// qr code
 
-/// Makes a sharp QR code image from text, fully offline (Core Image).
 enum QRCodeGenerator {
     private static let context = CIContext()
 
@@ -99,16 +86,11 @@ enum QRCodeGenerator {
     }
 }
 
-// MARK: - Shake fallback (Simulator: Device > Shake)
-
 extension UIDevice {
-    /// Posted when the system detects a shake gesture.
     static let deviceDidShake = Notification.Name("SocialEatsDeviceDidShake")
 }
 
 extension UIWindow {
-    /// The Simulator has no accelerometer, so we also listen to the
-    /// built-in shake gesture (Simulator menu: Device > Shake).
     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             NotificationCenter.default.post(name: UIDevice.deviceDidShake, object: nil)
@@ -133,16 +115,14 @@ extension View {
     }
 }
 
-// MARK: - Reduce Motion aware animation
+// motion aware animation
 
 extension View {
-    /// Uses the animation only if the user has NOT turned on Reduce Motion.
     func motionSafeAnimation<V: Equatable>(_ animation: Animation?, value: V, reduceMotion: Bool) -> some View {
         self.animation(reduceMotion ? nil : animation, value: value)
     }
 }
 
-// MARK: - Top view controller (needed by Google Sign-In)
 
 extension UIApplication {
     /// The view controller currently on screen.

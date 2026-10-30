@@ -1,11 +1,4 @@
-//
 //  PassViews.swift
-//  SocialEats
-//
-//  Prototype Figure 13 — Digital Dining Pass ("Offline Vault Mode").
-//  Proposal MVP Feature 8: everything here is read from CORE DATA,
-//  so it opens in a basement restaurant with zero signal.
-//
 
 import SwiftUI
 import MapKit
@@ -33,7 +26,6 @@ final class PassViewModel: ObservableObject {
         func load(tableId: String) {
             guard let uid = session.userId else { return }
             if let table = tablesStore.table(id: tableId) {
-                // Online: also rebuilds the pass if you joined on another device
                 reservation = reservations.restorePassIfNeeded(for: table, userId: uid)
             } else {
                 // Offline: only what's saved in Core Data
@@ -43,7 +35,6 @@ final class PassViewModel: ObservableObject {
 
         func loadAll() {
             guard let uid = session.userId else { return }
-            // Save a pass for every table you've joined (even from another device)
             for table in tablesStore.tables where table.isAttending(uid) {
                 _ = reservations.restorePassIfNeeded(for: table, userId: uid)
             }
@@ -53,14 +44,11 @@ final class PassViewModel: ObservableObject {
     var upcomingPasses: [Reservation] { allPasses.filter { $0.isUpcomingOrActive && !$0.isVerified } }
     var pastPasses: [Reservation] { allPasses.filter { !$0.isUpcomingOrActive || $0.isVerified } }
 
-    /// Same QR token check the host's scanner would do
     var isTokenValid: Bool {
         guard let reservation else { return false }
         return QRToken.verify(reservation.qrToken) != nil
     }
 }
-
-// MARK: - Single pass
 
 struct DigitalPassView: View {
     let tableId: String
@@ -107,7 +95,6 @@ struct DigitalPassView: View {
 
     private func passContent(_ pass: Reservation) -> some View {
         VStack(spacing: 14) {
-            // "● Offline Vault Mode Enabled        Local CoreData"
             HStack {
                 Label(network.isOnline ? "Saved for Offline Use" : "Offline Vault Mode Enabled",
                       systemImage: "circle.fill")
@@ -139,7 +126,6 @@ struct DigitalPassView: View {
                     .font(AppFont.footnote)
                     .foregroundStyle(AppColors.textSecondary)
 
-                // Date / time / table / seat grid
                 Grid(alignment: .leading, horizontalSpacing: 24, verticalSpacing: 12) {
                     GridRow {
                         passField("DATE", pass.startTime.formatted(.dateTime.weekday(.abbreviated).day().month()))
@@ -154,7 +140,6 @@ struct DigitalPassView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(RoundedRectangle(cornerRadius: 14).fill(AppColors.surfaceMuted))
 
-                // Ticket tear line
                 Line()
                     .stroke(style: StrokeStyle(lineWidth: 1, dash: [6]))
                     .foregroundStyle(AppColors.border)
@@ -223,7 +208,6 @@ struct DigitalPassView: View {
     }
 }
 
-/// Horizontal dashed line (ticket tear).
 struct Line: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -233,7 +217,6 @@ struct Line: Shape {
     }
 }
 
-/// Label style that shows a coloured dot instead of the icon.
 struct DotLabelStyle: LabelStyle {
     var color: Color
     func makeBody(configuration: Configuration) -> some View {
@@ -243,8 +226,6 @@ struct DotLabelStyle: LabelStyle {
         }
     }
 }
-
-// MARK: - All passes
 
 struct MyPassesView: View {
     @EnvironmentObject private var navigation: NavigationModel

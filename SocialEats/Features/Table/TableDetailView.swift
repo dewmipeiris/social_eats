@@ -1,9 +1,4 @@
-//
 //  TableDetailView.swift
-//  SocialEats
-//
-//  Prototype Figure 12 — Restaurant Detail / Community Table.
-//
 
 import SwiftUI
 import UIKit
@@ -12,13 +7,10 @@ import MapKit
 struct TableDetailView: View {
     @EnvironmentObject private var navigation: NavigationModel
     @Environment(\.dismiss) private var dismiss
-    /// Table id of the pass to open after the RSVP popup closes
     @State private var passToOpen: String?
     @StateObject private var viewModel: TableDetailViewModel
     @State private var showsCancelConfirm = false
-    /// Host only: the "Edit Meetup Time" sheet
     @State private var showsEditTime = false
-    /// Host only: scan a guest's pass
     @State private var showsCheckIn = false
     @State private var newTime = Date()
 
@@ -44,9 +36,6 @@ struct TableDetailView: View {
         .toolbar(.hidden, for: .navigationBar)
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.stop() }
-        // Step 1: "View Offline Pass" remembers which pass to open and closes the popup.
-        // Step 2: when the popup has FULLY closed (onDismiss), we open the pass screen.
-        // (Opening a new screen while a popup is still closing doesn't work in SwiftUI.)
         .sheet(item: $viewModel.confirmedReservation, onDismiss: openWaitingPass) { reservation in
             ReservationConfirmedSheet(reservation: reservation) {
                 passToOpen = reservation.tableId
@@ -63,7 +52,7 @@ struct TableDetailView: View {
                 } message: {
                     Text("Your seat will be released for someone else. Face ID or Touch ID is needed to confirm.")
                 }
-        // Host only: pick a new time for the meetup
+
         .sheet(isPresented: $showsEditTime) {
             EditTimeSheet(newTime: $newTime, isSaving: viewModel.isWorking,
                           errorMessage: viewModel.errorMessage) {
@@ -80,14 +69,11 @@ struct TableDetailView: View {
         }
     }
 
-    /// Opens the offline pass once the RSVP popup has finished closing.
     private func openWaitingPass() {
         guard let tableId = passToOpen else { return }
         passToOpen = nil
         navigation.open(.pass(tableId), on: navigation.selectedTab)
     }
-
-    // MARK: - Main content
 
     private func content(_ table: CommunityTable) -> some View {
         ScrollView {
@@ -122,8 +108,6 @@ struct TableDetailView: View {
 
     private func hero(_ table: CommunityTable) -> some View {
         ZStack(alignment: .bottomLeading) {
-            // Restaurant photo at the top (prototype Figure 12).
-            // Uses "table_hero" from Assets; if it's missing, the food photo instead.
             Group {
                 if UIImage(named: "table_hero") != nil {
                     Image("table_hero")
@@ -289,7 +273,7 @@ struct TableDetailView: View {
                     }
                 }
             }
-            // Seat bar
+            
             HStack(spacing: 4) {
                 ForEach(0..<table.capacity, id: \.self) { index in
                     RoundedRectangle(cornerRadius: 3)
@@ -344,14 +328,11 @@ struct TableDetailView: View {
                 }
                 .frame(height: 170)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
-                // Tapping the small map also opens Apple Maps
                 .onTapGesture { viewModel.openWalkingDirections() }
                 .accessibilityLabel("Map showing \(table.venueName)")
                 .accessibilityAddTraits(.isButton)
                 .accessibilityHint("Opens walking directions in Apple Maps")
 
-                // Venue card: the whole card (including the green "Open" badge)
-                // is a button that opens walking directions in Apple Maps.
                 Button {
                     viewModel.openWalkingDirections()
                 } label: {
@@ -382,7 +363,6 @@ struct TableDetailView: View {
         }
     }
 
-    /// Extra buttons for people who already have a seat.
     private func memberActions(_ table: CommunityTable) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
@@ -401,7 +381,6 @@ struct TableDetailView: View {
                 .buttonStyle(SoftButtonStyle())
             }
             if viewModel.isHost {
-                // Hosts can move their table to a new time
                 Button {
                     newTime = table.startTime
                     showsEditTime = true
@@ -413,7 +392,6 @@ struct TableDetailView: View {
                 }
                 .accessibilityHint("Change when your table meets")
 
-                // Hosts scan their guests' pass QR codes on arrival
                 Button {
                     showsCheckIn = true
                 } label: {
@@ -468,8 +446,6 @@ struct TableDetailView: View {
         .background(AppColors.surface.shadow(.drop(color: .black.opacity(0.08), radius: 8, y: -2)))
     }
 }
-
-// MARK: - RSVP Confirmed sheet (Figure 11)
 
 struct ReservationConfirmedSheet: View {
     let reservation: Reservation
@@ -536,9 +512,6 @@ struct ReservationConfirmedSheet: View {
     }
 }
 
-/// QR code image built on the phone (no internet needed).
-/// `text` is the pass token; the picture holds it as a socialeats://checkin link
-/// so the iPhone Camera app can scan it (see QRToken.checkInLink).
 struct QRCodeView: View {
     let text: String
     var size: CGFloat = 180
@@ -558,13 +531,12 @@ struct QRCodeView: View {
         }
         .frame(width: size, height: size)
         .padding(12)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))   // QR always on white so it scans
+        .background(RoundedRectangle(cornerRadius: 16).fill(Color.white))
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(AppColors.border, lineWidth: 1))
         .accessibilityLabel("Check-in QR code")
     }
 }
 
-/// Host only: small sheet with a date & time picker to move the meetup.
 struct EditTimeSheet: View {
     @Binding var newTime: Date
     let isSaving: Bool
@@ -580,13 +552,11 @@ struct EditTimeSheet: View {
                     .foregroundStyle(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
 
-                // Only future times, up to 7 days ahead
                 DatePicker("Meetup time", selection: $newTime,
                            in: Date()...Date().addingTimeInterval(7 * 24 * 60 * 60))
                     .datePickerStyle(.compact)
                     .font(AppFont.body)
 
-                // If saving fails, show why HERE (not behind the popup)
                 if let errorMessage {
                     Text(errorMessage)
                         .font(AppFont.footnote)

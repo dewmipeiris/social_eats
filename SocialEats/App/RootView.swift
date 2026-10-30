@@ -1,10 +1,4 @@
-//
 //  RootView.swift
-//  SocialEats
-//
-//  Shows the right screen for the current AppPhase and applies the
-//  Light / Dark / System theme chosen in Settings to the WHOLE app.
-//
 
 import SwiftUI
 
@@ -15,9 +9,6 @@ struct RootView: View {
     @EnvironmentObject private var tablesStore: TablesStore
     @Environment(\.scenePhase) private var scenePhase
 
-    /// The scanned pass is shown only once the app is signed in and the
-    /// tables have loaded. If SocialEats was closed when the QR was scanned,
-    /// it waits instead of showing an empty screen.
     private var scannedPassWhenReady: Binding<ScannedPass?> {
         Binding(
             get: {
@@ -57,8 +48,6 @@ struct RootView: View {
         // Settings > Accessibility > Text Size slider (applies to every screen)
         .dynamicTypeSize(settings.textSize.dynamicTypeSize)
         .tint(AppColors.primary)
-        // A guest's pass was scanned with the iPhone Camera app -> show the check-in result
-        // (waits until the app is signed in and the tables have loaded)
         .sheet(item: scannedPassWhenReady) { pass in
             CheckInResultView(scannedText: pass.id)
                 .environmentObject(container.tablesStore)
@@ -87,7 +76,6 @@ struct RootView: View {
     }
 }
 
-/// Simple splash while we check who is signed in.
 struct LaunchView: View {
     var body: some View {
         VStack(spacing: 16) {

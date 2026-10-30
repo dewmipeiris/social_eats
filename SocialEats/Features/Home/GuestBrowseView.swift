@@ -1,11 +1,4 @@
-//
 //  GuestBrowseView.swift
-//  SocialEats
-//
-//  Prototype Figure 5 — Quick Browse (after tapping "Skip").
-//  Guests can look at live tables (read-only) but must create an
-//  account to take a seat.
-//
 
 import SwiftUI
 
@@ -171,7 +164,6 @@ struct GuestBrowseView: View {
     }
 }
 
-/// Read-only preview sheet for guests.
 private struct GuestTablePreview: View {
     let table: CommunityTable
     let onJoin: () -> Void

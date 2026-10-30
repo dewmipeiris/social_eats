@@ -1,14 +1,4 @@
-//
 //  AuthViewModel.swift
-//  SocialEats
-//
-//  All sign-in logic for Feature 1 (Authentication & Onboarding):
-//   1. User types a phone number -> E.164 smart validation
-//   2. Firebase sends a 6-digit SMS code (with a 30 s resend timer)
-//   3. User enters the code -> verified -> profile created in Firestore
-//  Also: Google, email + password (with Forgot password) and "Login with Face ID".
-//  (Sign in with Apple needs a paid Apple Developer account, so it isn't included.)
-//
 
 import Foundation
 import Combine
@@ -17,13 +7,13 @@ import Combine
 final class AuthViewModel: ObservableObject {
 
     enum Step: Equatable {
-        case enterDetails     // Figure 2 — Member Sign In
-        case enterCode        // Figure 4 — Smart Auth & OTP
+        case enterDetails
+        case enterCode
     }
 
     // MARK: - Inputs (bound to text fields)
-    @Published var identifierInput = ""      // "Phone or Email" field
-    @Published var phoneInput = ""           // "Direct Mobile Access" field
+    @Published var identifierInput = ""
+    @Published var phoneInput = ""
     @Published var country = PhoneNumberValidator.defaultCountry
     @Published var otpCode = "" {
         didSet {
@@ -59,8 +49,6 @@ final class AuthViewModel: ObservableObject {
         self.session = session
     }
 
-    // MARK: - Validation (drives the green tick + button state)
-
     var isPhoneValid: Bool {
         PhoneNumberValidator.isValid(phoneInput, country: country)
     }
@@ -85,9 +73,6 @@ final class AuthViewModel: ObservableObject {
         verifiedPhone.map(PhoneNumberValidator.masked) ?? ""
     }
 
-    // MARK: - Phone OTP
-
-    /// "Send Login Code" button
     func sendCode() async {
         errorMessage = nil
         guard let e164 = PhoneNumberValidator.toE164(phoneInput, country: country) else {
@@ -98,7 +83,6 @@ final class AuthViewModel: ObservableObject {
         await requestCode(for: e164)
     }
 
-    /// "Continue" on the Phone or Email field — works out which one it is.
     func continueWithIdentifier() async {
         errorMessage = nil
         switch identifierKind {
@@ -159,7 +143,6 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    /// "Change Phone Number"
     func changePhoneNumber() {
         timerTask?.cancel()
         otpCode = ""
@@ -178,7 +161,6 @@ final class AuthViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Other providers
 
     func signInWithGoogle() async {
         await runProvider { try await self.auth.signInWithGoogle() }
@@ -197,7 +179,6 @@ final class AuthViewModel: ObservableObject {
         await runProvider { try await self.auth.signInWithEmail(self.emailForPassword, password: self.password) }
     }
 
-    /// "Forgot password?" on the email sheet
     func forgotPassword() async {
         errorMessage = nil
         resetMessage = nil
@@ -215,7 +196,6 @@ final class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    /// "Login with Face ID" (only works if you've signed in on this phone before)
     func loginWithFaceID() async {
         errorMessage = await session.unlockWithBiometrics()
     }
@@ -227,12 +207,9 @@ final class AuthViewModel: ObservableObject {
             let uid = try await signIn()
             await session.finishSignIn(userId: uid)
         } catch AuthServiceError.cancelled {
-            // User closed the sheet — not an error worth showing
         } catch {
             let nsError = error as NSError
-            // Google Sign-In "cancelled" is code -5
             if nsError.domain == "com.google.GIDSignIn", nsError.code == -5 {
-                // ignore
             } else {
                 errorMessage = error.localizedDescription
                 Haptics.error()

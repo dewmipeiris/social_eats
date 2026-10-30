@@ -1,22 +1,7 @@
-//
 //  PersistenceController.swift
-//  SocialEats
-//
-//  Core Data local storage (proposal MVP Feature 8 — Offline Reservation Pass).
-//
-//  We build the Core Data model IN CODE (instead of an .xcdatamodeld file)
-//  so every attribute is visible and commented right here.
-//
-//  Two entities:
-//   • CDReservation  – confirmed seats + QR token (works with no internet)
-//   • CDCachedTable  – last downloaded tables, so the Dashboard still
-//                      shows something when you're offline
-//
 
 import Foundation
 import CoreData
-
-// MARK: - Managed object classes
 
 @objc(CDReservation)
 final class CDReservation: NSManagedObject {
@@ -39,16 +24,12 @@ final class CDReservation: NSManagedObject {
 @objc(CDCachedTable)
 final class CDCachedTable: NSManagedObject {
     @NSManaged var tableId: String
-    /// The whole table encoded as JSON
     @NSManaged var payload: Data
     @NSManaged var updatedAt: Date
 }
 
-// MARK: - Model built in code
-
 enum SocialEatsModel {
 
-    /// Creates the NSManagedObjectModel once (Core Data needs a single shared model).
     static let shared: NSManagedObjectModel = {
         let model = NSManagedObjectModel()
 
@@ -60,7 +41,6 @@ enum SocialEatsModel {
             return attribute
         }
 
-        // Reservation entity
         let reservation = NSEntityDescription()
         reservation.name = "CDReservation"
         reservation.managedObjectClassName = NSStringFromClass(CDReservation.self)
@@ -80,10 +60,9 @@ enum SocialEatsModel {
             attribute("isVerified", .booleanAttributeType),
             attribute("savedAt", .dateAttributeType)
         ]
-        // One reservation per (table, user)
+
         reservation.uniquenessConstraints = [["tableId", "userId"]]
 
-        // Cached table entity
         let cachedTable = NSEntityDescription()
         cachedTable.name = "CDCachedTable"
         cachedTable.managedObjectClassName = NSStringFromClass(CDCachedTable.self)
@@ -99,13 +78,11 @@ enum SocialEatsModel {
     }()
 }
 
-// MARK: - Controller
 
 final class PersistenceController {
 
     let container: NSPersistentContainer
 
-    /// `inMemory: true` is used by unit tests so they never touch real data.
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "SocialEats", managedObjectModel: SocialEatsModel.shared)
 
@@ -115,11 +92,9 @@ final class PersistenceController {
 
         container.loadPersistentStores { _, error in
             if let error {
-                // In a real app we'd report this; for coursework, log it clearly.
                 print("❌ Core Data failed to load: \(error.localizedDescription)")
             }
         }
-        // If the same tableId is saved twice, keep the newest values
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         container.viewContext.automaticallyMergesChangesFromParent = true
     }

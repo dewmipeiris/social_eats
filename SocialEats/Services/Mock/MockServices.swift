@@ -1,29 +1,16 @@
-//
 //  MockServices.swift
-//  SocialEats
-//
-//  In-memory versions of every backend service.
-//  Used for: unit tests, SwiftUI previews, and "Demo mode"
-//  (the app runs without GoogleService-Info.plist).
-//
-//  They behave like the real ones — including live listeners —
-//  so the UI updates the same way.
-//
 
 import Foundation
 import CoreLocation
 
-/// Shared in-memory "database" for all mock services.
 final class MockDatabase {
     var tables: [String: CommunityTable] = [:]
     var users: [String: AppUser] = [:]
     var messages: [String: [ChatMessage]] = [:]
     var activity: [String: [ActivityItem]] = [:]
     var receipts: [String: ReceiptScanResult] = [:]
-    /// "tableId_userId" -> RSVP status (same idea as the Firestore rsvps collection)
     var rsvps: [String: RSVPStatus] = [:]
 
-    // Listener callbacks, keyed by a random id so they can be removed
     var tableListeners: [UUID: (Result<[CommunityTable], Error>) -> Void] = [:]
     var singleTableListeners: [UUID: (id: String, callback: (CommunityTable?) -> Void)] = [:]
     var messageListeners: [UUID: (tableId: String, callback: ([ChatMessage]) -> Void)] = [:]
@@ -39,8 +26,6 @@ final class MockDatabase {
         activity[SampleData.demoUser.id] = SampleData.sampleActivity
     }
 
-    /// Demo mode: move the sample tables next to the user's real location
-    /// so distances and the map look realistic wherever you test the app.
     func reseedTables(around center: CLLocationCoordinate2D) {
         let userTables = tables.values.filter { $0.id.hasPrefix("new-") }   // tables the user created
         tables = [:]
@@ -53,7 +38,6 @@ final class MockDatabase {
         tables.values.sorted { $0.startTime < $1.startTime }
     }
 
-    /// Tell every listener that tables changed.
     func notifyTables() {
         let list = sortedTables
         tableListeners.values.forEach { $0(.success(list)) }
@@ -75,14 +59,9 @@ final class MockDatabase {
     }
 }
 
-// MARK: - Auth
-
 final class MockAuthService: AuthServicing {
-    /// Any 6-digit code works except this one (lets tests check the error path)
     static let wrongCode = "000000"
 
-    /// Who is signed in. In the real app Firebase remembers this after the app
-    /// is closed; in Demo mode we copy that by saving it in UserDefaults.
     private(set) var currentUserId: String? {
         didSet {
             if remembersSignIn { UserDefaults.standard.set(currentUserId, forKey: Self.savedUserKey) }
@@ -95,8 +74,6 @@ final class MockAuthService: AuthServicing {
     private static let savedUserKey = "demo.signedInUserId"
     private let remembersSignIn: Bool
 
-    /// remembersSignIn: true for the Demo app (stay signed in like Firebase),
-    /// false for unit tests (each test starts clean).
     init(signedInUserId: String? = nil, remembersSignIn: Bool = false) {
         self.remembersSignIn = remembersSignIn
         if remembersSignIn, signedInUserId == nil {
@@ -137,7 +114,6 @@ final class MockAuthService: AuthServicing {
         return SampleData.demoUser.id
     }
 
-    /// "Forgot password?" — Demo mode: no real email is sent, it just pretends it worked.
     func sendPasswordReset(to email: String) async throws {
         try await Task.sleep(nanoseconds: 500_000_000)
     }
@@ -146,8 +122,6 @@ final class MockAuthService: AuthServicing {
         currentUserId = nil
     }
 }
-
-// MARK: - Tables
 
 final class MockTableService: TableServicing {
     let database: MockDatabase
@@ -159,7 +133,7 @@ final class MockTableService: TableServicing {
     func listenToActiveTables(onChange: @escaping (Result<[CommunityTable], Error>) -> Void) -> ListenerToken {
         let key = UUID()
         database.tableListeners[key] = onChange
-        onChange(.success(database.sortedTables))           // first snapshot
+        onChange(.success(database.sortedTables))
         return ClosureListenerToken { [weak database] in database?.tableListeners[key] = nil }
     }
 
@@ -218,8 +192,6 @@ final class MockTableService: TableServicing {
     }
 }
 
-// MARK: - Users
-
 final class MockUserService: UserServicing {
     let database: MockDatabase
 
@@ -275,8 +247,6 @@ final class MockUserService: UserServicing {
         database.notifyActivity(userId)
     }
 }
-
-// MARK: - Chat
 
 final class MockChatService: ChatServicing {
     let database: MockDatabase

@@ -1,16 +1,4 @@
-//
 //  TablesStore.swift
-//  SocialEats
-//
-//  ONE shared live list of community tables that every screen reads
-//  (Dashboard, Map, Shake to Match, Search). This is the "Repository"
-//  pattern: one listener to Firestore instead of one per screen.
-//
-//  It also:
-//   • caches the list in Core Data for offline use (Above & Beyond: offline support)
-//   • sends a "new table nearby" notification when a host opens a table
-//     inside the user's radius (proposal Feature 5)
-//
 
 import Foundation
 import Combine
@@ -22,7 +10,6 @@ final class TablesStore: ObservableObject {
     @Published private(set) var tables: [CommunityTable] = []
     @Published private(set) var isLoading = true
     @Published private(set) var errorMessage: String?
-    /// True when we are showing the Core Data copy because the network failed
     @Published private(set) var isShowingCachedData = false
 
     private let tableService: TableServicing
@@ -30,9 +17,7 @@ final class TablesStore: ObservableObject {
     private let notifications: NotificationServicing
     private let settings: SettingsStore
     private let currentUserId: () -> String?
-    /// Where the user is right now (a closure so tests can pass a fixed spot)
     private let currentLocation: () -> CLLocation?
-    /// Remembers which tables we already sent "nearby" banners for
     private let alertHistory: NearbyAlertHistory
 
     private var listener: ListenerToken?
@@ -53,7 +38,7 @@ final class TablesStore: ObservableObject {
         self.currentUserId = currentUserId
     }
 
-    // MARK: - Start / stop
+// stop
 
     func start() {
         guard listener == nil else { return }
@@ -75,24 +60,22 @@ final class TablesStore: ObservableObject {
         listener = nil
     }
 
-    /// Pull-to-refresh: restart the listener.
     func refresh() {
         stop()
         start()
     }
 
-    // MARK: - Lookups
+    // lookups
 
     func table(id: String) -> CommunityTable? {
         tables.first { $0.id == id }
     }
 
-    /// Tables the user has a seat at (including hosting), soonest first.
     func joinedTables(userId: String?) -> [CommunityTable] {
         tables.filter { $0.isAttending(userId) }.sorted { $0.startTime < $1.startTime }
     }
 
-    // MARK: - Private
+// private
 
     private func handle(_ result: Result<[CommunityTable], Error>) {
         isLoading = false
@@ -115,8 +98,6 @@ final class TablesStore: ObservableObject {
         }
     }
 
-    /// Sends an alert for each brand-new table inside the user's radius
-    /// (shared by the live listener and the background check).
     @discardableResult
     private func detectNewNearbyTables(in list: [CommunityTable]) -> Int {
         guard settings.nearbyAlertsEnabled else { return 0 }
@@ -137,11 +118,8 @@ final class TablesStore: ObservableObject {
         return newTables.count
     }
 
-    // MARK: - Background check (app closed)
-
-    /// Called when iOS wakes the app in the background (significant location
-    /// change — the user moved about 500 m). Downloads tables once and alerts
-    /// about new ones nearby. Returns true if it worked.
+// background check
+    
     @discardableResult
     func runBackgroundNearbyCheck() async -> Bool {
         do {

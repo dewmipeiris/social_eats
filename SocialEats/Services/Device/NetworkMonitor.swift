@@ -1,11 +1,4 @@
-//
 //  NetworkMonitor.swift
-//  SocialEats
-//
-//  Watches the internet connection with NWPathMonitor.
-//  When offline, the app shows an "offline" banner and reads
-//  passes and tables from the Core Data cache instead.
-//
 
 import Foundation
 import Network

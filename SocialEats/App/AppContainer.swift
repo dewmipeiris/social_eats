@@ -1,14 +1,4 @@
-//
 //  AppContainer.swift
-//  SocialEats
-//
-//  The "dependency container": creates every service ONCE and hands
-//  them to ViewModels. Screens never create services themselves.
-//
-//  • live()    -> real Firebase (if GoogleService-Info.plist is in the project)
-//  • demo()    -> in-memory mock services (app still fully works offline,
-//                 handy for previews and if Firebase isn't set up yet)
-//
 
 import Foundation
 import Combine
@@ -18,7 +8,6 @@ import FirebaseFirestore
 @MainActor
 final class AppContainer: ObservableObject {
 
-    /// True when running on mock data (no Firebase config file found)
     let isDemoMode: Bool
 
     // Backend services (protocols — can be real or mock)
@@ -41,7 +30,6 @@ final class AppContainer: ObservableObject {
     let tablesStore: TablesStore
     let reservations: ReservationManager
 
-    /// Mock database (only in demo mode) — used by "Add sample tables"
     let mockDatabase: MockDatabase?
     private var cancellables = Set<AnyCancellable>()
 
@@ -64,8 +52,6 @@ final class AppContainer: ObservableObject {
         self.mockDatabase = mockDatabase
         self.settings = settings
 
-        // Create device services as local constants first (Swift won't let us
-        // read self.properties until every stored property has a value)
         let notifications = NotificationService()
         let location = LocationService()
         let offlineStore = CoreDataOfflineStore(persistence: persistence)
@@ -95,9 +81,6 @@ final class AppContainer: ObservableObject {
 
         wireUpDeepLinks()
 
-        // Background "new table nearby" checks (Feature 5): run when iOS wakes us
-        // after a significant move, and keep the low-power tracking in sync with
-        // the Settings toggle + location permission.
         let tablesStore = self.tablesStore
         location.onSignificantMove = { [weak tablesStore] in
             Task { @MainActor in await tablesStore?.runBackgroundNearbyCheck() }
@@ -121,7 +104,6 @@ final class AppContainer: ObservableObject {
         }
     }
 
-    /// Tapping a notification or entering a venue geofence opens that table.
     private func wireUpDeepLinks() {
         notifications.onOpenTable = { [weak session = self.session] tableId in
             Task { @MainActor in session?.pendingTableId = tableId }
@@ -131,9 +113,7 @@ final class AppContainer: ObservableObject {
         }
     }
 
-    // MARK: - Factories
-
-    /// Real app: Firebase if configured, otherwise demo mode.
+// Factories
     static func live() -> AppContainer {
         let hasFirebaseConfig = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil
 
@@ -144,8 +124,6 @@ final class AppContainer: ObservableObject {
 
         FirebaseApp.configure()
 
-        // Firestore keeps its own offline cache, so chat messages and seat
-        // changes made offline are sent automatically when back online.
         let firestoreSettings = FirestoreSettings()
         firestoreSettings.cacheSettings = PersistentCacheSettings()
         Firestore.firestore().settings = firestoreSettings
@@ -161,7 +139,6 @@ final class AppContainer: ObservableObject {
         )
     }
 
-    /// Everything in memory — no internet or Firebase needed.
     static func demo(signedIn: Bool = false) -> AppContainer {
         let database = MockDatabase()
         return AppContainer(
@@ -177,7 +154,6 @@ final class AppContainer: ObservableObject {
         )
     }
 
-    /// For SwiftUI previews: signed in with sample data.
     static var preview: AppContainer {
         let container = demo(signedIn: true)
         Task { await container.session.finishSignIn(userId: SampleData.demoUser.id) }
@@ -185,12 +161,8 @@ final class AppContainer: ObservableObject {
         return container
     }
 
-    // MARK: - Demo helpers
-
-    /// Settings > "Add sample tables near me": fills the backend with
-    /// example tables around the user's current position (great for the demo video).
-    /// A sample table is SKIPPED if the same one is already there and people can
-    /// still join it, so pressing the button twice doesn't make duplicates.
+// Demo helpers
+    
     func addSampleTablesNearUser() async throws -> Int {
         let center = location.currentLocation?.coordinate ?? SampleData.defaultCenter
         let samples = SampleData.tables(around: center)

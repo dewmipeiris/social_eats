@@ -1,12 +1,4 @@
-//
 //  SettingsView.swift
-//  SocialEats
-//
-//  Prototype Figure 7 — Settings & Preferences (MVP Feature 2):
-//  theme (Light/Dark/System), nearby alerts + radius, dietary filters,
-//  Face ID protection, privacy policy and log out.
-//  (Log Out lives ONLY here; My Offline Passes lives on the Profile page.)
-//
 
 import SwiftUI
 
@@ -32,7 +24,6 @@ final class SettingsViewModel: ObservableObject {
         return "v\(version) (\(build))"
     }
 
-    /// Dietary chips also sync to the Firestore profile.
     func toggleDietary(_ tag: DietaryTag) {
         settings.toggleDietary(tag)
         Haptics.selection()
@@ -41,7 +32,6 @@ final class SettingsViewModel: ObservableObject {
         Task { try? await container.session.updateProfile(user) }
     }
 
-    /// Turning Face ID protection ON must pass Face ID first (so nobody else can enable/disable it).
     func setFaceIDProtection(_ enabled: Bool) async {
         if biometricKind == .none {
             errorMessage = BiometricError.notAvailable.localizedDescription
@@ -157,8 +147,6 @@ struct SettingsView: View {
         .sheet(isPresented: $showsPrivacy) { PrivacyPolicyView() }
     }
 
-    // MARK: - Appearance
-
     private var appearanceSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -188,8 +176,6 @@ struct SettingsView: View {
             .background(RoundedRectangle(cornerRadius: 14).fill(AppColors.surfaceMuted))
         }
     }
-
-    // MARK: - Notifications & geofence
 
     private var notificationSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -236,8 +222,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Dietary
-
     private var dietarySection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -263,10 +247,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Accessibility (proposal Feature 2: "provides accessibility options")
-
-    /// The slider works with numbers (0...5), so this turns the
-    /// saved text size into a number and back again.
     private var textSizeSliderValue: Binding<Double> {
         Binding(
             get: { Double(settings.textSize.rawValue) },
@@ -280,7 +260,6 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             OverlineText(text: "Accessibility")
             VStack(spacing: 12) {
-                // Text Size: "A-" button, slider, "A+" button
                 VStack(alignment: .leading, spacing: 10) {
                     settingRow(icon: "textformat.size", title: "Text Size",
                                subtitle: settings.textSize.title)
@@ -298,7 +277,6 @@ struct SettingsView: View {
                         .disabled(settings.textSize == .extraSmall)
                         .accessibilityLabel("Smaller text")
 
-                        // Drag to pick a size (6 steps)
                         Slider(value: textSizeSliderValue,
                                in: 0...Double(AppTextSize.allCases.count - 1),
                                step: 1)
@@ -339,8 +317,6 @@ struct SettingsView: View {
             .cardStyle()
         }
     }
-
-    // MARK: - Account
 
     private var accountSection: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -388,8 +364,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - About
-
     private var aboutSection: some View {
         VStack(spacing: 10) {
             if viewModel.isDemoMode {
@@ -420,7 +394,6 @@ struct SettingsView: View {
         .padding(.top, 8)
     }
 
-    /// Icon + title + subtitle used by every row.
     private func settingRow(icon: String, title: String, subtitle: String?) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
@@ -438,7 +411,6 @@ struct SettingsView: View {
     }
 }
 
-/// Plain-English privacy summary (inclusive, readable).
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
 

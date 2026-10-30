@@ -1,31 +1,16 @@
-//
-//  TestReceiptRenderer.swift
-//  SocialEats
-//
-//  The Simulator has no camera. To still test the Vision scanner there, this
-//  draws a normal-looking paper receipt (as a picture) for the table you joined.
-//  The picture then goes through the SAME Vision OCR as a real camera photo,
-//  so the text recognition is genuinely tested — nothing is skipped.
-//
-//  Only shown on the Simulator. On a real iPhone you scan a real receipt.
-//
-
 import UIKit
 
 enum TestReceiptRenderer {
 
-    /// Draws a receipt image for a venue.
     static func image(venueName: String, time: Date = Date()) -> UIImage {
         let size = CGSize(width: 800, height: 1100)
         let renderer = UIGraphicsImageRenderer(size: size)
 
-        // Date and time printed on the receipt, e.g. "24/10/2026" and "19:15"
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yyyy"
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm"
 
-        // What the receipt says (one entry per printed line)
         let lines: [(text: String, big: Bool)] = [
             (venueName.uppercased(), true),
             ("Colombo 07", false),
@@ -43,7 +28,6 @@ enum TestReceiptRenderer {
         ]
 
         return renderer.image { context in
-            // White paper
             UIColor.white.setFill()
             context.fill(CGRect(origin: .zero, size: size))
 

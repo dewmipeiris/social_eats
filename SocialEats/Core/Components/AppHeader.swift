@@ -1,10 +1,4 @@
-//
 //  AppHeader.swift
-//  SocialEats
-//
-//  The top bar used on most screens in the prototype:
-//  [🍴 logo] Title ............ [search] [bell] [avatar]
-//
 
 import SwiftUI
 
@@ -28,7 +22,6 @@ struct AppLogoBadge: View {
     }
 }
 
-/// Custom header bar that matches the Figma design.
 struct AppHeader: View {
     let title: String
     var showsBack: Bool = false

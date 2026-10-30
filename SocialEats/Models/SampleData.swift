@@ -1,18 +1,10 @@
-//
 //  SampleData.swift
-//  SocialEats
-//
-//  Example tables and users around Colombo 07 (NIBM).
-//  Used by: Demo mode (no Firebase), SwiftUI previews, unit tests,
-//  and the "Add sample tables" button in Settings to fill Firestore.
-//
 
 import Foundation
 import CoreLocation
 
 enum SampleData {
 
-    /// Centre point used when location permission is not given (Colombo 07)
     static let defaultCenter = CLLocationCoordinate2D(latitude: 6.9061, longitude: 79.8700)
 
     static let demoUser = AppUser(
@@ -26,15 +18,13 @@ enum SampleData {
         newFriends: 14,
         tablesHosted: 3,
         hostRating: 4.9,
-        dietaryTags: [],             // no dietary filter, so ALL tables show on Home
+        dietaryTags: [],
         ambiences: [.chillCozy, .techFounders],
         cuisines: [.neapolitanPizza, .ramenNoodles],
         diningStyle: .smallGroup,
         joinedAt: Date(timeIntervalSinceNow: -60 * 60 * 24 * 400)
     )
 
-    /// Profiles for some of the sample hosts/guests, so tablemate profiles
-    /// (Community Hub) have something to show in Demo mode.
     static let sampleMembers: [AppUser] = [
         member("h-sarah", "Sarah Jenkins", karma: 2150, meals: 31, ambiences: [.techFounders, .quickLively],
                cuisines: [.streetTacos, .neapolitanPizza], diet: [.halal]),
@@ -58,12 +48,9 @@ enum SampleData {
                 diningStyle: .smallGroup, joinedAt: Date(timeIntervalSinceNow: -60 * 60 * 24 * 200))
     }
 
-    /// Builds sample tables relative to a centre point and "now",
-    /// so the demo always shows upcoming meetups nearby.
     static func tables(around center: CLLocationCoordinate2D = defaultCenter,
                        now: Date = Date()) -> [CommunityTable] {
 
-        /// Moves the centre point by metres north/east
         func offset(_ north: Double, _ east: Double) -> (Double, Double) {
             let lat = center.latitude + north / 111_000
             let lon = center.longitude + east / (111_000 * cos(center.latitude * .pi / 180))

@@ -1,17 +1,10 @@
-//
 //  CommonViews.swift
-//  SocialEats
-//
-//  Small building blocks reused on many screens:
-//  cards, chips, badges, avatars, headers, empty states and banners.
-//
 
 import SwiftUI
 import UIKit
 
-// MARK: - Card
+// card
 
-/// Adds the white rounded card look from the prototype.
 struct CardModifier: ViewModifier {
     var padding: CGFloat = AppLayout.cardPadding
 
@@ -31,21 +24,17 @@ struct CardModifier: ViewModifier {
 }
 
 extension View {
-    /// Wraps any view in the standard SocialEats card.
     func cardStyle(padding: CGFloat = AppLayout.cardPadding) -> some View {
         modifier(CardModifier(padding: padding))
     }
 
-    /// Standard screen background colour (cream in light, near-black in dark).
     func screenBackground() -> some View {
         background(AppColors.background.ignoresSafeArea())
     }
 }
 
-// MARK: - Chip
+// chip
 
-/// Pill-shaped chip used for categories ("Pizza", "Sushi"),
-/// dietary tags ("Halal", "Vegan") and filters.
 struct ChipView: View {
     let title: String
     var icon: String? = nil
@@ -56,11 +45,11 @@ struct ChipView: View {
     var body: some View {
         let label = HStack(spacing: 6) {
             if let icon {
-                Text(icon)               // emoji icons like 🍕
+                Text(icon)
                     .accessibilityHidden(true)
             }
             Text(title)
-                .lineLimit(2)                 // long names wrap instead of being cut off
+                .lineLimit(2)                
                 .minimumScaleFactor(0.85)
             if isSelected && action != nil {
                 Image(systemName: "checkmark")
@@ -91,10 +80,8 @@ struct ChipView: View {
     }
 }
 
-// MARK: - ChipGrid
+// chip grid
 
-/// Shows chips in a grid that wraps onto new rows when there is no space.
-/// (LazyVGrid with "adaptive" columns fits as many 130-point columns as possible.)
 struct ChipGrid<Content: View>: View {
     @ViewBuilder let content: Content
 
@@ -107,9 +94,8 @@ struct ChipGrid<Content: View>: View {
     }
 }
 
-// MARK: - Badges
+// badges
 
-/// Small coloured capsule, e.g. "● 3/4 Seats Filled" or "Optimal".
 struct BadgeView: View {
     let text: String
     var foreground: Color = AppColors.success
@@ -134,7 +120,6 @@ struct BadgeView: View {
     }
 }
 
-/// Little uppercase heading like "APPEARANCE" or "DIETARY PREFERENCES".
 struct OverlineText: View {
     let text: String
     var color: Color = AppColors.textSecondary
@@ -148,7 +133,6 @@ struct OverlineText: View {
     }
 }
 
-/// Section header with an optional trailing button ("See map >").
 struct SectionHeader: View {
     let title: String
     var showsLiveDot: Bool = false
@@ -184,29 +168,25 @@ struct SectionHeader: View {
     }
 }
 
-// MARK: - Avatar
+// avatar
 
-/// Circle with the person's initials (used instead of real photos).
 struct AvatarView: View {
     let name: String
     var size: CGFloat = 40
     var showsOnlineDot: Bool = false
 
-    /// "Sarah Jenkins" -> "SJ"
     private var initials: String {
         let parts = name.split(separator: " ").prefix(2)
         let letters = parts.compactMap { $0.first }.map { String($0) }
         return letters.joined().uppercased()
     }
-
-    /// Each name always gets the same soft colour.
+    
     private var tint: Color {
         let palette: [Color] = [AppColors.primary, AppColors.amber, AppColors.teal, AppColors.success]
         let index = Int(UInt(bitPattern: name.hashValueStable) % UInt(palette.count))
         return palette[index]
     }
 
-    /// Optional photo in Assets.xcassets named "avatar_" + first name, e.g. "avatar_sarah"
     private var photoName: String {
         "avatar_" + (name.split(separator: " ").first.map { String($0).lowercased() } ?? "")
     }
@@ -218,13 +198,11 @@ struct AvatarView: View {
             .overlay(
                 Group {
                     if UIImage(named: photoName) != nil {
-                        // Real profile photo
                         Image(photoName)
                             .resizable()
                             .scaledToFill()
                             .clipShape(Circle())
                     } else {
-                        // No photo -> initials ("SJ")
                         Text(initials.isEmpty ? "?" : initials)
                             .font(.system(size: size * 0.38, weight: .bold, design: .rounded))
                             .foregroundStyle(tint)
@@ -243,7 +221,6 @@ struct AvatarView: View {
     }
 }
 
-/// Overlapping row of small avatars ("ML JD SK +1").
 struct AvatarStack: View {
     let names: [String]
     var maxVisible: Int = 3
@@ -272,9 +249,6 @@ struct AvatarStack: View {
     }
 }
 
-// MARK: - Empty / error states
-
-/// Friendly message shown when a list has nothing in it.
 struct EmptyStateView: View {
     let systemImage: String
     let title: String
@@ -310,7 +284,6 @@ struct EmptyStateView: View {
     }
 }
 
-/// Red banner used to show an error message at the top of a screen.
 struct ErrorBanner: View {
     let message: String
     var onDismiss: (() -> Void)? = nil
@@ -341,7 +314,6 @@ struct ErrorBanner: View {
     }
 }
 
-/// Amber banner shown while the phone has no internet.
 struct OfflineBanner: View {
     var body: some View {
         HStack(spacing: 8) {
@@ -359,11 +331,7 @@ struct OfflineBanner: View {
     }
 }
 
-// MARK: - Helpers
-
 extension String {
-    /// A hash that stays the same every app launch (Swift's normal
-    /// `hashValue` changes each launch, which would change avatar colours).
     var hashValueStable: Int {
         var result = 5381
         for scalar in unicodeScalars {

@@ -1,13 +1,4 @@
-//
 //  TableDetailViewModel.swift
-//  SocialEats
-//
-//  Logic for the Restaurant / Table Detail screen (prototype Figure 12):
-//   • live seat count (Firestore listener on this one table)
-//   • walking time with MapKit directions (MKDirections)
-//   • "Join This Table Now" -> Face ID -> transaction -> offline pass
-//   • cancel seat (Face ID protected)
-//
 
 import Foundation
 import MapKit
@@ -21,9 +12,7 @@ final class TableDetailViewModel: ObservableObject {
     @Published private(set) var isLoading = true
     @Published private(set) var isWorking = false
     @Published var errorMessage: String?
-    /// Set after a successful join -> shows the "RSVP Confirmed!" sheet
     @Published var confirmedReservation: Reservation?
-    /// "4 min walk" from MapKit (falls back to a straight-line estimate)
     @Published private(set) var walkingText: String = ""
 
     let tableId: String
@@ -54,8 +43,6 @@ final class TableDetailViewModel: ObservableObject {
                   initialTable: container.tablesStore.table(id: tableId))
     }
 
-    // MARK: - Derived state
-
     var userId: String? { session.userId }
     var isAttending: Bool { table?.isAttending(userId) ?? false }
     var isHost: Bool { table?.isHost(userId) ?? false }
@@ -64,7 +51,6 @@ final class TableDetailViewModel: ObservableObject {
         DistanceText.away(table?.distance(from: location.currentLocation))
     }
 
-    /// Text on the big button
     var joinButtonTitle: String {
         guard let table else { return "Join This Table Now" }
         if isAttending { return "View My Pass" }
@@ -78,8 +64,6 @@ final class TableDetailViewModel: ObservableObject {
         guard let table, let userId else { return false }
         return table.joinBlockReason(for: userId) == nil
     }
-
-    // MARK: - Lifecycle
 
     func start() {
         guard listener == nil else { return }
@@ -99,8 +83,6 @@ final class TableDetailViewModel: ObservableObject {
         listener = nil
     }
 
-    // MARK: - Actions
-
     func join() async {
         guard let table, let user = session.currentUser else { return }
         isWorking = true
@@ -110,7 +92,7 @@ final class TableDetailViewModel: ObservableObject {
             Haptics.success()
             confirmedReservation = reservation
         } catch BiometricError.cancelled {
-            // user cancelled Face ID — nothing to show
+
         } catch {
             errorMessage = error.localizedDescription
             Haptics.error()
@@ -133,10 +115,8 @@ final class TableDetailViewModel: ObservableObject {
         isWorking = false
     }
 
-    /// Host only: moves the meetup to a new time. Returns true if it worked.
     func changeTime(to newTime: Date) async -> Bool {
         guard let table, let userId else { return false }
-        // The new time must be in the future
         guard newTime > Date() else {
             errorMessage = "Please choose a time in the future."
             return false
@@ -155,9 +135,6 @@ final class TableDetailViewModel: ObservableObject {
         }
     }
 
-    /// Opens Google Maps with walking directions from your location to the venue.
-    /// (Apple Maps has no directions in Sri Lanka, Google Maps does.
-    ///  Opens the Google Maps app if installed, otherwise the website.)
     func openWalkingDirections() {
         guard let table else { return }
         let link = "https://www.google.com/maps/dir/?api=1&destination=\(table.latitude),\(table.longitude)&travelmode=walking"
@@ -166,7 +143,6 @@ final class TableDetailViewModel: ObservableObject {
         }
     }
 
-    /// Asks MapKit for a real walking route time (once).
     func loadWalkingTime() async {
         guard let table else { return }
         let straightLine = table.distance(from: location.currentLocation)

@@ -1,11 +1,4 @@
-//
 //  ProfileView.swift
-//  SocialEats
-//
-//  Prototype Figure 18 — User Profile:
-//  karma balance + tier progress, stats, taste & dietary profile, offline passes.
-//  (Log Out is on the Settings page only.)
-//
 
 import SwiftUI
 
@@ -32,7 +25,6 @@ final class ProfileViewModel: ObservableObject {
     var tierProgress: Double { KarmaCalculator.tierProgress(for: user?.karma ?? 0) }
     var level: Int { KarmaCalculator.level(for: user?.karma ?? 0) }
 
-    /// "50 pts needed to unlock Gold Epicurean"
     var pointsToNextTier: String {
         guard let user, let next = nextTier else { return "Top tier reached 👑" }
         return "\(next.minimumKarma - user.karma) pts needed to unlock \(next.rawValue)"
@@ -111,8 +103,6 @@ struct ProfileView: View {
         .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showsEditName) { editNameSheet }
     }
-
-    // MARK: - Cards
 
     private func headerCard(_ user: AppUser) -> some View {
         VStack(spacing: 10) {

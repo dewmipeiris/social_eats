@@ -1,13 +1,4 @@
-//
 //  AdaptiveMainView.swift
-//  SocialEats
-//
-//  Multi-device design (Component 5 / LO1):
-//   • iPhone (compact width)  -> bottom TabView, like the prototype
-//   • iPad   (regular width)  -> NavigationSplitView with a sidebar,
-//                                so the big screen shows more at once
-//  Both use the SAME screens and ViewModels — only the shell changes.
-//
 
 import SwiftUI
 
@@ -37,24 +28,18 @@ struct AdaptiveMainView: View {
             }
         }
         .animation(.easeInOut, value: network.isOnline)
-        // A tapped notification opens that table on the Home tab
         .onChange(of: session.pendingTableId) { _, tableId in
             openPendingTable(tableId)
         }
-        // App was CLOSED and opened by tapping a notification: the tap arrived
-        // before this screen existed, so check once when it appears.
         .onAppear { openPendingTable(session.pendingTableId) }
     }
 
-    /// Opens the RSVP / table screen a notification pointed to.
     private func openPendingTable(_ tableId: String?) {
         guard let tableId else { return }
         navigation.popToRoot(.home)
         navigation.open(.table(tableId), on: .home)
         session.pendingTableId = nil
     }
-
-    // MARK: - iPhone
 
     private var iPhoneLayout: some View {
         TabView(selection: $navigation.selectedTab) {
@@ -71,8 +56,6 @@ struct AdaptiveMainView: View {
             }
         }
     }
-
-    // MARK: - iPad
 
     private var iPadLayout: some View {
         NavigationSplitView(columnVisibility: sidebarVisibility) {
@@ -118,12 +101,10 @@ struct AdaptiveMainView: View {
                 rootView(for: navigation.selectedTab)
                     .withAppRoutes()
             }
-            .id(navigation.selectedTab)       // fresh stack per section
+            .id(navigation.selectedTab)
         }
         .navigationSplitViewStyle(.balanced)
     }
-
-    // MARK: - Tab roots
     
     @available(iOS 16.0, *)
         private var sidebarVisibility: Binding<NavigationSplitViewVisibility> {
@@ -145,8 +126,6 @@ struct AdaptiveMainView: View {
     }
 }
 
-/// iPad only: the show / hide sidebar button for screens that draw their own header
-/// (Home, Map, Settings, Profile). On iPhone it shows nothing.
 struct SidebarToggleButton: View {
     @EnvironmentObject private var navigation: NavigationModel
     @Environment(\.horizontalSizeClass) private var sizeClass

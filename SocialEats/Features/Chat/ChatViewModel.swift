@@ -1,31 +1,16 @@
-//
 //  ChatViewModel.swift
-//  SocialEats
-//
-//  Proposal MVP Feature 7 — Community Hub.
-//   1. Confirmed table members get a TEMPORARY group chat attached to the meetup
-//      (it closes 24 hours after the meal starts).
-//   2. Members can view each other's profiles, MUTUAL INTERESTS and verified
-//      badge standing (karma tier) — builds trust before meeting.
-//   3. Members send quick coordination messages ("Arrived! Sitting near the patio").
-//  Real-time Firestore listener on tables/{id}/messages.
-//
 
 import Foundation
 import Combine
 
-/// One person at the table, as shown in the "Tablemates" sheet.
 struct TablemateProfile: Identifiable, Equatable {
     let id: String
     let name: String
     let isHost: Bool
     let isMe: Bool
-    /// nil when the person's profile couldn't be loaded
     let user: AppUser?
-    /// Cuisines / vibes / dietary choices you both picked
     let mutualInterests: [String]
 
-    /// "Verified" = they signed in with a verified phone number or email
     var isVerified: Bool {
         user?.phoneNumber != nil || user?.email != nil
     }
@@ -43,12 +28,10 @@ final class ChatViewModel: ObservableObject {
     @Published private(set) var isLoadingTablemates = false
     @Published var draft = ""
     @Published var errorMessage: String?
-
-    /// One-tap coordination messages (from the prototype)
+    
     let quickReplies = ["Running 2 mins behind! 🏃", "Arrived! Sitting near the outdoor patio 🌿",
                         "Just arrived 👋", "Order me a drink 🥤"]
 
-    /// The chat is temporary: read-only this long after the meal starts
     static let chatOpenHoursAfterStart: Double = 24
 
     let tableId: String
@@ -73,7 +56,6 @@ final class ChatViewModel: ObservableObject {
                   users: container.users, session: container.session)
     }
 
-    // MARK: - Derived state
 
     var myUserId: String? { session.userId }
 
@@ -92,7 +74,6 @@ final class ChatViewModel: ObservableObject {
         canChat && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    /// "Starts in 45 min" / "Started" / "Tomorrow, 7:00 PM"
     var startsInText: String {
         guard let table else { return "" }
         let minutes = Int(table.startTime.timeIntervalSinceNow / 60)
@@ -101,12 +82,9 @@ final class ChatViewModel: ObservableObject {
         return table.startTime.friendlyDayTime
     }
 
-    /// Shows the green "Zero-Flake Reminder" when every seat is taken
     var showsZeroFlakeReminder: Bool { table?.isFull ?? false }
 
     func isMine(_ message: ChatMessage) -> Bool { message.senderId == myUserId }
-
-    // MARK: - Lifecycle
 
     func start() {
         tableListener = tableService.listenToTable(id: tableId) { [weak self] table in
@@ -122,9 +100,6 @@ final class ChatViewModel: ObservableObject {
         messageListener?.remove()
     }
 
-    // MARK: - Tablemate profiles
-
-    /// Loads every member's profile and works out mutual interests.
     func loadTablemates() async {
         guard let table else { return }
         isLoadingTablemates = true
@@ -144,12 +119,11 @@ final class ChatViewModel: ObservableObject {
                 mutualInterests: (isMe || user == nil) ? [] : Self.mutualInterests(me: me, them: user!)
             ))
         }
-        // Host first, then everyone else, me last
+       
         tablemates = result.sorted { ($0.isHost ? 0 : $0.isMe ? 2 : 1) < ($1.isHost ? 0 : $1.isMe ? 2 : 1) }
         isLoadingTablemates = false
     }
 
-    /// Things both people chose in their taste profile (unit tested).
     static func mutualInterests(me: AppUser?, them: AppUser) -> [String] {
         guard let me else { return [] }
         let cuisines = them.cuisines.filter { me.cuisines.contains($0) }.map(\.title)
@@ -157,8 +131,6 @@ final class ChatViewModel: ObservableObject {
         let diet = them.dietaryTags.filter { me.dietaryTags.contains($0) && !$0.isAllergy }.map(\.title)
         return cuisines + vibes + diet
     }
-
-    // MARK: - Sending
 
     func send(_ text: String? = nil) async {
         let body = (text ?? draft).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -176,8 +148,6 @@ final class ChatViewModel: ObservableObject {
         Haptics.selection()
 
         do {
-            // Offline? Firestore keeps the message on the phone (shown as
-            // "Sending…") and uploads it automatically when back online.
             try await chat.sendMessage(message, tableId: tableId)
         } catch {
             errorMessage = "Message not sent: \(error.localizedDescription)"

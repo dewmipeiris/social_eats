@@ -1,13 +1,4 @@
-//
 //  ExploreMapView.swift
-//  SocialEats
-//
-//  Prototype Figure 17 — Explore Map.
-//  iPhone: full-screen map + bottom card.
-//  iPad: list of tables on the left, map on the right (LO1 adaptation).
-//  Tap a pin -> distance + walking time from YOUR location, a line on the map,
-//  and a Directions button (Google Maps).
-//
 
 import SwiftUI
 import MapKit
@@ -15,7 +6,6 @@ import MapKit
 struct ExploreMapView: View {
     @EnvironmentObject private var navigation: NavigationModel
     @EnvironmentObject private var session: SessionStore
-    // Watched so the map redraws when tables, your location or filters change
     @EnvironmentObject private var tablesStore: TablesStore
     @EnvironmentObject private var location: LocationService
     @EnvironmentObject private var settings: SettingsStore
@@ -59,24 +49,19 @@ struct ExploreMapView: View {
         .toolbar(.hidden, for: .navigationBar)
     }
 
-    // MARK: - Map
-
     private var mapLayer: some View {
         Map(position: $viewModel.position, selection: $viewModel.selectedTableId) {
             UserAnnotation()
 
-            // Road route from you to the selected cafe (if Apple Maps has one here)
             if let route = viewModel.route {
                 MapPolyline(route.polyline)
                     .stroke(AppColors.primary, lineWidth: 5)
             }
-            // Otherwise: dashed straight line from you to the cafe
             if let line = viewModel.straightLine {
                 MapPolyline(coordinates: line)
                     .stroke(AppColors.primary, style: StrokeStyle(lineWidth: 4, dash: [8, 6]))
             }
 
-            // Your alert / geofence radius
             if let user = viewModel.userCoordinate {
                 MapCircle(center: user, radius: viewModel.radiusMetres)
                     .foregroundStyle(AppColors.primary.opacity(0.08))
@@ -110,7 +95,6 @@ struct ExploreMapView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedTableId)
-        // A pin was tapped -> work out the distance / route to it
         .onChange(of: viewModel.selectedTableId) { _, _ in
             Task { await viewModel.loadRoute() }
         }
@@ -146,7 +130,6 @@ struct ExploreMapView: View {
         .padding(.horizontal, AppLayout.screenPadding)
     }
 
-    // MARK: - Bottom card
 
     private func selectedCard(_ table: CommunityTable) -> some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -190,7 +173,6 @@ struct ExploreMapView: View {
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 12).fill(AppColors.surfaceMuted))
 
-            // How far the cafe is from YOU + Directions (Google Maps)
             HStack(spacing: 8) {
                 Image(systemName: "figure.walk")
                     .foregroundStyle(AppColors.primary)
@@ -230,8 +212,6 @@ struct ExploreMapView: View {
         .frame(maxWidth: 520)
     }
 
-    // MARK: - iPad side list
-
     private var sideList: some View {
         List(viewModel.tables) { table in
             Button {
@@ -256,7 +236,6 @@ struct ExploreMapView: View {
     }
 }
 
-/// Custom map pin: "● 1 Open" bubble above a round category icon.
 struct TableMapPin: View {
     let table: CommunityTable
     let isSelected: Bool

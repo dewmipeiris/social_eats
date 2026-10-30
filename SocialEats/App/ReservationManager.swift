@@ -1,15 +1,4 @@
-//
 //  ReservationManager.swift
-//  SocialEats
-//
-//  Everything that happens when you take, cancel or complete a seat,
-//  in ONE place so every screen does it the same way:
-//
-//  JOIN:     Face ID ✔ -> Firestore transaction -> Core Data offline pass
-//            -> 1-hour reminder -> venue geofence -> activity feed
-//  CANCEL:   Face ID ✔ -> Firestore -> remove pass, reminder and geofence
-//  COMPLETE: Vision receipt verified -> save receipt -> +karma -> mark pass verified
-//
 
 import Foundation
 
@@ -36,7 +25,6 @@ final class ReservationManager {
         self.settings = settings
     }
 
-    /// Asks for Face ID only when the user has protection switched on.
     private func confirmWithBiometrics(reason: String) async throws {
         guard settings.faceIDProtectionEnabled, biometrics.availableKind != .none else { return }
         if case .failure(let error) = await biometrics.authenticate(reason: reason) {
@@ -44,9 +32,8 @@ final class ReservationManager {
         }
     }
 
-    // MARK: - Join
-
-    /// Takes a seat and returns the saved offline reservation.
+// Join
+    
     func join(_ table: CommunityTable, user: AppUser) async throws -> Reservation {
         // Check locally first so we don't ask for Face ID on a full table
         if let reason = table.joinBlockReason(for: user.id) { throw reason }
@@ -59,7 +46,6 @@ final class ReservationManager {
         return reservation
     }
 
-    /// Saves the pass and sets up reminders — also used right after HOSTING a table.
     func afterSeatConfirmed(_ table: CommunityTable, reservation: Reservation, userId: String) {
         offlineStore.saveReservation(reservation)
 
@@ -80,7 +66,7 @@ final class ReservationManager {
         Task { try? await users.addActivity(item, for: userId) }
     }
 
-    // MARK: - Cancel
+// cancel
 
     func cancel(_ table: CommunityTable, userId: String) async throws {
         try await confirmWithBiometrics(reason: "Cancel your seat at \(table.venueName)")
@@ -90,10 +76,8 @@ final class ReservationManager {
         location?.stopGeofence(tableId: table.id)
     }
 
-    // MARK: - Edit time (host only)
+// edit time
 
-    /// The host moves their table to a new time.
-    /// Saves it online, then updates the host's offline pass and reminder to match.
     func changeTime(of table: CommunityTable, to newTime: Date, userId: String) async throws {
         guard table.isHost(userId) else { return }
         try await tables.updateTableTime(id: table.id, startTime: newTime)
@@ -108,9 +92,8 @@ final class ReservationManager {
         }
     }
 
-    // MARK: - Complete (receipt verified)
+// receipt verified
 
-    /// Returns the karma points earned.
     func completeMeal(table: CommunityTable, userId: String, receipt: ReceiptScanResult) async throws -> Int {
         let points = KarmaCalculator.pointsForVerifiedMeal(isHost: table.isHost(userId))
 
@@ -135,21 +118,17 @@ final class ReservationManager {
         return points
     }
 
-    /// "Rate Your Tablemates" — each rating gives the rater +15 karma.
     func rate(tablemateId: String, stars: Int, table: CommunityTable, raterId: String) async throws {
         try await tables.rateTablemate(tableId: table.id, raterId: raterId, rateeId: tablemateId, stars: stars)
         try await users.addKarma(KarmaCalculator.ratingTablematePoints, to: raterId, mealCompleted: false)
     }
 
-    // MARK: - Offline passes
+// offline passes
 
     func savedPasses(for userId: String) -> [Reservation] {
         offlineStore.reservations(for: userId)
     }
-    
-    /// Makes sure you have an offline pass for a table you've joined.
-    /// (Passes are saved on the device you joined from. If you joined on another
-    /// iPhone/iPad, this rebuilds the pass from the live Firebase table and saves it here.)
+
     func restorePassIfNeeded(for table: CommunityTable, userId: String) -> Reservation? {
         if let saved = offlineStore.reservation(tableId: table.id, userId: userId) {
             return saved

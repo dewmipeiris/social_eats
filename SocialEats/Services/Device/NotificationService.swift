@@ -1,14 +1,4 @@
-//
 //  NotificationService.swift
-//  SocialEats
-//
-//  Push notifications with the UserNotifications framework
-//  (proposal MVP Feature 5). We send three kinds of alerts:
-//   1. "New table nearby"  – when a host opens a table inside your radius
-//   2. "Meetup in 1 hour"  – reminder before a table you joined
-//   3. "You've arrived"    – geofence alert when you walk into the venue area
-//  Tapping an alert opens that table's screen (deep link).
-//
 
 import Foundation
 import UserNotifications
@@ -24,12 +14,10 @@ protocol NotificationServicing: AnyObject {
 
 final class NotificationService: NSObject, NotificationServicing, UNUserNotificationCenterDelegate {
 
-    /// Key used to store the table id inside each notification
     static let tableIdKey = "tableId"
 
     private let center = UNUserNotificationCenter.current()
 
-    /// Called when the user taps a notification (set by AppRouter).
     var onOpenTable: ((String) -> Void)?
 
     override init() {
@@ -45,8 +33,6 @@ final class NotificationService: NSObject, NotificationServicing, UNUserNotifica
         }
     }
 
-    // MARK: - Sending
-
     func notifyNewTableNearby(_ table: CommunityTable, distanceMetres: Double?) {
         let content = UNMutableNotificationContent()
         content.title = "New table nearby \(table.category.emoji)"
@@ -56,7 +42,6 @@ final class NotificationService: NSObject, NotificationServicing, UNUserNotifica
         content.userInfo = [Self.tableIdKey: table.id]
         content.threadIdentifier = "nearby"
 
-        // Deliver straight away (1 second trigger)
         add(id: "nearby-\(table.id)", content: content,
             trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false))
     }
@@ -106,16 +91,12 @@ final class NotificationService: NSObject, NotificationServicing, UNUserNotifica
         }
     }
 
-    // MARK: - UNUserNotificationCenterDelegate
-
-    /// Show banners even while the app is open.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound, .list])
     }
 
-    /// User tapped a notification -> open the matching table.
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
@@ -128,7 +109,6 @@ final class NotificationService: NSObject, NotificationServicing, UNUserNotifica
     }
 }
 
-/// Test version that just records what was sent.
 final class MockNotificationService: NotificationServicing {
     private(set) var nearbyAlerts: [String] = []
     private(set) var reminders: [String] = []

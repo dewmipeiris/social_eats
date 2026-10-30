@@ -1,11 +1,4 @@
-//
 //  SettingsStore.swift
-//  SocialEats
-//
-//  User preferences saved on the phone with UserDefaults
-//  (proposal MVP Feature 2 — Settings & Preferences).
-//  Every property saves itself automatically when it changes.
-//
 
 import Foundation
 import Combine
@@ -14,7 +7,6 @@ final class SettingsStore: ObservableObject {
 
     private let defaults: UserDefaults
 
-    /// Keys used in UserDefaults
     private enum Key {
         static let theme = "settings.theme"
         static let nearbyAlerts = "settings.nearbyAlerts"
@@ -27,42 +19,42 @@ final class SettingsStore: ObservableObject {
         static let haptics = Haptics.enabledKey
     }
 
-    /// Light / Dark / System
+    //Light / Dark / System
     @Published var theme: AppTheme {
         didSet { defaults.set(theme.rawValue, forKey: Key.theme) }
     }
 
-    /// "Nearby Table Alerts" toggle
+    //Nearby Table Alerts toggle
     @Published var nearbyAlertsEnabled: Bool {
         didSet { defaults.set(nearbyAlertsEnabled, forKey: Key.nearbyAlerts) }
     }
 
-    /// "Proximity Radius" slider: 0.5 km (walking) ... 5.0 km (drive)
+    //Proximity Radius slider: 0.5 km (walking) ... 5.0 km (drive)
     @Published var proximityRadiusKm: Double {
         didSet { defaults.set(proximityRadiusKm, forKey: Key.radius) }
     }
 
-    /// "Face ID Protection" toggle — locks the app and protects seat changes
+    //Face ID Protection toggle — locks the app and protects seat changes
     @Published var faceIDProtectionEnabled: Bool {
         didSet { defaults.set(faceIDProtectionEnabled, forKey: Key.faceIDProtection) }
     }
 
-    /// 1-hour-before meetup reminders
+    // 1-hour-before meetup reminders
     @Published var meetupRemindersEnabled: Bool {
         didSet { defaults.set(meetupRemindersEnabled, forKey: Key.meetupReminders) }
     }
 
-    /// Dietary chips — act as global filters on the Dashboard and Map
+    // Dietary chips — act as global filters on the Dashboard and Map
     @Published var dietaryTags: [DietaryTag] {
         didSet { defaults.set(dietaryTags.map(\.rawValue), forKey: Key.dietary) }
     }
 
-    /// Accessibility option: the Text Size slider (smaller / bigger text everywhere)
+    // Accessibility option: the Text Size slider (smaller / bigger text everywhere)
     @Published var textSize: AppTextSize {
         didSet { defaults.set(textSize.rawValue, forKey: Key.textSize) }
     }
 
-    /// Accessibility option: turn vibration feedback off
+    // Accessibility option: turn vibration feedback off
     @Published var hapticsEnabled: Bool {
         didSet { defaults.set(hapticsEnabled, forKey: Key.haptics) }
     }
@@ -86,12 +78,10 @@ final class SettingsStore: ObservableObject {
         hapticsEnabled = defaults.object(forKey: Key.haptics) as? Bool ?? true
     }
 
-    /// Label shown next to the radius slider
     var radiusLabel: String {
         String(format: "%.1f km", proximityRadiusKm)
     }
 
-    /// Small badge next to the radius ("Walking", "Optimal", "Drive")
     var radiusHint: String {
         switch proximityRadiusKm {
         case ..<1.0: return "Walking"
@@ -108,13 +98,10 @@ final class SettingsStore: ObservableObject {
         }
     }
 
-    /// Clears everything on log out (keeps onboarding seen).
-    /// "A-" button next to the slider
     func makeTextSmaller() {
         if let smaller = AppTextSize(rawValue: textSize.rawValue - 1) { textSize = smaller }
     }
 
-    /// "A+" button next to the slider
     func makeTextBigger() {
         if let bigger = AppTextSize(rawValue: textSize.rawValue + 1) { textSize = bigger }
     }

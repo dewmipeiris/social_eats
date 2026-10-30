@@ -1,15 +1,8 @@
-//
 //  FirestoreMapping.swift
-//  SocialEats
-//
-//  Converts our Swift models to and from Firestore dictionaries.
-//  Keeping this here means the Models folder stays free of Firebase code.
-//
 
 import Foundation
 import FirebaseFirestore
 
-/// Firestore collection names in one place (no typos!).
 enum FirestorePath {
     static let users = "users"
     static let tables = "tables"
@@ -20,13 +13,10 @@ enum FirestorePath {
     static let rsvps = "rsvps"
 }
 
-/// Firestore can't store Swift's `nil`, so empty optionals become NSNull.
 func firestoreValue<T>(_ value: T?) -> Any {
     if let value { return value }
     return NSNull()
 }
-
-// MARK: - Small reading helpers
 
 private extension Dictionary where Key == String, Value == Any {
     func string(_ key: String, default value: String = "") -> String { self[key] as? String ?? value }
@@ -35,13 +25,10 @@ private extension Dictionary where Key == String, Value == Any {
     func strings(_ key: String) -> [String] { self[key] as? [String] ?? [] }
     func date(_ key: String) -> Date { (self[key] as? Timestamp)?.dateValue() ?? Date() }
 
-    /// Reads an array of enum raw values, skipping unknown ones.
     func enums<T: RawRepresentable>(_ key: String) -> [T] where T.RawValue == String {
         strings(key).compactMap { T(rawValue: $0) }
     }
 }
-
-// MARK: - AppUser
 
 extension AppUser {
     init?(id: String, data: [String: Any]?) {
@@ -84,8 +71,6 @@ extension AppUser {
         ]
     }
 }
-
-// MARK: - CommunityTable
 
 extension CommunityTable {
     init?(id: String, data: [String: Any]?) {
@@ -143,8 +128,6 @@ extension CommunityTable {
     }
 }
 
-// MARK: - ChatMessage
-
 extension ChatMessage {
     init?(id: String, data: [String: Any]) {
         self.init(
@@ -170,8 +153,6 @@ extension ChatMessage {
         ]
     }
 }
-
-// MARK: - ActivityItem
 
 extension ActivityItem {
     init?(id: String, data: [String: Any]) {
@@ -201,7 +182,6 @@ extension ActivityItem {
     }
 }
 
-/// Wraps a Firestore listener so it matches our `ListenerToken` protocol.
 struct FirestoreListenerToken: ListenerToken {
     let registration: ListenerRegistration
     func remove() { registration.remove() }

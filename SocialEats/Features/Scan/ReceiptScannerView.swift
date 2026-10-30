@@ -1,9 +1,4 @@
-//
 //  ReceiptScannerView.swift
-//  SocialEats
-//
-//  Prototype Figure 14 (Vision Scanner) and Figure 15 (Scan Success).
-//
 
 import SwiftUI
 import UIKit
@@ -13,7 +8,6 @@ import AVFoundation
 struct ReceiptScannerView: View {
     @EnvironmentObject private var session: SessionStore
     @EnvironmentObject private var navigation: NavigationModel
-    /// Observed so the screen updates when your joined tables change
     @EnvironmentObject private var tablesStore: TablesStore
     @StateObject private var viewModel: ReceiptScannerViewModel
     @State private var photoItem: PhotosPickerItem?
@@ -87,8 +81,6 @@ struct ReceiptScannerView: View {
         }
     }
 
-    // MARK: - No reservation
-
     private var noTableState: some View {
         VStack {
             Spacer()
@@ -104,15 +96,12 @@ struct ReceiptScannerView: View {
         }
     }
 
-    /// Tells the user WHY they can't scan yet
     private var noTableMessage: String {
         if let next = viewModel.nextUpcomingTable {
             return "Your next meal, \(next.title) at \(next.venueName), is on \(next.startTime.friendlyDayTime). Receipt scanning opens 3 hours before it starts."
         }
         return "Join a table, enjoy your meal, then scan the paper receipt here to earn Foodie Karma."
     }
-
-    // MARK: - Scanner
 
     private var scannerContent: some View {
         ScrollView {
@@ -146,7 +135,6 @@ struct ReceiptScannerView: View {
             .frame(height: 300)
             .clipShape(RoundedRectangle(cornerRadius: AppLayout.cardRadius))
 
-            // Green scan line + corner guides
             if viewModel.camera.state == .running {
                 ScanLineOverlay()
                     .frame(height: 300)
@@ -190,7 +178,7 @@ struct ReceiptScannerView: View {
                         .frame(minHeight: 40)
                         .background(Capsule().fill(.black.opacity(0.55)))
                 }
-                // Simulator only: a printed test receipt for your table
+ 
                 #if targetEnvironment(simulator)
                 Button {
                     Task { await viewModel.scanTestReceipt() }
@@ -222,8 +210,6 @@ struct ReceiptScannerView: View {
         .padding(.bottom, 28)
     }
 
-    /// Shown when the live camera can't be used (Simulator / permission off).
-    /// The design's scanner photo goes in the background, darkened so the text is readable.
     private func cameraMessage(_ text: String) -> some View {
         ZStack {
             if UIImage(named: "scanner_preview") != nil {
@@ -254,7 +240,6 @@ struct ReceiptScannerView: View {
                 }
             }
 
-            // Which table this receipt is for
             if viewModel.eligibleTables.count > 1 {
                 Picker("Meal", selection: $viewModel.selectedTableId) {
                     ForEach(viewModel.eligibleTables) { table in
@@ -349,8 +334,6 @@ struct ReceiptScannerView: View {
     }
 }
 
-// MARK: - Camera preview layer
-
 struct CameraPreview: UIViewRepresentable {
     let session: AVCaptureSession
 
@@ -369,7 +352,6 @@ struct CameraPreview: UIViewRepresentable {
     func updateUIView(_ uiView: PreviewView, context: Context) {}
 }
 
-/// Animated green scanning line (stops if Reduce Motion is on).
 struct ScanLineOverlay: View {
     @State private var moveDown = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -394,8 +376,6 @@ struct ScanLineOverlay: View {
         .accessibilityHidden(true)
     }
 }
-
-// MARK: - Success (Figure 15)
 
 struct ReceiptSuccessView: View {
     let points: Int
@@ -523,7 +503,6 @@ struct ReceiptSuccessView: View {
     }
 }
 
-/// Five tappable stars.
 struct StarRatingView: View {
     let rating: Int
     var isLocked: Bool = false
@@ -558,7 +537,6 @@ struct StarRatingView: View {
     }
 }
 
-/// Simple falling confetti made of coloured dots.
 struct ConfettiView: View {
     @State private var fall = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

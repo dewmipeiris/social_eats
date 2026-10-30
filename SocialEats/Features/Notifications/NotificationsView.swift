@@ -1,10 +1,4 @@
-//
 //  NotificationsView.swift
-//  SocialEats
-//
-//  Prototype Figure 9 — Activity / Notifications feed.
-//  Live from Firestore (users/{uid}/activity). Tapping an item opens the table.
-//
 
 import SwiftUI
 

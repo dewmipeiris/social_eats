@@ -1,15 +1,8 @@
-//
 //  OnboardingView.swift
-//  SocialEats
-//
-//  Prototype Figure 1 — 3-card onboarding carousel
-//  ("Never Eat Alone Again" + Get Started / Sign In / Skip).
-//
 
 import SwiftUI
 import UIKit
 
-/// One page of the carousel.
 struct OnboardingPage: Identifiable {
     let id: Int
     let title: String
@@ -18,13 +11,11 @@ struct OnboardingPage: Identifiable {
     let badges: [OnboardingBadge]
 }
 
-/// Small chip under each onboarding page ("🪑 85+ Host Cafes").
 struct OnboardingBadge: Hashable {
     let icon: String
     let text: String
 }
 
-/// Holds which page is showing. Tiny, but keeps logic out of the View.
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     @Published var currentPage = 0
@@ -58,7 +49,6 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            // Top row: "● COMMUNITY PREVIEW"   Skip
             HStack {
                 BadgeView(text: "COMMUNITY PREVIEW", foreground: AppColors.textSecondary,
                           background: AppColors.surfaceMuted, showsDot: true)
@@ -70,7 +60,6 @@ struct OnboardingView: View {
                     .accessibilityHint("Browse tables as a guest without an account")
             }
 
-            // Swipeable cards
             TabView(selection: $viewModel.currentPage) {
                 ForEach(viewModel.pages) { page in
                     OnboardingPageView(page: page)
@@ -79,7 +68,6 @@ struct OnboardingView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
 
-            // Custom page dots (the active one is a wide pill)
             HStack(spacing: 6) {
                 ForEach(viewModel.pages) { page in
                     Capsule()
@@ -115,20 +103,17 @@ struct OnboardingView: View {
         }
         .padding(.horizontal, 24)
         .padding(.top, 8)
-        .frame(maxWidth: 560)           // keeps it readable on iPad
+        .frame(maxWidth: 560)
         .frame(maxWidth: .infinity)
         .screenBackground()
     }
 }
 
-/// The illustration card + title + badges for one page.
 private struct OnboardingPageView: View {
     let page: OnboardingPage
 
     var body: some View {
         VStack(spacing: 22) {
-            // Illustration: the "onboarding_hero" picture from Assets.xcassets
-            // (two friends at a table). If it's missing, draws a simple emoji version.
             if UIImage(named: "onboarding_hero") != nil {
                 Image("onboarding_hero")
                     .resizable()
@@ -192,7 +177,6 @@ private struct OnboardingPageView: View {
     }
 }
 
-/// Puts the icon AFTER the text ("Get Started →").
 struct TrailingIconLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 6) {

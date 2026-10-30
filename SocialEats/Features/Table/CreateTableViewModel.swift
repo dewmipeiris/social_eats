@@ -1,18 +1,9 @@
-//
 //  CreateTableViewModel.swift
-//  SocialEats
-//
-//  Proposal MVP Feature 9 — Community Table & Host Engine.
-//  1. Host fills the Table Creator form (venue, time, tags, seats)
-//  2. Venue is found with MapKit local search (real places + coordinates)
-//  3. A Firestore document is created with the host in Seat #1
-//
 
 import Foundation
 import MapKit
 import Combine
 
-/// One venue result from MapKit search.
 struct VenueResult: Identifiable, Equatable {
     let id = UUID()
     let name: String
@@ -25,7 +16,6 @@ struct VenueResult: Identifiable, Equatable {
 @MainActor
 final class CreateTableViewModel: ObservableObject {
 
-    // MARK: - Form fields
     @Published var title = ""
     @Published var about = ""
     @Published var category: TableCategory = .cafe
@@ -35,13 +25,11 @@ final class CreateTableViewModel: ObservableObject {
     @Published var pricePerPerson: Double = 2000
     @Published var perk = ""
 
-    // Venue search
     @Published var venueQuery = ""
     @Published private(set) var venueResults: [VenueResult] = []
     @Published private(set) var selectedVenue: VenueResult?
     @Published private(set) var isSearchingVenues = false
 
-    // State
     @Published private(set) var isSaving = false
     @Published var errorMessage: String?
     @Published private(set) var createdTableId: String?
@@ -62,7 +50,6 @@ final class CreateTableViewModel: ObservableObject {
         self.session = session
         self.location = location
 
-        // Search venues 0.4 s after the user stops typing (debounce)
         $venueQuery
             .removeDuplicates()
             .debounce(for: .milliseconds(400), scheduler: RunLoop.main)
@@ -75,11 +62,9 @@ final class CreateTableViewModel: ObservableObject {
                   session: container.session, location: container.location)
     }
 
-    // MARK: - Validation
-
     var titleError: String? {
         let trimmed = title.trimmingCharacters(in: .whitespaces)
-        if trimmed.isEmpty { return nil }                       // don't nag before typing
+        if trimmed.isEmpty { return nil }
         return trimmed.count < 3 ? "Give your table a name (3+ characters)" : nil
     }
 
@@ -94,7 +79,6 @@ final class CreateTableViewModel: ObservableObject {
             && Self.capacityRange.contains(capacity)
     }
 
-    /// "1 host + 3 guest seats"
     var seatsSummary: String {
         "You (Seat #1) + \(capacity - 1) guest seat\(capacity - 1 == 1 ? "" : "s")"
     }
@@ -113,8 +97,6 @@ final class CreateTableViewModel: ObservableObject {
         selectedVenue = nil
         venueQuery = ""
     }
-
-    // MARK: - MapKit venue search
 
     private func searchVenues(_ query: String) {
         searchTask?.cancel()
@@ -144,7 +126,6 @@ final class CreateTableViewModel: ObservableObject {
         }
     }
 
-    /// Use the user's current location as the venue (e.g. a pop-up spot).
     func useCurrentLocationAsVenue() {
         let name = venueQuery.trimmingCharacters(in: .whitespaces)
         guard let coordinate = location.currentLocation?.coordinate else {
@@ -153,8 +134,6 @@ final class CreateTableViewModel: ObservableObject {
         }
         selectVenue(VenueResult(name: name.isEmpty ? "My spot" : name, address: "Near your location", coordinate: coordinate))
     }
-
-    // MARK: - Create
 
     func createTable() async {
         guard isValid, let venue = selectedVenue, let user = session.currentUser else {
@@ -179,7 +158,7 @@ final class CreateTableViewModel: ObservableObject {
             latitude: venue.coordinate.latitude,
             longitude: venue.coordinate.longitude,
             capacity: capacity,
-            attendeeIds: [user.id],              // host takes Seat #1
+            attendeeIds: [user.id],
             attendeeNames: [user.displayName],
             dietaryTags: DietaryTag.allCases.filter { dietaryTags.contains($0) },
             pricePerPerson: pricePerPerson,
@@ -191,7 +170,6 @@ final class CreateTableViewModel: ObservableObject {
         do {
             table.id = try await tableService.createTable(table)
 
-            // Host gets an offline pass + reminder + geofence like everyone else
             reservations.afterSeatConfirmed(table, reservation: Reservation.make(from: table, userId: user.id),
                                             userId: user.id)
             var updatedUser = user

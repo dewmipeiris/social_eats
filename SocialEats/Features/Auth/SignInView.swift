@@ -1,10 +1,4 @@
-//
 //  SignInView.swift
-//  SocialEats
-//
-//  Prototype Figure 2 (Member Sign In) and Figure 4 (Smart Auth & OTP).
-//  One ViewModel drives both steps.
-//
 
 import SwiftUI
 
@@ -26,7 +20,6 @@ struct SignInView: View {
                     if isDemoMode {
                         demoNotice
                     }
-                    // Errors show at the TOP so they're seen straight away
                     if let error = viewModel.errorMessage {
                         ErrorBanner(message: error) { viewModel.errorMessage = nil }
                     }
@@ -38,7 +31,7 @@ struct SignInView: View {
                     }
                 }
                 .padding(AppLayout.screenPadding)
-                .frame(maxWidth: 520)                  // nice width on iPad
+                .frame(maxWidth: 520)
                 .frame(maxWidth: .infinity)
             }
             .scrollDismissesKeyboard(.interactively)
@@ -47,12 +40,10 @@ struct SignInView: View {
         .animation(.easeInOut(duration: 0.25), value: viewModel.step)
         .sheet(isPresented: $viewModel.showsPasswordSheet) {
             EmailPasswordSheet(viewModel: viewModel)
-                // medium = half screen; can be pulled up to full if the messages need more room
                 .presentationDetents([.medium, .large])
         }
     }
 
-    // MARK: - Header
 
     private var header: some View {
         HStack {
@@ -87,11 +78,8 @@ struct SignInView: View {
         .background(RoundedRectangle(cornerRadius: 12).fill(AppColors.amberSoft))
     }
 
-    // MARK: - Step 1: details (Figure 2)
-
     private var detailsStep: some View {
         VStack(spacing: 16) {
-            // Welcome card with Face ID button
             VStack(spacing: 12) {
                 Image(systemName: "fork.knife")
                     .font(.system(size: 26, weight: .bold))
@@ -126,7 +114,6 @@ struct SignInView: View {
                                    ? "Logs you back in to your saved account"
                                    : "Available after you sign in once on this phone")
 
-                // Small line under the button: tells the user if Face ID login is ready yet
                 Label(session.hasSavedAccount
                       ? "Instant Face ID & Touch ID login"
                       : "Sign in once below to turn on Face ID login",
@@ -136,7 +123,6 @@ struct SignInView: View {
             }
             .cardStyle(padding: 18)
 
-            // Phone or email + mobile number card
             VStack(alignment: .leading, spacing: 12) {
                 Text("Phone or Email")
                     .font(AppFont.footnote)
@@ -164,7 +150,6 @@ struct SignInView: View {
                 }
                 .inputFieldStyle()
 
-                // "— OR WITH ONE-TIME CODE —"
                 HStack {
                     Rectangle().fill(AppColors.border).frame(height: 1)
                     OverlineText(text: "or with one-time code")
@@ -237,7 +222,6 @@ struct SignInView: View {
     }
 }
 
-// MARK: - Step 2: OTP (Figure 4)
 
 private struct OTPStepView: View {
     @ObservedObject var viewModel: AuthViewModel
@@ -280,7 +264,6 @@ private struct OTPStepView: View {
                 .accessibilityElement(children: .combine)
             }
 
-            // Code entry card
             VStack(spacing: 14) {
                 Image(systemName: "ellipsis.message")
                     .foregroundStyle(AppColors.primary)
@@ -335,8 +318,6 @@ private struct OTPStepView: View {
     }
 }
 
-/// Six boxes that show the code, with one hidden TextField underneath.
-/// `.oneTimeCode` lets iOS auto-fill the code from the SMS.
 struct OTPBoxesField: View {
     @Binding var code: String
     var isFocused: FocusState<Bool>.Binding
@@ -376,7 +357,6 @@ struct OTPBoxesField: View {
     }
 }
 
-/// Country flag + dial code menu ("🇱🇰 +94 ⌄").
 struct CountryPicker: View {
     @Binding var selection: PhoneNumberValidator.Country
 
@@ -401,7 +381,6 @@ struct CountryPicker: View {
     }
 }
 
-/// Small sheet for the email + password path (with "Forgot password?").
 private struct EmailPasswordSheet: View {
     @ObservedObject var viewModel: AuthViewModel
 
@@ -422,7 +401,6 @@ private struct EmailPasswordSheet: View {
                 .textContentType(.password)
                 .inputFieldStyle()
 
-            // Forgot password link (right side)
             HStack {
                 Spacer()
                 Button("Forgot password?") {
@@ -433,13 +411,12 @@ private struct EmailPasswordSheet: View {
                 .disabled(viewModel.isLoading)
             }
 
-            // Green message after the reset email is sent
             if let message = viewModel.resetMessage {
                 Label(message, systemImage: "envelope.badge")
                     .font(AppFont.footnote)
                     .foregroundStyle(AppColors.success)
             }
-            // Red message (e.g. no email typed)
+
             if let error = viewModel.errorMessage {
                 Text(error)
                     .font(AppFont.footnote)
@@ -453,7 +430,6 @@ private struct EmailPasswordSheet: View {
         }
         .padding(20)
         .screenBackground()
-        // Clear old messages each time the sheet opens
         .onAppear {
             viewModel.resetMessage = nil
             viewModel.errorMessage = nil
@@ -461,10 +437,7 @@ private struct EmailPasswordSheet: View {
     }
 }
 
-// MARK: - Input field style
-
 extension View {
-    /// Peach rounded input box from the prototype.
     func inputFieldStyle() -> some View {
         self
             .font(AppFont.body)

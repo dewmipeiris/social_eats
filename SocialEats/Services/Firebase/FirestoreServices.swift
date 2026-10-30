@@ -1,25 +1,14 @@
-//
 //  FirestoreServices.swift
-//  SocialEats
-//
-//  Cloud Firestore backend (proposal Feature 4 — "API (Firebase Backend)").
-//  • Real-time listeners (addSnapshotListener) push seat changes to every phone.
-//  • Joining a table uses a TRANSACTION so two people can never grab
-//    the same last seat at the same moment (capacity logic, Feature 9).
-//
 
 import Foundation
 import FirebaseFirestore
 import FirebaseAuth
-
-// MARK: - Tables
 
 final class FirestoreTableService: TableServicing {
     private let db = Firestore.firestore()
     private var tables: CollectionReference { db.collection(FirestorePath.tables) }
     private var rsvps: CollectionReference { db.collection(FirestorePath.rsvps) }
 
-    /// One RSVP document per person per table: rsvps/{tableId}_{userId}
     private func rsvpReference(tableId: String, userId: String) -> DocumentReference {
         rsvps.document("\(tableId)_\(userId)")
     }
@@ -35,7 +24,6 @@ final class FirestoreTableService: TableServicing {
     }
 
     func listenToActiveTables(onChange: @escaping (Result<[CommunityTable], Error>) -> Void) -> ListenerToken {
-        // Only tables starting from 3 hours ago onwards
         let since = Timestamp(date: Date().addingTimeInterval(-3 * 60 * 60))
         let registration = tables
             .whereField("startTime", isGreaterThan: since)
@@ -82,10 +70,8 @@ final class FirestoreTableService: TableServicing {
         var newTable = table
         newTable.id = document.documentID
 
-        // Table + the host's own RSVP (Seat #1) are saved together in one batch
         let batch = db.batch()
         batch.setData(newTable.firestoreData, forDocument: document)
-        // (Sample tables from the demo button have made-up hosts, so they get no RSVP)
         if newTable.hostId == Auth.auth().currentUser?.uid {
             batch.setData(rsvpData(tableId: newTable.id, userId: newTable.hostId, seat: 1, status: .confirmed),
                           forDocument: rsvpReference(tableId: newTable.id, userId: newTable.hostId))
@@ -97,8 +83,6 @@ final class FirestoreTableService: TableServicing {
     func joinTable(id: String, userId: String, userName: String) async throws -> CommunityTable {
         let reference = tables.document(id)
 
-        // runTransaction re-reads the document and retries if someone else
-        // changed it at the same time — so seats can never go over capacity.
         let result = try await db.runTransaction { transaction, errorPointer -> Any? in
             do {
                 let snapshot = try transaction.getDocument(reference)
@@ -112,7 +96,6 @@ final class FirestoreTableService: TableServicing {
                     "attendeeNames": updated.attendeeNames,
                     "seatsFilled": updated.attendeeIds.count
                 ], forDocument: reference)
-                // RSVP state saved in the SAME transaction (both happen, or neither)
                 transaction.setData(self.rsvpData(tableId: id, userId: userId,
                                                   seat: updated.seatNumber(for: userId), status: .confirmed),
                                     forDocument: self.rsvpReference(tableId: id, userId: userId))
@@ -149,7 +132,6 @@ final class FirestoreTableService: TableServicing {
         }
     }
 
-    /// Host changes the meetup time. Only "startTime" changes (the rules allow this for the host only).
     func updateTableTime(id: String, startTime: Date) async throws {
         try await tables.document(id).updateData(["startTime": Timestamp(date: startTime)])
     }
@@ -181,8 +163,6 @@ final class FirestoreTableService: TableServicing {
     }
 }
 
-// MARK: - Users
-
 final class FirestoreUserService: UserServicing {
     private let db = Firestore.firestore()
     private var users: CollectionReference { db.collection(FirestorePath.users) }
@@ -193,7 +173,6 @@ final class FirestoreUserService: UserServicing {
     }
 
     func saveUser(_ user: AppUser) async throws {
-        // merge: true keeps any fields we didn't send
         try await users.document(user.id).setData(user.firestoreData, merge: true)
     }
 
@@ -244,8 +223,6 @@ final class FirestoreUserService: UserServicing {
     }
 }
 
-// MARK: - Chat
-
 final class FirestoreChatService: ChatServicing {
     private let db = Firestore.firestore()
 
@@ -254,8 +231,6 @@ final class FirestoreChatService: ChatServicing {
             .collection(FirestorePath.messages)
             .order(by: "sentAt")
             .limit(toLast: 200)
-            // includeMetadataChanges: we also get told when a message
-            // goes from "waiting to upload" (offline) to "delivered"
             .addSnapshotListener(includeMetadataChanges: true) { snapshot, _ in
                 let messages = snapshot?.documents.compactMap { document -> ChatMessage? in
                     var message = ChatMessage(id: document.documentID, data: document.data(with: .estimate))
@@ -268,8 +243,6 @@ final class FirestoreChatService: ChatServicing {
     }
 
     func sendMessage(_ message: ChatMessage, tableId: String) async throws {
-        // Firestore queues this automatically if the phone is offline
-        // and sends it when the connection comes back.
         try await db.collection(FirestorePath.tables).document(tableId)
             .collection(FirestorePath.messages).document(message.id)
             .setData(message.firestoreData)

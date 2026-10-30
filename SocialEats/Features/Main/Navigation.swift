@@ -1,27 +1,20 @@
-//
 //  Navigation.swift
-//  SocialEats
-//
-//  Every screen you can "push" to, in one enum. Any NavigationStack in
-//  the app can open any of these with `path.append(.table(id))`.
-//
 
 import SwiftUI
 
 enum AppRoute: Hashable {
-    case table(String)          // Restaurant / table detail
-    case chat(String)           // Table group chat
-    case pass(String)           // Digital dining pass (offline)
-    case myPasses               // All saved passes
+    case table(String)
+    case chat(String)
+    case pass(String)
+    case myPasses
     case notifications
     case search
     case shakeToMatch
     case createTable
-    case scanner                // Receipt scanner
+    case scanner
     case editTasteProfile
 }
 
-/// The five tabs from the prototype's bottom bar (plus Notifications on iPad).
 enum AppTab: String, CaseIterable, Identifiable, Hashable {
     case home, map, scan, settings, profile
 
@@ -48,7 +41,6 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
-/// Remembers which tab is selected and the navigation path in each tab.
 @MainActor
 final class NavigationModel: ObservableObject {
     @Published var selectedTab: AppTab = .home
@@ -63,7 +55,6 @@ final class NavigationModel: ObservableObject {
         )
     }
 
-    /// Opens a screen on the given tab (switching to it first).
     func open(_ route: AppRoute, on tab: AppTab = .home) {
         selectedTab = tab
         var path = paths[tab] ?? NavigationPath()
@@ -76,7 +67,6 @@ final class NavigationModel: ObservableObject {
     }
 }
 
-/// Attaches the destination for every AppRoute to a NavigationStack.
 struct AppRouteDestinations: ViewModifier {
     @EnvironmentObject private var container: AppContainer
 
@@ -114,7 +104,6 @@ extension View {
     }
 }
 
-/// Wraps ProfileSetupView in edit mode with the user's current choices.
 struct EditTasteProfileView: View {
     @EnvironmentObject private var session: SessionStore
 

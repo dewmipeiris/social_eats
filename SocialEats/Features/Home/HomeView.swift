@@ -1,11 +1,4 @@
-//
 //  HomeView.swift
-//  SocialEats
-//
-//  Prototype Figure 6 — Dashboard:
-//  greeting, Shake to Match banner, search bar, category chips,
-//  "Active Tables Near You" (live from Firestore) and a + button to host.
-//
 
 import SwiftUI
 
@@ -16,14 +9,12 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
     @StateObject private var viewModel: DashboardViewModel
 
-    /// Bookmarked table ids (kept on the phone)
     @AppStorage("savedTableIds") private var savedTableIdsRaw = ""
 
     init(container: AppContainer) {
         _viewModel = StateObject(wrappedValue: DashboardViewModel(container: container))
     }
 
-    /// iPad shows 2 columns of cards, iPhone shows 1
     private var columns: [GridItem] {
         sizeClass == .regular
             ? [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
@@ -44,14 +35,14 @@ struct HomeView: View {
             }
             .padding(.horizontal, AppLayout.screenPadding)
             .padding(.bottom, 90)
-            .frame(maxWidth: 900)          // same centred look as other screens on iPad
+            .frame(maxWidth: 900)
             .frame(maxWidth: .infinity)
         }
         .refreshable { await viewModel.refresh() }
         .screenBackground()
         .safeAreaInset(edge: .top, spacing: 0) {
             HStack(spacing: 0) {
-                SidebarToggleButton()          // iPad only
+                SidebarToggleButton()
                 AppHeader(title: "Home",
                           onSearch: { navigation.open(.search, on: navigation.selectedTab) },
                           avatarName: session.currentUser?.displayName ?? "Foodie",
@@ -61,8 +52,6 @@ struct HomeView: View {
         .overlay(alignment: .bottomTrailing) { hostButton }
         .toolbar(.hidden, for: .navigationBar)
     }
-
-    // MARK: - Sections
 
     private var greeting: some View {
         HStack(spacing: 12) {
@@ -195,7 +184,6 @@ struct HomeView: View {
             }
 
             if viewModel.isLoading {
-                // Skeleton cards while the first snapshot loads
                 ForEach(0..<3, id: \.self) { _ in
                     RoundedRectangle(cornerRadius: AppLayout.cardRadius)
                         .fill(AppColors.surface)
@@ -215,7 +203,6 @@ struct HomeView: View {
             } else {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(viewModel.visibleTables) { table in
-                        // onTapGesture (not Button) so the bookmark button inside still works
                         TableRowCard(table: table,
                                      distanceText: viewModel.distanceText(for: table),
                                      isSaved: isSaved(table.id),
@@ -235,7 +222,6 @@ struct HomeView: View {
         }
     }
 
-    /// Floating coral "+" button to host a new table (Feature 9).
     private var hostButton: some View {
         Button {
             navigation.open(.createTable, on: navigation.selectedTab)
@@ -250,8 +236,6 @@ struct HomeView: View {
         .padding(20)
         .accessibilityLabel("Host a new table")
     }
-
-    // MARK: - Bookmarks
 
     private func isSaved(_ id: String) -> Bool {
         savedTableIdsRaw.split(separator: ",").contains(Substring(id))

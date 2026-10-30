@@ -1,9 +1,4 @@
-//
 //  ShakeToMatchView.swift
-//  SocialEats
-//
-//  Prototype Figure 16 — Shake to Match radar.
-//
 
 import SwiftUI
 
@@ -12,7 +7,6 @@ struct ShakeToMatchView: View {
     @EnvironmentObject private var tablesStore: TablesStore
     @EnvironmentObject private var location: LocationService
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    /// Table id of the pass to open after the RSVP popup closes
     @State private var passToOpen: String?
     @StateObject private var viewModel: ShakeToMatchViewModel
     @State private var pulse = false
@@ -56,7 +50,6 @@ struct ShakeToMatchView: View {
                 }
 
                 if !viewModel.isMotionAvailable || viewModel.match == nil {
-                    // Accessible alternative to shaking (also used on the Simulator)
                     Button {
                         Task { await viewModel.handleShake() }
                     } label: {
@@ -79,10 +72,7 @@ struct ShakeToMatchView: View {
             if !reduceMotion { pulse = true }
         }
         .onDisappear { viewModel.stop() }
-        .onDeviceShake { Task { await viewModel.handleShake() } }      // Simulator: Device > Shake
-        // Step 1: "View Offline Pass" remembers which pass to open and closes the popup.
-        // Step 2: when the popup has FULLY closed (onDismiss), we open the pass screen.
-        // (Opening a new screen while a popup is still closing doesn't work in SwiftUI.)
+        .onDeviceShake { Task { await viewModel.handleShake() } }
         .sheet(item: $viewModel.confirmedReservation, onDismiss: openWaitingPass) { reservation in
             ReservationConfirmedSheet(reservation: reservation) {
                 passToOpen = reservation.tableId
@@ -91,14 +81,11 @@ struct ShakeToMatchView: View {
         }
     }
 
-    /// Opens the offline pass once the RSVP popup has finished closing.
     private func openWaitingPass() {
         guard let tableId = passToOpen else { return }
         passToOpen = nil
         navigation.open(.pass(tableId), on: navigation.selectedTab)
     }
-
-    // MARK: - Radar
 
     private var radar: some View {
         GeometryReader { geo in
@@ -106,20 +93,17 @@ struct ShakeToMatchView: View {
             let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
 
             ZStack {
-                // Rings
                 ForEach(1...3, id: \.self) { ring in
                     Circle()
                         .stroke(AppColors.primary.opacity(0.35), lineWidth: 1)
                         .background(Circle().fill(AppColors.primarySoft.opacity(0.18 * Double(4 - ring))))
                         .frame(width: size * CGFloat(ring) / 3, height: size * CGFloat(ring) / 3)
                 }
-                // Pulse
                 Circle()
                     .stroke(AppColors.primary.opacity(pulse ? 0 : 0.5), lineWidth: 2)
                     .frame(width: pulse ? size : size * 0.2, height: pulse ? size : size * 0.2)
                     .animation(reduceMotion ? nil : .easeOut(duration: 2).repeatForever(autoreverses: false), value: pulse)
 
-                // Shake intensity ring (grows with phone force)
                 Circle()
                     .stroke(AppColors.amber, lineWidth: 3)
                     .frame(width: size * 0.28 * CGFloat(min(max(viewModel.liveForce, 1), 3)),
@@ -127,7 +111,6 @@ struct ShakeToMatchView: View {
                     .opacity(viewModel.liveForce > 1.3 ? 0.8 : 0)
                     .animation(.easeOut(duration: 0.1), value: viewModel.liveForce)
 
-                // You
                 VStack(spacing: 2) {
                     AvatarView(name: "You", size: 54)
                         .overlay(Circle().stroke(AppColors.surface, lineWidth: 3))
@@ -138,7 +121,6 @@ struct ShakeToMatchView: View {
                            ? .easeInOut(duration: 0.08).repeatForever(autoreverses: true) : .default,
                            value: viewModel.isSearching)
 
-                // Table blips
                 ForEach(viewModel.blips) { blip in
                     let distance = blip.radius * Double(size) / 2
                     HStack(spacing: 6) {
@@ -177,8 +159,6 @@ struct ShakeToMatchView: View {
         .background(Capsule().fill(AppColors.amberSoft))
         .accessibilityAddTraits(.updatesFrequently)
     }
-
-    // MARK: - Match card
 
     private func matchCard(_ table: CommunityTable) -> some View {
         VStack(spacing: 12) {

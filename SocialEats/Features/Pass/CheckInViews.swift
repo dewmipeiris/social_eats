@@ -1,20 +1,4 @@
-//
 //  CheckInViews.swift
-//  SocialEats
-//
-//  Scanning a guest's pass QR code (proposal Feature 8: "show the QR to the host").
-//
-//  Two ways to scan:
-//   1. iPhone: open the normal CAMERA app and point it at the QR.
-//      The QR holds a "socialeats://checkin?t=..." link, so iOS offers
-//      "Open in SocialEats" and the app shows the result below.
-//   2. Inside the app (host): "Check In a Guest" -> choose a photo / screenshot
-//      of the pass -> Apple's Vision framework finds the QR in the picture.
-//      This also works on the Simulator, which has no camera.
-//
-//  The check itself (is the code genuine? does the guest still have the seat?)
-//  is in CheckIn.check(...) in AppLogic.swift, and works offline.
-//
 
 import SwiftUI
 import Combine
@@ -22,14 +6,10 @@ import UIKit
 import PhotosUI
 import Vision
 
-/// A scanned pass waiting to be shown (Identifiable so it can drive a .sheet).
 struct ScannedPass: Identifiable, Equatable {
-    let id: String      // the text inside the QR
+    let id: String
 }
 
-// MARK: - Result screen
-
-/// "✓ Guest checked in" / "✗ Not a valid pass"
 struct CheckInResultView: View {
     let scannedText: String
     @EnvironmentObject private var tablesStore: TablesStore
@@ -103,9 +83,6 @@ struct CheckInResultView: View {
     }
 }
 
-// MARK: - Host: "Check In a Guest"
-
-/// Host picks a photo / screenshot of a guest's pass; Vision reads the QR in it.
 struct CheckInScannerSheet: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var scanned: ScannedPass?
@@ -125,14 +102,12 @@ struct CheckInScannerSheet: View {
                     .font(AppFont.title)
                     .foregroundStyle(AppColors.textPrimary)
 
-                // Way 1: the iPhone Camera app
                 Label("On iPhone: open the Camera app and point it at the guest's QR, then tap \"Open in SocialEats\".",
                       systemImage: "camera")
                     .font(AppFont.subheadline)
                     .foregroundStyle(AppColors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Way 2: a photo or screenshot of the pass (works on the Simulator)
                 Label("Or choose a photo / screenshot of their pass:",
                       systemImage: "photo")
                     .font(AppFont.subheadline)
@@ -171,7 +146,6 @@ struct CheckInScannerSheet: View {
         }
     }
 
-    /// Loads the chosen picture and asks Vision to find a QR code in it.
     private func read(_ item: PhotosPickerItem) async {
         isReading = true
         errorMessage = nil
@@ -192,13 +166,9 @@ struct CheckInScannerSheet: View {
     }
 }
 
-// MARK: - Vision QR reader
-
 enum QRReader {
-    /// Finds the first QR code in a picture using Apple's Vision framework (on-device).
     static func readQR(in image: UIImage) async -> String? {
         guard let cgImage = image.cgImage else { return nil }
-        // Vision work is slow-ish, so do it off the main thread
         return await Task.detached(priority: .userInitiated) {
             let request = VNDetectBarcodesRequest()
             request.symbologies = [.qr]

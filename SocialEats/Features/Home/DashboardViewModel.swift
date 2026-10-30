@@ -1,14 +1,4 @@
-//
 //  DashboardViewModel.swift
-//  SocialEats
-//
-//  Proposal MVP Feature 3 — Dashboard.
-//  Uses Combine to re-filter the live table list automatically whenever:
-//   • Firestore pushes new tables
-//   • the user moves (new location)
-//   • a category chip is tapped
-//   • dietary preferences / radius change in Settings
-//
 
 import Foundation
 import Combine
@@ -17,16 +7,11 @@ import CoreLocation
 @MainActor
 final class DashboardViewModel: ObservableObject {
 
-    // MARK: - Outputs
     @Published private(set) var visibleTables: [CommunityTable] = []
     @Published private(set) var myUpcomingTables: [CommunityTable] = []
     @Published private(set) var userLocation: CLLocation?
-
-    // MARK: - Inputs
-    /// nil = "All" chip
     @Published var selectedCategory: TableCategory?
 
-    /// Chips shown in the horizontal scroller (matches the prototype order)
     let categories: [TableCategory] = [.pizza, .sushi, .cafe, .student, .tacos, .ramen, .burgers, .coWork]
 
     private let tablesStore: TablesStore
@@ -42,7 +27,6 @@ final class DashboardViewModel: ObservableObject {
         self.settings = settings
         self.session = session
 
-        // Combine: whenever ANY input changes, rebuild the visible list
         Publishers.CombineLatest4(
             tablesStore.$tables,
             locationPublisher,
@@ -59,7 +43,6 @@ final class DashboardViewModel: ObservableObject {
         .store(in: &cancellables)
     }
 
-    /// Convenience init used by the real app.
     convenience init(container: AppContainer) {
         self.init(tablesStore: container.tablesStore,
                   locationPublisher: container.location.$currentLocation.eraseToAnyPublisher(),
@@ -67,13 +50,9 @@ final class DashboardViewModel: ObservableObject {
                   session: container.session)
     }
 
-    // MARK: - State for the view
-
     var isLoading: Bool { tablesStore.isLoading && visibleTables.isEmpty }
     var errorMessage: String? { tablesStore.errorMessage }
     var greetingName: String { session.currentUser?.firstName ?? "Foodie" }
-
-    /// Message for the empty state (changes if filters are hiding tables)
     var emptyMessage: String {
         if selectedCategory != nil || !settings.dietaryTags.isEmpty {
             return "No tables match your filters right now. Try \"All\" or widen your radius in Settings."
@@ -93,8 +72,6 @@ final class DashboardViewModel: ObservableObject {
         tablesStore.refresh()
         try? await Task.sleep(nanoseconds: 600_000_000)
     }
-
-    // MARK: - Private
 
     private func rebuild(tables: [CommunityTable], location: CLLocation?, category: TableCategory?,
                          dietary: [DietaryTag], radiusKm: Double) {
