@@ -55,13 +55,14 @@ struct TableDetailView: View {
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
-        .confirmationDialog("Cancel your seat?", isPresented: $showsCancelConfirm, titleVisibility: .visible) {
-            Button("Cancel My Seat", role: .destructive) {
-                Task { await viewModel.cancelSeat() }
-            }
-        } message: {
-            Text("Your seat will be released for someone else. Face ID is needed to confirm.")
-        }
+        .alert("Cancel your seat?", isPresented: $showsCancelConfirm) {
+                    Button("Keep Seat", role: .cancel) { }
+                    Button("Cancel Seat", role: .destructive) {
+                        Task { await viewModel.cancelSeat() }
+                    }
+                } message: {
+                    Text("Your seat will be released for someone else. Face ID or Touch ID is needed to confirm.")
+                }
         // Host only: pick a new time for the meetup
         .sheet(isPresented: $showsEditTime) {
             EditTimeSheet(newTime: $newTime, isSaving: viewModel.isWorking,

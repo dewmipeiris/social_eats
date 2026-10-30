@@ -47,7 +47,7 @@ final class SettingsViewModel: ObservableObject {
             return
         }
         let result = await container.biometrics.authenticate(
-            reason: enabled ? "Turn on Face ID protection" : "Turn off Face ID protection")
+            reason: enabled ? "Turn on \(biometricKind.title) protection" : "Turn off \(biometricKind.title) protection")
         switch result {
         case .success: settings.faceIDProtectionEnabled = enabled
         case .failure(let error): errorMessage = error.localizedDescription
@@ -84,6 +84,7 @@ final class SettingsViewModel: ObservableObject {
 
 struct SettingsView: View {
     @EnvironmentObject private var settings: SettingsStore
+    @EnvironmentObject private var tablesStore: TablesStore
     @EnvironmentObject private var navigation: NavigationModel
     @EnvironmentObject private var session: SessionStore
     @StateObject private var viewModel: SettingsViewModel

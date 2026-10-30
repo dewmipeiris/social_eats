@@ -229,7 +229,9 @@ enum TableFilter {
             if !query.isEmpty {
                 let haystack = [table.title, table.venueName, table.category.title, table.about]
                     .joined(separator: " ").lowercased()
-                if !haystack.contains(query) { return false }
+                // Every word you type (or say) must appear somewhere in the table
+                let words = query.split(separator: " ").map(String.init)
+                if !words.allSatisfy({ haystack.contains($0) }) { return false }
             }
             return true
         }

@@ -12,7 +12,20 @@ struct RootView: View {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionStore
     @EnvironmentObject private var settings: SettingsStore
+    @EnvironmentObject private var tablesStore: TablesStore
     @Environment(\.scenePhase) private var scenePhase
+
+    /// The scanned pass is shown only once the app is signed in and the
+    /// tables have loaded. If SocialEats was closed when the QR was scanned,
+    /// it waits instead of showing an empty screen.
+    private var scannedPassWhenReady: Binding<ScannedPass?> {
+        Binding(
+            get: {
+                session.phase == .main && !tablesStore.isLoading ? session.scannedPass : nil
+            },
+            set: { session.scannedPass = $0 }
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -45,7 +58,8 @@ struct RootView: View {
         .dynamicTypeSize(settings.textSize.dynamicTypeSize)
         .tint(AppColors.primary)
         // A guest's pass was scanned with the iPhone Camera app -> show the check-in result
-        .sheet(item: $session.scannedPass) { pass in
+        // (waits until the app is signed in and the tables have loaded)
+        .sheet(item: scannedPassWhenReady) { pass in
             CheckInResultView(scannedText: pass.id)
                 .environmentObject(container.tablesStore)
         }

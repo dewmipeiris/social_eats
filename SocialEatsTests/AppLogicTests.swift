@@ -21,21 +21,27 @@ struct ShakeDetectorTests {
     @Test("Phone lying still (1g) is not a shake")
     func stillPhone() {
         var detector = ShakeDetector()
-        #expect(detector.process(x: 0, y: 0, z: -1, timestamp: 0) == false)
+        // process() changes the detector, so run it first, then check the answer
+        let isShake = detector.process(x: 0, y: 0, z: -1, timestamp: 0)
+        #expect(isShake == false)
     }
 
     @Test("A hard shake above 2.5g is detected")
     func hardShake() {
         var detector = ShakeDetector()
-        #expect(detector.process(x: 2.0, y: 1.8, z: 1.0, timestamp: 0))
+        let isShake = detector.process(x: 2.0, y: 1.8, z: 1.0, timestamp: 0)
+        #expect(isShake)
     }
 
     @Test("Second shake inside the cooldown is ignored, after cooldown it counts")
     func cooldown() {
         var detector = ShakeDetector(threshold: 2.5, cooldown: 1.5)
-        #expect(detector.process(x: 3, y: 0, z: 0, timestamp: 10.0))
-        #expect(detector.process(x: 3, y: 0, z: 0, timestamp: 10.5) == false)
-        #expect(detector.process(x: 3, y: 0, z: 0, timestamp: 11.6))
+        let first = detector.process(x: 3, y: 0, z: 0, timestamp: 10.0)
+        let tooSoon = detector.process(x: 3, y: 0, z: 0, timestamp: 10.5)
+        let afterCooldown = detector.process(x: 3, y: 0, z: 0, timestamp: 11.6)
+        #expect(first)
+        #expect(tooSoon == false)
+        #expect(afterCooldown)
     }
 }
 

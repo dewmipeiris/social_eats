@@ -52,10 +52,10 @@ enum BiometricError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .notAvailable: return "This device doesn't support Face ID or Touch ID."
-        case .notEnrolled: return "Face ID isn't set up yet. iPhone: Settings → Face ID & Passcode. Simulator: menu Features → Face ID → Enrolled."
+        case .notAvailable: return "his device doesn't support Face ID or Touch ID."
+        case .notEnrolled: return "Face ID / Touch ID isn't set up yet. iPhone: Settings → Face ID (or Touch ID) & Passcode. Simulator: menu Features → Face ID → Enrolled."
         case .cancelled: return "Verification was cancelled — your seat was not changed."
-        case .failed: return "Face ID didn't recognise you. Please try again."
+        case .failed: return "Face ID / Touch ID didn't recognise you. Please try again."
         case .lockedOut: return "Too many failed attempts. Unlock your phone with your passcode first."
         }
     }
@@ -93,7 +93,8 @@ final class BiometricService: BiometricServicing {
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &checkError) else {
             switch LAError.Code(rawValue: checkError?.code ?? 0) {
             case .biometryNotEnrolled: return .failure(.notEnrolled)
-            case .biometryLockout: return .failure(.lockedOut)
+            // Locked after too many wrong tries -> ask for the phone passcode instead
+            case .biometryLockout: return await authenticateWithPasscode(reason: reason)
             default: return .failure(.notAvailable)
             }
         }
@@ -107,12 +108,27 @@ final class BiometricService: BiometricServicing {
             return success ? .success(()) : .failure(.failed)
         } catch let error as LAError {
             switch error.code {
-            case .userCancel, .appCancel, .systemCancel, .userFallback: return .failure(.cancelled)
-            case .biometryLockout: return .failure(.lockedOut)
+            case .userCancel, .appCancel, .systemCancel: return .failure(.cancelled)
+            // "Use Passcode" button, or locked during this attempt -> passcode screen
+            case .userFallback, .biometryLockout: return await authenticateWithPasscode(reason: reason)
             default: return .failure(.failed)
             }
         } catch {
             return .failure(.failed)
+        }
+    }
+
+    /// Shows the iPhone passcode screen. Entering it also unlocks Face ID / Touch ID again.
+    private func authenticateWithPasscode(reason: String) async -> Result<Void, BiometricError> {
+        let context = LAContext()
+        do {
+            let success = try await context.evaluatePolicy(.deviceOwnerAuthentication,
+                                                           localizedReason: reason)
+            return success ? .success(()) : .failure(.failed)
+        } catch let error as LAError where error.code == .userCancel {
+            return .failure(.cancelled)
+        } catch {
+            return .failure(.lockedOut)
         }
     }
 }
