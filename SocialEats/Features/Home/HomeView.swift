@@ -50,10 +50,13 @@ struct HomeView: View {
         .refreshable { await viewModel.refresh() }
         .screenBackground()
         .safeAreaInset(edge: .top, spacing: 0) {
-            AppHeader(title: "Home",
-                      onSearch: { navigation.open(.search, on: navigation.selectedTab) },
-                      avatarName: session.currentUser?.displayName ?? "Foodie",
-                      onAvatar: { navigation.selectedTab = .profile })
+            HStack(spacing: 0) {
+                SidebarToggleButton()          // iPad only
+                AppHeader(title: "Home",
+                          onSearch: { navigation.open(.search, on: navigation.selectedTab) },
+                          avatarName: session.currentUser?.displayName ?? "Foodie",
+                          onAvatar: { navigation.selectedTab = .profile })
+            }
         }
         .overlay(alignment: .bottomTrailing) { hostButton }
         .toolbar(.hidden, for: .navigationBar)

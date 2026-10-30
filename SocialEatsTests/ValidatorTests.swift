@@ -1,10 +1,8 @@
-//
 //  ValidatorTests.swift
-//  SocialEatsTests
-//
-//  Swift Testing (not XCTest) — checks the "smart validation" used on
-//  the sign-in screens: E.164 phone formatting, email, OTP and names.
-//
+// Test File 03
+
+//  checks the smart validation, sign-in screens: E.164 phone formatting, email, OTP and names.
+
 
 import Testing
 @testable import SocialEats
@@ -12,7 +10,6 @@ import Testing
 @Suite("Phone number validation (E.164)")
 struct PhoneNumberValidatorTests {
 
-    /// Different ways a Sri Lankan user might type the same number
     @Test("Valid Sri Lankan inputs all become +94771234567",
           arguments: ["771234567", "77 123 4567", "0771234567", "077-123-4567", "+94 77 123 4567", "0094771234567"])
     func validSriLankanNumbers(input: String) {

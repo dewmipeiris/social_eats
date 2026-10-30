@@ -1,10 +1,7 @@
-//
-//  ReceiptParserTests.swift
-//  SocialEatsTests
-//
-//  Tests the logic behind the Vision receipt scanner (Advanced Feature 1).
-//  We feed in text lines exactly like Vision returns them.
-//
+// ReceiptParserTests.swift
+//  Test File 02
+
+//  Tests Vision receipt scanner (Advanced Feature 1).
 
 import Testing
 import Foundation
@@ -14,7 +11,7 @@ import CoreGraphics
 @Suite("Receipt parsing")
 struct ReceiptParserTests {
 
-    /// A typical Colombo restaurant receipt as OCR text lines
+    // sample restaurant receipt as OCR text lines
     let sampleLines = [
         "LUIGI'S BRICK OVEN",
         "Dharmapala Mawatha, Colombo 07",
@@ -76,7 +73,7 @@ struct ReceiptParserTests {
         #expect(ReceiptParser.findTotal(in: ["Coffee 400.00", "Cake 650.00", "1,050.00"]) == 1050.00)
     }
 
-    // MARK: - Validation against the reservation
+    // Reservation validations
 
     @Test("Receipt from the right venue at the right time is verified")
     func verified() {
@@ -132,7 +129,6 @@ struct StringSimilarityTests {
     }
 
     @Test func sharedWords() {
-        // 2 of 3 words in common
         #expect(abs(StringSimilarity.score("Bella Napoli Trattoria", "Bella Napoli Pizzeria") - 2.0 / 3.0) < 0.001)
     }
 }
@@ -140,7 +136,6 @@ struct StringSimilarityTests {
 @Suite("Joining Vision text pieces into receipt lines")
 struct VisionLineMergeTests {
 
-    /// Builds a fragment at x / y (Vision coordinates: 0 = bottom, 1 = top)
     func piece(_ text: String, x: CGFloat, y: CGFloat, height: CGFloat = 0.03) -> TextFragment {
         TextFragment(text: text, box: CGRect(x: x, y: y, width: 0.2, height: height))
     }
@@ -148,9 +143,9 @@ struct VisionLineMergeTests {
     @Test("Pieces on the same row are joined left to right, rows top to bottom")
     func mergesRows() {
         let lines = VisionTextRecognizer.mergeIntoLines([
-            piece("3,575.00", x: 0.7, y: 0.40),          // right side of the TOTAL row (listed first!)
+            piece("3,575.00", x: 0.7, y: 0.40),
             piece("BELLA NAPOLI", x: 0.3, y: 0.90),
-            piece("TOTAL LKR", x: 0.05, y: 0.405),       // tiny vertical wobble, same row
+            piece("TOTAL LKR", x: 0.05, y: 0.405),
             piece("Thank you", x: 0.3, y: 0.20)
         ])
         #expect(lines == ["BELLA NAPOLI", "TOTAL LKR 3,575.00", "Thank you"])

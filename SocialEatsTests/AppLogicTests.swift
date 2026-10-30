@@ -1,6 +1,6 @@
 //  AppLogicTests.swift
 //  Test File 01
-//
+
 //  Shake detection (maths part), karma levels, QR pass tokens, seat capacity rules and table filtering.
 
 import Testing

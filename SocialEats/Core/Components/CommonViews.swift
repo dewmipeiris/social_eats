@@ -91,6 +91,22 @@ struct ChipView: View {
     }
 }
 
+// MARK: - ChipGrid
+
+/// Shows chips in a grid that wraps onto new rows when there is no space.
+/// (LazyVGrid with "adaptive" columns fits as many 130-point columns as possible.)
+struct ChipGrid<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 130), spacing: 8, alignment: .leading)],
+                  alignment: .leading,
+                  spacing: 8) {
+            content
+        }
+    }
+}
+
 // MARK: - Badges
 
 /// Small coloured capsule, e.g. "● 3/4 Seats Filled" or "Optimal".

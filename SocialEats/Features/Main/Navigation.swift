@@ -52,6 +52,7 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
 @MainActor
 final class NavigationModel: ObservableObject {
     @Published var selectedTab: AppTab = .home
+    @Published var isSidebarShown = true
     @Published var paths: [AppTab: NavigationPath] = [:]
 
     /// Two-way binding to one tab's path (for NavigationStack(path:))

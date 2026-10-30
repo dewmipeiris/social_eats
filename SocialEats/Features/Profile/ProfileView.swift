@@ -3,7 +3,8 @@
 //  SocialEats
 //
 //  Prototype Figure 18 — User Profile:
-//  karma balance + tier progress, stats, taste & dietary profile.
+//  karma balance + tier progress, stats, taste & dietary profile, offline passes.
+//  (Log Out is on the Settings page only.)
 //
 
 import SwiftUI
@@ -72,7 +73,6 @@ struct ProfileView: View {
     @EnvironmentObject private var navigation: NavigationModel
     @StateObject private var viewModel: ProfileViewModel
     @State private var showsEditName = false
-    @State private var showsLogoutConfirm = false
 
     init(container: AppContainer) {
         _viewModel = StateObject(wrappedValue: ProfileViewModel(container: container))
@@ -100,20 +100,16 @@ struct ProfileView: View {
         }
         .screenBackground()
         .safeAreaInset(edge: .top, spacing: 0) {
-            AppHeader(title: "Profile",
-                      onSearch: { navigation.open(.search, on: navigation.selectedTab) },
-                      onBell: { navigation.open(.notifications, on: navigation.selectedTab) },
-                      hasUnread: session.unreadCount > 0)
+            HStack(spacing: 0) {
+                SidebarToggleButton()          // iPad only
+                AppHeader(title: "Profile",
+                          onSearch: { navigation.open(.search, on: navigation.selectedTab) },
+                          onBell: { navigation.open(.notifications, on: navigation.selectedTab) },
+                          hasUnread: session.unreadCount > 0)
+            }
         }
         .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showsEditName) { editNameSheet }
-        // Standard iOS alert in the middle of the screen: "Log out?"  [Cancel] [Log Out]
-        .alert("Log out?", isPresented: $showsLogoutConfirm) {
-            Button("Cancel", role: .cancel) {}
-            Button("Log Out", role: .destructive) { session.signOut() }
-        } message: {
-            Text("You can sign back in anytime with your phone number. Your offline passes stay on this phone.")
-        }
     }
 
     // MARK: - Cards
@@ -246,12 +242,6 @@ struct ProfileView: View {
             }
             .tint(AppColors.success)
             .frame(minHeight: 48)
-            Divider()
-            Button { showsLogoutConfirm = true } label: {
-                Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
-                    .foregroundStyle(AppColors.danger)
-                    .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
-            }
         }
         .cardStyle()
     }

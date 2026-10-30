@@ -12,6 +12,7 @@
 import Foundation
 import MapKit
 import Combine
+import UIKit
 
 @MainActor
 final class TableDetailViewModel: ObservableObject {
@@ -154,12 +155,15 @@ final class TableDetailViewModel: ObservableObject {
         }
     }
 
-    /// Opens Apple Maps with walking directions to the venue.
+    /// Opens Google Maps with walking directions from your location to the venue.
+    /// (Apple Maps has no directions in Sri Lanka, Google Maps does.
+    ///  Opens the Google Maps app if installed, otherwise the website.)
     func openWalkingDirections() {
         guard let table else { return }
-        let item = MKMapItem(placemark: MKPlacemark(coordinate: table.coordinate))
-        item.name = table.venueName
-        item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
+        let link = "https://www.google.com/maps/dir/?api=1&destination=\(table.latitude),\(table.longitude)&travelmode=walking"
+        if let url = URL(string: link) {
+            UIApplication.shared.open(url)
+        }
     }
 
     /// Asks MapKit for a real walking route time (once).
@@ -182,4 +186,3 @@ final class TableDetailViewModel: ObservableObject {
         }
     }
 }
-

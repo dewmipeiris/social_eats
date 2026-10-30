@@ -75,7 +75,7 @@ struct AdaptiveMainView: View {
     // MARK: - iPad
 
     private var iPadLayout: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: sidebarVisibility) {
             List {
                 Section {
                     ForEach(AppTab.allCases) { tab in
@@ -124,6 +124,14 @@ struct AdaptiveMainView: View {
     }
 
     // MARK: - Tab roots
+    
+    @available(iOS 16.0, *)
+        private var sidebarVisibility: Binding<NavigationSplitViewVisibility> {
+            Binding(
+                get: { navigation.isSidebarShown ? .all : .detailOnly },
+                set: { navigation.isSidebarShown = ($0 != .detailOnly) }
+            )
+        }
 
     @ViewBuilder
     private func rootView(for tab: AppTab) -> some View {
@@ -133,6 +141,30 @@ struct AdaptiveMainView: View {
         case .scan: ReceiptScannerView(container: container)
         case .settings: SettingsView(container: container)
         case .profile: ProfileView(container: container)
+        }
+    }
+}
+
+/// iPad only: the show / hide sidebar button for screens that draw their own header
+/// (Home, Map, Settings, Profile). On iPhone it shows nothing.
+struct SidebarToggleButton: View {
+    @EnvironmentObject private var navigation: NavigationModel
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    var body: some View {
+        if sizeClass == .regular && !navigation.isSidebarShown {
+            Button {
+                withAnimation(.easeInOut) { navigation.isSidebarShown = true }
+            } label: {
+                Image(systemName: "sidebar.left")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(AppColors.surface))
+            }
+            .padding(.leading, AppLayout.screenPadding)
+            .accessibilityLabel("Show sidebar")
+                        .transition(.opacity)
         }
     }
 }

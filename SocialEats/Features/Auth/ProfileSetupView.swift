@@ -69,7 +69,11 @@ struct ProfileSetupView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header: < [logo] Taste Profile Setup   (Step 1 of 2)
-            HStack {
+            HStack(spacing: 0) {
+
+                if mode == .edit {
+                    SidebarToggleButton()
+                }
                 AppHeader(title: "Taste Profile Setup",
                           showsBack: true,
                           onBack: {
@@ -298,18 +302,3 @@ struct ProfileSetupView: View {
     }
 }
 
-// MARK: - ChipGrid
-
-/// Shows chips in a grid that wraps onto new rows when there is no space.
-/// (LazyVGrid with "adaptive" columns fits as many 130-point columns as possible.)
-struct ChipGrid<Content: View>: View {
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 130), spacing: 8, alignment: .leading)],
-                  alignment: .leading,
-                  spacing: 8) {
-            content
-        }
-    }
-}

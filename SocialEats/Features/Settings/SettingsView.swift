@@ -5,6 +5,7 @@
 //  Prototype Figure 7 — Settings & Preferences (MVP Feature 2):
 //  theme (Light/Dark/System), nearby alerts + radius, dietary filters,
 //  Face ID protection, privacy policy and log out.
+//  (Log Out lives ONLY here; My Offline Passes lives on the Profile page.)
 //
 
 import SwiftUI
@@ -135,12 +136,15 @@ struct SettingsView: View {
         }
         .screenBackground()
         .safeAreaInset(edge: .top, spacing: 0) {
-            AppHeader(title: "Settings",
-                      onSearch: { navigation.open(.search, on: navigation.selectedTab) },
-                      onBell: { navigation.open(.notifications, on: navigation.selectedTab) },
-                      hasUnread: session.unreadCount > 0,
-                      avatarName: session.currentUser?.displayName,
-                      onAvatar: { navigation.selectedTab = .profile })
+            HStack(spacing: 0) {
+                SidebarToggleButton()
+                AppHeader(title: "Settings",
+                          onSearch: { navigation.open(.search, on: navigation.selectedTab) },
+                          onBell: { navigation.open(.notifications, on: navigation.selectedTab) },
+                          hasUnread: session.unreadCount > 0,
+                          avatarName: session.currentUser?.displayName,
+                          onAvatar: { navigation.selectedTab = .profile })
+            }
         }
         .toolbar(.hidden, for: .navigationBar)
         // Standard iOS alert in the middle of the screen: "Log out?"  [Cancel] [Log Out]
@@ -351,17 +355,6 @@ struct SettingsView: View {
                 .tint(AppColors.success)
                 .padding(.vertical, 6)
 
-                Divider()
-
-                Button { navigation.open(.myPasses, on: navigation.selectedTab) } label: {
-                    HStack {
-                        settingRow(icon: "wallet.pass", title: "My Offline Passes", subtitle: "Stored on this phone with Core Data")
-                        Spacer()
-                        Image(systemName: "chevron.right").foregroundStyle(AppColors.textTertiary)
-                    }
-                }
-                .buttonStyle(.plain)
-                .padding(.vertical, 6)
 
                 Divider()
 
@@ -477,4 +470,3 @@ struct PrivacyPolicyView: View {
         .cardStyle()
     }
 }
-

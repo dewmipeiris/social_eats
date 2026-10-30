@@ -1,11 +1,8 @@
-//
 //  ViewModelTests.swift
-//  SocialEatsTests
-//
-//  Tests the ViewModels and managers with MOCK services injected
-//  (this is why the app uses protocols + dependency injection).
-//  Also tests Core Data offline storage with an in-memory store.
-//
+//  Test File 04
+
+//  Tests the ViewModels and managers with MOCK services injected (this is why the app uses protocols + dependency injection).
+//  tests Core Data offline storage with an in-memory store.
 
 import Testing
 import Foundation
@@ -13,7 +10,6 @@ import Combine
 import CoreLocation
 @testable import SocialEats
 
-/// Builds everything a test needs, wired to in-memory mocks.
 @MainActor
 struct TestEnvironment {
     let database = MockDatabase()
@@ -35,7 +31,7 @@ struct TestEnvironment {
         chat = MockChatService(database: database)
         biometrics = MockBiometricService(shouldSucceed: faceIDPasses)
 
-        // Fresh UserDefaults for every test so settings don't leak
+        // Fresh UserDefaults for every test
         let defaults = UserDefaults(suiteName: "tests-\(UUID().uuidString)")!
         settings = SettingsStore(defaults: defaults)
         settings.hasSeenOnboarding = true
@@ -46,7 +42,6 @@ struct TestEnvironment {
                                           location: nil, settings: settings)
     }
 
-    /// A TablesStore wired to the mocks, with its own clean alert history.
     func makeTablesStore(userId: String?, location: CLLocation? = nil) -> TablesStore {
         let history = NearbyAlertHistory(defaults: UserDefaults(suiteName: "alerts-\(UUID().uuidString)")!)
         return TablesStore(tableService: tables, offlineStore: offlineStore, notifications: notifications,
@@ -54,13 +49,12 @@ struct TestEnvironment {
                            currentLocation: { location }, currentUserId: { userId })
     }
 
-    /// Signs the demo user in and waits until the profile is loaded.
+    // Signs the demo user in and waits until the profile is loaded.
     func signIn() async {
         await session.finishSignIn(userId: SampleData.demoUser.id)
     }
 }
 
-/// Waits (up to ~3 s) for an async condition — used for auto-submitting OTP.
 @MainActor
 func waitUntil(_ condition: @escaping () -> Bool) async {
     for _ in 0..<60 where !condition() {
@@ -68,7 +62,7 @@ func waitUntil(_ condition: @escaping () -> Bool) async {
     }
 }
 
-// MARK: - Session / app flow
+// session/app flow
 
 @Suite("Session flow")
 @MainActor
@@ -146,7 +140,7 @@ struct SessionStoreTests {
     }
 }
 
-// MARK: - Auth
+// auth
 
 @Suite("Phone OTP sign-in")
 @MainActor
@@ -210,7 +204,7 @@ struct AuthViewModelTests {
     }
 }
 
-// MARK: - Reservations
+// reservations
 
 @Suite("Joining, cancelling and completing a table")
 @MainActor
@@ -326,7 +320,7 @@ struct ReservationManagerTests {
     }
 }
 
-// MARK: - Dashboard
+// Dashboard
 
 @Suite("Dashboard filtering (Combine)")
 @MainActor
@@ -350,7 +344,7 @@ struct DashboardViewModelTests {
         await waitUntil { viewModel.visibleTables.count == 1 }
         #expect(viewModel.visibleTables.map(\.category) == [.sushi])
 
-        // Join one table -> it moves to "Your Upcoming Tables"
+        // Join one table and it it moves to the Upcoming Tables
         viewModel.select(nil)
         let user = try #require(env.session.currentUser)
         _ = try await env.reservations.join(try #require(env.database.tables["t-sushi"]), user: user)
@@ -379,14 +373,13 @@ struct DashboardViewModelTests {
 
         var newTable = try #require(env.database.tables["t-pizza"])
         newTable.hostId = "someone"
-        newTable.createdAt = Date()            // a brand-new table (sample ones are 3 h old)
+        newTable.createdAt = Date()
         let newId = try await env.tables.createTable(newTable)
         await waitUntil { env.notifications.nearbyAlerts.contains(newId) }
-        #expect(env.notifications.nearbyAlerts == [newId])     // only the NEW table, not the first load
+        #expect(env.notifications.nearbyAlerts == [newId])
     }
 }
-
-// MARK: - Chat
+// chat
 
 @Suite("Group chat")
 @MainActor
@@ -489,7 +482,7 @@ struct OfflineStoreTests {
     }
 }
 
-// MARK: - Settings: Text Size slider
+// settings - text size slider
 
 @Suite("Text size setting")
 @MainActor

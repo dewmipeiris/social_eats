@@ -5,6 +5,8 @@
 //  Prototype Figure 17 — Explore Map.
 //  iPhone: full-screen map + bottom card.
 //  iPad: list of tables on the left, map on the right (LO1 adaptation).
+//  Tap a pin -> distance + walking time from YOUR location, a line on the map,
+//  and a Directions button (Google Maps).
 //
 
 import SwiftUI
@@ -27,22 +29,28 @@ struct ExploreMapView: View {
     var body: some View {
         Group {
             if sizeClass == .regular {
-                HStack(spacing: 0) {
+                HStack(spacing: AppLayout.screenPadding) {
                     sideList
                         .frame(width: 340)
-                    Divider()
+                        .clipShape(RoundedRectangle(cornerRadius: AppLayout.cardRadius))
                     mapLayer
+                        .clipShape(RoundedRectangle(cornerRadius: AppLayout.cardRadius))
                 }
+                .padding(.horizontal, AppLayout.screenPadding)
+                .padding(.bottom, AppLayout.screenPadding)
             } else {
                 mapLayer
             }
         }
         .safeAreaInset(edge: .top, spacing: 0) {
             VStack(spacing: 8) {
-                AppHeader(title: "Explore Map",
-                          onSearch: { navigation.open(.search, on: navigation.selectedTab) },
-                          onBell: { navigation.open(.notifications, on: navigation.selectedTab) },
-                          hasUnread: session.unreadCount > 0)
+                HStack(spacing: 0) {
+                    SidebarToggleButton()
+                    AppHeader(title: "Explore Map",
+                              onSearch: { navigation.open(.search, on: navigation.selectedTab) },
+                              onBell: { navigation.open(.notifications, on: navigation.selectedTab) },
+                              hasUnread: session.unreadCount > 0)
+                }
                 filterBar
             }
             .padding(.bottom, 8)
@@ -56,6 +64,17 @@ struct ExploreMapView: View {
     private var mapLayer: some View {
         Map(position: $viewModel.position, selection: $viewModel.selectedTableId) {
             UserAnnotation()
+
+            // Road route from you to the selected cafe (if Apple Maps has one here)
+            if let route = viewModel.route {
+                MapPolyline(route.polyline)
+                    .stroke(AppColors.primary, lineWidth: 5)
+            }
+            // Otherwise: dashed straight line from you to the cafe
+            if let line = viewModel.straightLine {
+                MapPolyline(coordinates: line)
+                    .stroke(AppColors.primary, style: StrokeStyle(lineWidth: 4, dash: [8, 6]))
+            }
 
             // Your alert / geofence radius
             if let user = viewModel.userCoordinate {
@@ -91,6 +110,10 @@ struct ExploreMapView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedTableId)
+        // A pin was tapped -> work out the distance / route to it
+        .onChange(of: viewModel.selectedTableId) { _, _ in
+            Task { await viewModel.loadRoute() }
+        }
     }
 
     private var filterBar: some View {
@@ -137,9 +160,6 @@ struct ExploreMapView: View {
                     .padding(.horizontal, 6).padding(.vertical, 2)
                     .background(Capsule().fill(AppColors.amberSoft))
                 Spacer()
-                Label(viewModel.distanceText(for: table), systemImage: "location.north")
-                    .font(AppFont.caption)
-                    .foregroundStyle(AppColors.textSecondary)
             }
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -170,6 +190,29 @@ struct ExploreMapView: View {
             .padding(10)
             .background(RoundedRectangle(cornerRadius: 12).fill(AppColors.surfaceMuted))
 
+            // How far the cafe is from YOU + Directions (Google Maps)
+            HStack(spacing: 8) {
+                Image(systemName: "figure.walk")
+                    .foregroundStyle(AppColors.primary)
+                if viewModel.isLoadingRoute {
+                    ProgressView().controlSize(.small)
+                }
+                Text(viewModel.distanceFromYou(for: table))
+                    .font(AppFont.subheadline.weight(.semibold))
+                    .foregroundStyle(AppColors.textPrimary)
+                Spacer()
+                Button {
+                    viewModel.openDirections(to: table)
+                } label: {
+                    Label("Directions", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+                        .font(AppFont.caption.weight(.bold))
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(AppColors.primary)
+                .accessibilityHint("Opens walking directions in Google Maps")
+            }
+            .accessibilityElement(children: .combine)
+
             Text("🕐 \(table.startTime.friendlyDayTime) • ~LKR \(Int(table.pricePerPerson)) per person")
                 .font(AppFont.caption)
                 .foregroundStyle(AppColors.textSecondary)
@@ -199,7 +242,8 @@ struct ExploreMapView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(table.title).font(AppFont.subheadline.weight(.semibold)).lineLimit(1)
                             .foregroundStyle(AppColors.textPrimary)
-                        Text("\(table.venueName) • \(table.seatSummary)").font(AppFont.caption)
+                        // iPad list: also shows how far each table is from you
+                        Text("\(table.venueName) • \(table.seatSummary)" + (viewModel.hasUserLocation ? " • \(viewModel.distanceText(for: table))" : "")).font(AppFont.caption)
                             .foregroundStyle(AppColors.textSecondary)
                     }
                 }
