@@ -112,7 +112,6 @@ struct SettingsView: View {
                         .font(AppFont.footnote)
                         .foregroundStyle(AppColors.success)
                 }
-
                 appearanceSection
                 notificationSection
                 dietarySection
@@ -442,3 +441,4 @@ struct PrivacyPolicyView: View {
         .cardStyle()
     }
 }
+
